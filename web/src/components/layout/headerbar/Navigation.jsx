@@ -27,14 +27,14 @@ const Navigation = ({
   isLoading,
   userState,
   pricingRequireAuth,
+  isConsoleRoute,
 }) => {
   const renderNavLinks = () => {
     const baseClasses =
-      'flex-shrink-0 flex items-center gap-1 font-semibold rounded-md transition-all duration-200 ease-in-out';
-    const hoverClasses = 'hover:text-semi-color-primary';
-    const spacingClasses = isMobile ? 'p-1' : 'p-2';
+      'landing-header-nav-link flex-shrink-0 flex items-center gap-1 rounded-full transition-all duration-200 ease-in-out';
+    const spacingClasses = isMobile ? 'px-2 py-1.5 text-sm' : 'px-3 py-2 text-sm';
 
-    const commonLinkClasses = `${baseClasses} ${spacingClasses} ${hoverClasses}`;
+    const commonLinkClasses = `${baseClasses} ${spacingClasses}`;
 
     return mainNavLinks.map((link) => {
       const linkContent = <span>{link.text}</span>;
@@ -70,7 +70,9 @@ const Navigation = ({
   };
 
   return (
-    <nav className='flex flex-1 items-center gap-1 lg:gap-2 mx-2 md:mx-4 overflow-x-auto whitespace-nowrap scrollbar-hide'>
+    <nav
+      className={`landing-header-nav ${isConsoleRoute ? 'landing-header-nav-console' : ''}`}
+    >
       <SkeletonWrapper
         loading={isLoading}
         type='navigation'

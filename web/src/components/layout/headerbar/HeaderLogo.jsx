@@ -19,7 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Typography, Tag } from '@douyinfe/semi-ui';
+import { Tag } from '@douyinfe/semi-ui';
 import SkeletonWrapper from '../components/SkeletonWrapper';
 
 const HeaderLogo = ({
@@ -38,16 +38,16 @@ const HeaderLogo = ({
   }
 
   return (
-    <Link to='/' className='group flex items-center gap-2'>
-      <div className='relative w-8 h-8 md:w-8 md:h-8'>
+    <Link to='/' className='landing-header-brand group'>
+      <div className='landing-header-brand-mark'>
         <SkeletonWrapper loading={isLoading || !logoLoaded} type='image' />
         <img
           src={logo}
           alt='logo'
-          className={`absolute inset-0 w-full h-full transition-all duration-200 group-hover:scale-110 rounded-full ${!isLoading && logoLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 h-full w-full rounded-2xl object-contain p-1.5 transition-all duration-200 group-hover:scale-105 ${!isLoading && logoLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       </div>
-      <div className='hidden md:flex items-center gap-2'>
+      <div className='hidden min-w-0 md:flex md:flex-col'>
         <div className='flex items-center gap-2'>
           <SkeletonWrapper
             loading={isLoading}
@@ -55,17 +55,12 @@ const HeaderLogo = ({
             width={120}
             height={24}
           >
-            <Typography.Title
-              heading={4}
-              className='!text-lg !font-semibold !mb-0'
-            >
-              {systemName}
-            </Typography.Title>
+            <span className='landing-header-brand-name'>{systemName}</span>
           </SkeletonWrapper>
           {(isSelfUseMode || isDemoSiteMode) && !isLoading && (
             <Tag
-              color={isSelfUseMode ? 'purple' : 'blue'}
-              className='text-xs px-1.5 py-0.5 rounded whitespace-nowrap shadow-sm'
+              color='orange'
+              className='landing-header-brand-tag'
               size='small'
               shape='circle'
             >
@@ -73,6 +68,9 @@ const HeaderLogo = ({
             </Tag>
           )}
         </div>
+        <span className='landing-header-brand-subtitle'>
+          Unified AI Gateway
+        </span>
       </div>
     </Link>
   );

@@ -119,7 +119,7 @@ const UserArea = ({
           <Button
             theme='borderless'
             type='tertiary'
-            className='flex items-center gap-1.5 !p-1 !rounded-full hover:!bg-semi-color-fill-1 dark:hover:!bg-gray-700 !bg-semi-color-fill-0 dark:!bg-semi-color-fill-1 dark:hover:!bg-semi-color-fill-2'
+            className='landing-user-button'
           >
             <Avatar
               size='extra-small'
@@ -129,13 +129,13 @@ const UserArea = ({
               {userState.user.username[0].toUpperCase()}
             </Avatar>
             <span className='hidden md:inline'>
-              <Typography.Text className='!text-xs !font-medium !text-semi-color-text-1 dark:!text-gray-300 mr-1'>
+              <Typography.Text className='landing-user-name'>
                 {userState.user.username}
               </Typography.Text>
             </span>
             <ChevronDown
               size={14}
-              className='text-xs text-semi-color-text-2 dark:text-gray-400'
+              className='landing-user-chevron'
             />
           </Button>
         </Dropdown>
@@ -174,7 +174,7 @@ const UserArea = ({
           <Button
             theme='borderless'
             type='tertiary'
-            className={loginButtonClasses}
+            className={`${loginButtonClasses} landing-auth-login-button`}
           >
             <span className={loginButtonTextSpanClass}>{t('登录')}</span>
           </Button>
@@ -185,7 +185,7 @@ const UserArea = ({
               <Button
                 theme='solid'
                 type='primary'
-                className={registerButtonClasses}
+                className={`${registerButtonClasses} landing-auth-register-button`}
               >
                 <span className={registerButtonTextSpanClass}>{t('注册')}</span>
               </Button>
