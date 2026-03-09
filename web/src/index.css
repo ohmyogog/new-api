@@ -154,7 +154,7 @@ body,
 .landing-badge-row {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 16px;
   margin-bottom: 40px;
   flex-wrap: wrap;
@@ -1219,12 +1219,19 @@ body,
 @media (min-width: 1024px) {
   .landing-hero-layout {
     flex-direction: row;
-    gap: 72px;
+    gap: 96px;
   }
 
   .landing-hero-copy {
     flex: 1 1 0%;
+    max-width: 632px;
     text-align: left;
+  }
+
+  .landing-hero-root {
+    max-width: none;
+    aspect-ratio: auto;
+    height: 600px;
   }
 
   .landing-badge-row,
@@ -1235,6 +1242,16 @@ body,
 
   .landing-hero-stage {
     scale: 0.9;
+  }
+}
+
+@media (min-width: 1280px) {
+  .landing-hero-layout {
+    gap: 112px;
+  }
+
+  .landing-hero-stage {
+    scale: 1;
   }
 }
 
