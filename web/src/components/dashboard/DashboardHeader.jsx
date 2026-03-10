@@ -18,8 +18,10 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Button } from '@douyinfe/semi-ui';
-import { RefreshCw, Search } from 'lucide-react';
+import { BellDot, RefreshCw, Search } from 'lucide-react';
+import AppButton from '../app-ui/Button';
+import AppBadge from '../app-ui/Badge';
+import AppSectionHeader from '../app-ui/SectionHeader';
 
 const DashboardHeader = ({
   getGreeting,
@@ -29,31 +31,33 @@ const DashboardHeader = ({
   loading,
   t,
 }) => {
-  const ICON_BUTTON_CLASS = 'text-white hover:bg-opacity-80 !rounded-full';
-
   return (
-    <div className='flex items-center justify-between mb-4'>
-      <h2
-        className='text-2xl font-semibold text-gray-800 transition-opacity duration-1000 ease-in-out'
-        style={{ opacity: greetingVisible ? 1 : 0 }}
-      >
-        {getGreeting}
-      </h2>
-      <div className='flex gap-3'>
-        <Button
-          type='tertiary'
-          icon={<Search size={16} />}
-          onClick={showSearchModal}
-          className={`bg-green-500 hover:bg-green-600 ${ICON_BUTTON_CLASS}`}
-        />
-        <Button
-          type='tertiary'
-          icon={<RefreshCw size={16} />}
-          onClick={refresh}
-          loading={loading}
-          className={`bg-blue-500 hover:bg-blue-600 ${ICON_BUTTON_CLASS}`}
-        />
-      </div>
+    <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+      <AppSectionHeader
+        icon={<BellDot size={18} />}
+        title={
+          <span
+            className='transition-opacity duration-1000 ease-in-out'
+            style={{ opacity: greetingVisible ? 1 : 0 }}
+          >
+            {getGreeting}
+          </span>
+        }
+        subtitle={t('专注监控模型消耗、服务状态与平台运营信号。')}
+        actions={
+          <>
+            <AppBadge variant='primary'>{t('Enterprise Console')}</AppBadge>
+            <AppButton variant='ghost' onClick={showSearchModal}>
+              <Search size={15} />
+              <span>{t('筛选数据')}</span>
+            </AppButton>
+            <AppButton variant='secondary' onClick={refresh} disabled={loading}>
+              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+              <span>{loading ? t('刷新中') : t('刷新')}</span>
+            </AppButton>
+          </>
+        }
+      />
     </div>
   );
 };

@@ -18,11 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Progress, Divider, Empty } from '@douyinfe/semi-ui';
-import {
-  IllustrationConstruction,
-  IllustrationConstructionDark,
-} from '@douyinfe/semi-illustrations';
+import { Progress } from '@douyinfe/semi-ui';
 import {
   timestamp2string,
   timestamp2string1,
@@ -36,6 +32,7 @@ import {
   DEFAULTS,
   ILLUSTRATION_SIZE,
 } from '../constants/dashboard.constants';
+import AppEmptyState from '../components/app-ui/EmptyState';
 
 // ========== 时间相关工具函数 ==========
 export const getDefaultTime = () => {
@@ -176,13 +173,10 @@ export const renderMonitorList = (
 ) => {
   if (!monitors || monitors.length === 0) {
     return (
-      <div className='flex justify-center items-center py-4'>
-        <Empty
-          image={<IllustrationConstruction style={ILLUSTRATION_SIZE} />}
-          darkModeImage={
-            <IllustrationConstructionDark style={ILLUSTRATION_SIZE} />
-          }
+      <div className='p-3'>
+        <AppEmptyState
           title={t('暂无监控数据')}
+          description=''
         />
       </div>
     );
@@ -196,23 +190,26 @@ export const renderMonitorList = (
   });
 
   const renderItem = (monitor, idx) => (
-    <div key={idx} className='p-2 hover:bg-white rounded-lg transition-colors'>
+    <div
+      key={idx}
+      className='rounded-[18px] border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-3 py-3 transition-colors hover:bg-white'
+    >
       <div className='flex items-center justify-between mb-1'>
         <div className='flex items-center gap-2'>
           <div
             className='w-2 h-2 rounded-full flex-shrink-0'
             style={{ backgroundColor: getUptimeStatusColor(monitor.status) }}
           />
-          <span className='text-sm font-medium text-gray-900'>
+          <span className='text-sm font-medium text-[var(--app-text)]'>
             {monitor.name}
           </span>
         </div>
-        <span className='text-xs text-gray-500'>
+        <span className='text-xs text-[var(--app-text-muted)]'>
           {((monitor.uptime || 0) * 100).toFixed(2)}%
         </span>
       </div>
       <div className='flex items-center gap-2'>
-        <span className='text-xs text-gray-500'>
+        <span className='text-xs text-[var(--app-text-muted)]'>
           {getUptimeStatusText(monitor.status)}
         </span>
         <div className='flex-1'>
@@ -230,12 +227,9 @@ export const renderMonitorList = (
   return Object.entries(grouped).map(([gname, list]) => (
     <div key={gname || 'default'} className='mb-2'>
       {gname && (
-        <>
-          <div className='text-md font-semibold text-gray-500 px-2 py-1'>
-            {gname}
-          </div>
-          <Divider />
-        </>
+        <div className='px-1 pb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--app-text-soft)]'>
+          {gname}
+        </div>
       )}
       {list.map(renderItem)}
     </div>

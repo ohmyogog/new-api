@@ -65,7 +65,9 @@ const HeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
   const { mainNavLinks } = useNavigation(t, docsLink, headerNavModules);
 
   return (
-    <header className='landing-header-shell'>
+    <header
+      className={isConsoleRoute ? 'console-header-shell' : 'landing-header-shell'}
+    >
       <NoticeModal
         visible={noticeVisible}
         onClose={handleNoticeClose}
@@ -74,9 +76,9 @@ const HeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
         unreadKeys={getUnreadKeys()}
       />
 
-      <div className='landing-header-frame'>
-        <div className='landing-header-bar'>
-          <div className='landing-header-left'>
+      <div className={isConsoleRoute ? 'console-header-frame' : 'landing-header-frame'}>
+        <div className={isConsoleRoute ? 'console-header-bar' : 'landing-header-bar'}>
+          <div className={isConsoleRoute ? 'console-header-left' : 'landing-header-left'}>
             <MobileMenuButton
               isConsoleRoute={isConsoleRoute}
               isMobile={isMobile}
@@ -99,14 +101,16 @@ const HeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
             />
           </div>
 
-          <Navigation
-            mainNavLinks={mainNavLinks}
-            isMobile={isMobile}
-            isLoading={isLoading}
-            userState={userState}
-            pricingRequireAuth={pricingRequireAuth}
-            isConsoleRoute={isConsoleRoute}
-          />
+          {!isConsoleRoute ? (
+            <Navigation
+              mainNavLinks={mainNavLinks}
+              isMobile={isMobile}
+              isLoading={isLoading}
+              userState={userState}
+              pricingRequireAuth={pricingRequireAuth}
+              isConsoleRoute={isConsoleRoute}
+            />
+          ) : null}
 
           <ActionButtons
             isNewYear={isNewYear}

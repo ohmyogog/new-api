@@ -145,7 +145,7 @@ const PageLayout = () => {
 
   return (
     <Layout
-      className='app-layout'
+      className={`app-layout ${isConsoleRoute ? 'console-shell' : ''}`}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -173,6 +173,7 @@ const PageLayout = () => {
           overflow: isMobile ? 'visible' : 'auto',
           display: 'flex',
           flexDirection: 'column',
+          background: 'transparent',
         }}
       >
         {showSider && (
@@ -186,6 +187,7 @@ const PageLayout = () => {
               border: 'none',
               paddingRight: '0',
               width: 'var(--sidebar-current-width)',
+              background: 'transparent',
             }}
           >
             <SiderBar
@@ -212,11 +214,18 @@ const PageLayout = () => {
               flex: '1 0 auto',
               overflowY: isMobile ? 'visible' : 'hidden',
               WebkitOverflowScrolling: 'touch',
-              padding: shouldInnerPadding ? (isMobile ? '5px' : '24px') : '0',
+              padding: shouldInnerPadding ? (isMobile ? '8px' : '28px') : '0',
               position: 'relative',
+              background: 'transparent',
             }}
           >
-            <App />
+            {shouldInnerPadding ? (
+              <div className='console-content-frame'>
+                <App />
+              </div>
+            ) : (
+              <App />
+            )}
           </Content>
           {!shouldHideFooter && (
             <Layout.Footer

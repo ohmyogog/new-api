@@ -18,108 +18,98 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Card, Tag, Timeline, Empty } from '@douyinfe/semi-ui';
 import { Bell } from 'lucide-react';
 import { marked } from 'marked';
-import {
-  IllustrationConstruction,
-  IllustrationConstructionDark,
-} from '@douyinfe/semi-illustrations';
 import ScrollableContainer from '../common/ui/ScrollableContainer';
+import AppBadge from '../app-ui/Badge';
+import AppCard from '../app-ui/Card';
+import AppEmptyState from '../app-ui/EmptyState';
+
+const colorMap = {
+  grey: '#98a2b3',
+  blue: '#2e90fa',
+  green: '#12b76a',
+  orange: '#f79009',
+  red: '#f04438',
+};
 
 const AnnouncementsPanel = ({
   announcementData,
   announcementLegendData,
-  CARD_PROPS,
-  ILLUSTRATION_SIZE,
   t,
 }) => {
   return (
-    <Card
-      {...CARD_PROPS}
-      className='shadow-sm !rounded-2xl lg:col-span-2'
-      title={
-        <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 w-full'>
-          <div className='flex items-center gap-2'>
-            <Bell size={16} />
-            {t('系统公告')}
-            <Tag color='white' shape='circle'>
-              {t('显示最新20条')}
-            </Tag>
-          </div>
-          {/* 图例 */}
-          <div className='flex flex-wrap gap-3 text-xs'>
-            {announcementLegendData.map((legend, index) => (
-              <div key={index} className='flex items-center gap-1'>
-                <div
-                  className='w-2 h-2 rounded-full'
-                  style={{
-                    backgroundColor:
-                      legend.color === 'grey'
-                        ? '#8b9aa7'
-                        : legend.color === 'blue'
-                          ? '#3b82f6'
-                          : legend.color === 'green'
-                            ? '#10b981'
-                            : legend.color === 'orange'
-                              ? '#f59e0b'
-                              : legend.color === 'red'
-                                ? '#ef4444'
-                                : '#8b9aa7',
-                  }}
-                />
-                <span className='text-gray-600'>{legend.label}</span>
-              </div>
-            ))}
-          </div>
+    <AppCard
+      className='lg:col-span-2'
+      title={t('系统公告')}
+      subtitle={t('跟踪平台发布、升级、维护与异常信息。')}
+      actions={
+        <div className='flex flex-wrap gap-2'>
+          <AppBadge variant='neutral'>{t('显示最新20条')}</AppBadge>
+          {announcementLegendData.map((legend, index) => (
+            <span key={index} className='console-badge'>
+              <span
+                className='h-2 w-2 rounded-full'
+                style={{ backgroundColor: colorMap[legend.color] || '#98a2b3' }}
+              />
+              <span>{legend.label}</span>
+            </span>
+          ))}
         </div>
       }
-      bodyStyle={{ padding: 0 }}
+      bodyClassName='p-0'
     >
       <ScrollableContainer maxHeight='24rem'>
         {announcementData.length > 0 ? (
-          <Timeline mode='left'>
+          <div className='space-y-3 p-4'>
             {announcementData.map((item, idx) => {
               const htmlExtra = item.extra ? marked.parse(item.extra) : '';
               return (
-                <Timeline.Item
+                <article
                   key={idx}
-                  type={item.type || 'default'}
-                  time={`${item.relative ? item.relative + ' ' : ''}${item.time}`}
-                  extra={
-                    item.extra ? (
-                      <div
-                        className='text-xs text-gray-500'
-                        dangerouslySetInnerHTML={{ __html: htmlExtra }}
-                      />
-                    ) : null
-                  }
+                  className='rounded-[18px] border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-4 py-4'
                 >
-                  <div>
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: marked.parse(item.content || ''),
-                      }}
-                    />
+                  <div className='flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between'>
+                    <div className='flex items-start gap-3'>
+                      <div
+                        className='mt-1 h-2.5 w-2.5 rounded-full'
+                        style={{ backgroundColor: colorMap[item.type] || '#98a2b3' }}
+                      />
+                      <div>
+                        <div
+                          className='prose prose-sm max-w-none text-[var(--app-text)] prose-p:my-1 prose-p:text-[var(--app-text)] prose-strong:text-[var(--app-text)]'
+                          dangerouslySetInnerHTML={{
+                            __html: marked.parse(item.content || ''),
+                          }}
+                        />
+                        {item.extra ? (
+                          <div
+                            className='mt-3 text-xs leading-6 text-[var(--app-text-muted)]'
+                            dangerouslySetInnerHTML={{ __html: htmlExtra }}
+                          />
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className='shrink-0 text-xs leading-6 text-[var(--app-text-soft)]'>
+                      {item.relative ? `${item.relative} · ` : ''}
+                      {item.time}
+                    </div>
                   </div>
-                </Timeline.Item>
+                </article>
               );
             })}
-          </Timeline>
+          </div>
         ) : (
-          <div className='flex justify-center items-center py-8'>
-            <Empty
-              image={<IllustrationConstruction style={ILLUSTRATION_SIZE} />}
-              darkModeImage={
-                <IllustrationConstructionDark style={ILLUSTRATION_SIZE} />
-              }
+          <div className='p-4'>
+            <AppEmptyState
+              icon={<Bell size={18} />}
               title={t('暂无系统公告')}
               description={t('请联系管理员在系统设置中配置公告信息')}
             />
           </div>
         )}
       </ScrollableContainer>
-    </Card>
+    </AppCard>
   );
 };
 

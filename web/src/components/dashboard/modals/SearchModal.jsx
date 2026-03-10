@@ -17,8 +17,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React, { useRef } from 'react';
-import { Modal, Form } from '@douyinfe/semi-ui';
+import React from 'react';
+import AppButton from '../../app-ui/Button';
+import AppDialog from '../../app-ui/Dialog';
 
 const SearchModal = ({
   searchModalVisible,
@@ -32,71 +33,89 @@ const SearchModal = ({
   handleInputChange,
   t,
 }) => {
-  const formRef = useRef();
-
-  const FORM_FIELD_PROPS = {
-    className: 'w-full mb-2 !rounded-lg',
-  };
-
-  const createFormField = (Component, props) => (
-    <Component {...FORM_FIELD_PROPS} {...props} />
-  );
-
   const { start_timestamp, end_timestamp, username } = inputs;
 
+  const renderLabel = (label) => (
+    <label className='mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--app-text-soft)]'>
+      {label}
+    </label>
+  );
+
   return (
-    <Modal
+    <AppDialog
+      open={searchModalVisible}
+      onClose={handleCloseModal}
+      onConfirm={handleSearchConfirm}
       title={t('搜索条件')}
-      visible={searchModalVisible}
-      onOk={handleSearchConfirm}
-      onCancel={handleCloseModal}
-      closeOnEsc={true}
-      size={isMobile ? 'full-width' : 'small'}
-      centered
+      description={t('按时间范围、粒度与用户筛选数据看板。')}
+      confirmText={t('应用筛选')}
+      cancelText={t('取消')}
+      widthClassName={isMobile ? 'max-w-full' : 'max-w-2xl'}
     >
-      <Form ref={formRef} layout='vertical' className='w-full'>
-        {createFormField(Form.DatePicker, {
-          field: 'start_timestamp',
-          label: t('起始时间'),
-          initValue: start_timestamp,
-          value: start_timestamp,
-          type: 'dateTime',
-          name: 'start_timestamp',
-          onChange: (value) => handleInputChange(value, 'start_timestamp'),
-        })}
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+        <div>
+          {renderLabel(t('起始时间'))}
+          <input
+            type='datetime-local'
+            value={start_timestamp ? start_timestamp.replace(' ', 'T') : ''}
+            onChange={(event) =>
+              handleInputChange(event.target.value.replace('T', ' '), 'start_timestamp')
+            }
+            className='h-11 w-full rounded-[14px] border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-3 text-sm text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]'
+          />
+        </div>
 
-        {createFormField(Form.DatePicker, {
-          field: 'end_timestamp',
-          label: t('结束时间'),
-          initValue: end_timestamp,
-          value: end_timestamp,
-          type: 'dateTime',
-          name: 'end_timestamp',
-          onChange: (value) => handleInputChange(value, 'end_timestamp'),
-        })}
+        <div>
+          {renderLabel(t('结束时间'))}
+          <input
+            type='datetime-local'
+            value={end_timestamp ? end_timestamp.replace(' ', 'T') : ''}
+            onChange={(event) =>
+              handleInputChange(event.target.value.replace('T', ' '), 'end_timestamp')
+            }
+            className='h-11 w-full rounded-[14px] border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-3 text-sm text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]'
+          />
+        </div>
 
-        {createFormField(Form.Select, {
-          field: 'data_export_default_time',
-          label: t('时间粒度'),
-          initValue: dataExportDefaultTime,
-          placeholder: t('时间粒度'),
-          name: 'data_export_default_time',
-          optionList: timeOptions,
-          onChange: (value) =>
-            handleInputChange(value, 'data_export_default_time'),
-        })}
+        <div>
+          {renderLabel(t('时间粒度'))}
+          <select
+            value={dataExportDefaultTime}
+            onChange={(event) =>
+              handleInputChange(event.target.value, 'data_export_default_time')
+            }
+            className='h-11 w-full rounded-[14px] border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-3 text-sm text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]'
+          >
+            {timeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        {isAdminUser &&
-          createFormField(Form.Input, {
-            field: 'username',
-            label: t('用户名称'),
-            value: username,
-            placeholder: t('可选值'),
-            name: 'username',
-            onChange: (value) => handleInputChange(value, 'username'),
-          })}
-      </Form>
-    </Modal>
+        {isAdminUser ? (
+          <div>
+            {renderLabel(t('用户名称'))}
+            <input
+              type='text'
+              value={username}
+              placeholder={t('可选值')}
+              onChange={(event) =>
+                handleInputChange(event.target.value, 'username')
+              }
+              className='h-11 w-full rounded-[14px] border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-3 text-sm text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]'
+            />
+          </div>
+        ) : null}
+      </div>
+
+      <div className='mt-6 flex flex-wrap gap-2'>
+        <AppButton variant='ghost' onClick={handleCloseModal}>
+          {t('关闭')}
+        </AppButton>
+      </div>
+    </AppDialog>
   );
 };
 

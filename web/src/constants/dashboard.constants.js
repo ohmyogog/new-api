@@ -17,21 +17,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-// ========== UI 配置常量 ==========
-export const CHART_CONFIG = { mode: 'desktop-browser' };
+import { dashboardChartOption } from '../components/dashboard/dashboardTheme';
 
-export const CARD_PROPS = {
-  shadows: '',
-  bordered: true,
-  headerLine: true,
-};
+// ========== UI 配置常量 ==========
+export const CHART_CONFIG = dashboardChartOption;
 
 export const FORM_FIELD_PROPS = {
   className: 'w-full mb-2 !rounded-lg',
   size: 'large',
 };
 
-export const ICON_BUTTON_CLASS = 'text-white hover:bg-opacity-80 !rounded-full';
 export const FLEX_CENTER_GAP2 = 'flex items-center gap-2';
 
 export const ILLUSTRATION_SIZE = { width: 96, height: 96 };

@@ -931,6 +931,99 @@ body,
   -webkit-backdrop-filter: blur(14px);
 }
 
+.console-header-shell {
+  color: var(--app-text);
+  background: rgba(244, 246, 251, 0.78);
+  border-bottom: 1px solid var(--app-border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.console-header-frame {
+  width: min(100%, 1560px);
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+.console-header-bar {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.console-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.console-shell .landing-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.console-shell .landing-header-brand-mark {
+  border-radius: 16px;
+  border: 1px solid var(--app-border);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--app-shadow-xs);
+}
+
+.console-shell .landing-header-brand-name {
+  color: var(--app-text);
+}
+
+.console-shell .landing-header-brand-subtitle {
+  color: var(--app-text-muted);
+}
+
+.console-shell .landing-header-brand-tag {
+  border-color: rgba(247, 144, 9, 0.2) !important;
+  background: rgba(247, 144, 9, 0.1) !important;
+  color: var(--app-warning) !important;
+}
+
+.console-shell .landing-header-actions {
+  gap: 8px;
+}
+
+.console-shell .landing-header-icon-button,
+.console-shell .landing-user-button,
+.console-shell .landing-auth-login-button {
+  background: rgba(255, 255, 255, 0.84) !important;
+  border: 1px solid var(--app-border) !important;
+  color: var(--app-text-muted) !important;
+}
+
+.console-shell .landing-header-icon-button:hover,
+.console-shell .landing-user-button:hover,
+.console-shell .landing-auth-login-button:hover {
+  border-color: var(--app-border-strong) !important;
+  color: var(--app-text) !important;
+}
+
+.console-shell .landing-auth-register-button {
+  background: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
+}
+
+.console-shell .landing-auth-register-button:hover {
+  background: #4d5ccc !important;
+  border-color: #4d5ccc !important;
+}
+
+.console-shell .landing-user-name {
+  color: var(--app-text-muted) !important;
+}
+
+.console-shell .landing-user-chevron {
+  color: var(--app-text-soft);
+}
+
 .landing-header-frame {
   width: min(100%, 1440px);
   margin: 0 auto;
@@ -1463,13 +1556,14 @@ code {
   flex-direction: column;
   min-height: 0;
   transition: width 0.3s ease;
-  background: var(--semi-color-bg-0);
+  background: transparent;
+  padding: 18px 14px 16px;
 }
 
 .sidebar-nav {
   flex: 1;
   width: 100%;
-  background: var(--semi-color-bg-0);
+  background: rgba(255, 255, 255, 0.74);
   height: 100%;
   overflow-x: hidden;
   border-right: none;
@@ -1478,6 +1572,12 @@ code {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  border: 1px solid var(--app-border);
+  border-radius: 24px;
+  box-shadow: var(--app-shadow-sm);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 10px 8px;
 }
 
 .sidebar-nav::-webkit-scrollbar {
@@ -1486,21 +1586,22 @@ code {
 
 /* 侧边栏导航项样式 */
 .sidebar-nav-item {
-  border-radius: 6px;
-  margin: 3px 8px;
+  border-radius: 14px;
+  margin: 4px 8px;
   transition: all 0.15s ease;
-  padding: 8px 12px;
+  padding: 10px 12px;
 }
 
 .sidebar-nav-item:hover {
-  background-color: rgba(var(--semi-blue-0), 0.08);
-  color: var(--semi-color-primary);
+  background-color: rgba(88, 103, 216, 0.08);
+  color: var(--app-primary);
 }
 
 .sidebar-nav-item-selected {
-  background-color: rgba(var(--semi-blue-0), 0.12);
-  color: var(--semi-color-primary);
-  font-weight: 500;
+  background-color: rgba(88, 103, 216, 0.12);
+  color: var(--app-primary);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgba(88, 103, 216, 0.12);
 }
 
 /* 图标容器样式 */
@@ -1527,18 +1628,19 @@ code {
 
 /* 分割线样式 */
 .sidebar-divider {
-  margin: 4px 8px;
-  opacity: 0.15;
+  margin: 10px 10px 8px;
+  opacity: 0.12;
 }
 
 /* 分组标签样式 */
 .sidebar-group-label {
-  padding: 4px 15px 8px;
-  color: var(--semi-color-text-2);
-  font-size: 12px;
+  padding: 6px 16px 8px;
+  color: var(--app-text-soft);
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  opacity: 0.8;
+  letter-spacing: 0.12em;
+  opacity: 1;
+  font-weight: 700;
 }
 
 /* 底部折叠按钮 */
@@ -1549,13 +1651,13 @@ code {
   padding: 12px;
   margin-top: auto;
   cursor: pointer;
-  background-color: var(--semi-color-bg-0);
+  background-color: transparent;
   position: sticky;
   bottom: 0;
   z-index: 10;
-  box-shadow: 0 -10px 10px -5px var(--semi-color-bg-0);
+  box-shadow: none;
   backdrop-filter: blur(4px);
-  border-top: 1px solid rgba(var(--semi-grey-0), 0.08);
+  border-top: none;
 }
 
 .sidebar-collapse-button-inner {
@@ -1565,7 +1667,7 @@ code {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--semi-color-fill-0);
+  background-color: rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
 }
 
@@ -1581,17 +1683,17 @@ code {
 
 @media (max-width: 767px) {
   .sidebar-container {
-    background: var(--semi-color-bg-1);
-    border-right: 1px solid var(--semi-color-border);
+    background: rgba(244, 246, 251, 0.96);
+    border-right: 1px solid var(--app-border);
   }
 
   .sidebar-nav {
-    background: var(--semi-color-bg-1);
+    background: rgba(255, 255, 255, 0.96);
   }
 
   .sidebar-collapse-button {
-    background-color: var(--semi-color-bg-1);
-    box-shadow: 0 -10px 10px -5px var(--semi-color-bg-1);
+    background-color: transparent;
+    box-shadow: none;
   }
 }
 

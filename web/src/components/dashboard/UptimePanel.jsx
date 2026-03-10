@@ -17,22 +17,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React from 'react';
-import {
-  Card,
-  Button,
-  Spin,
-  Tabs,
-  TabPane,
-  Tag,
-  Empty,
-} from '@douyinfe/semi-ui';
+import React, { useMemo } from 'react';
+import { Spin } from '@douyinfe/semi-ui';
 import { Gauge, RefreshCw } from 'lucide-react';
-import {
-  IllustrationConstruction,
-  IllustrationConstructionDark,
-} from '@douyinfe/semi-illustrations';
 import ScrollableContainer from '../common/ui/ScrollableContainer';
+import AppButton from '../app-ui/Button';
+import AppCard from '../app-ui/Card';
+import AppEmptyState from '../app-ui/EmptyState';
+import AppTabs from '../app-ui/Tabs';
 
 const UptimePanel = ({
   uptimeData,
@@ -42,85 +34,75 @@ const UptimePanel = ({
   loadUptimeData,
   uptimeLegendData,
   renderMonitorList,
-  CARD_PROPS,
-  ILLUSTRATION_SIZE,
   t,
 }) => {
+  const uptimeTabs = useMemo(
+    () =>
+      uptimeData.map((group) => ({
+        value: group.categoryName,
+        label: group.categoryName,
+        icon: <Gauge size={14} />,
+        badge: group.monitors ? group.monitors.length : 0,
+      })),
+    [uptimeData],
+  );
+
   return (
-    <Card
-      {...CARD_PROPS}
-      className='shadow-sm !rounded-2xl lg:col-span-1'
-      title={
-        <div className='flex items-center justify-between w-full gap-2'>
-          <div className='flex items-center gap-2'>
-            <Gauge size={16} />
-            {t('服务可用性')}
-          </div>
-          <Button
-            icon={<RefreshCw size={14} />}
-            onClick={loadUptimeData}
-            loading={uptimeLoading}
-            size='small'
-            theme='borderless'
-            type='tertiary'
-            className='text-gray-500 hover:text-blue-500 hover:bg-blue-50 !rounded-full'
-          />
-        </div>
+    <AppCard
+      className='lg:col-span-1'
+      title={t('服务可用性')}
+      subtitle={t('监控服务健康状态、类别可用性与实时刷新。')}
+      actions={
+        <AppButton variant='ghost' onClick={loadUptimeData}>
+          <RefreshCw size={14} className={uptimeLoading ? 'animate-spin' : ''} />
+          <span>{t('刷新')}</span>
+        </AppButton>
       }
-      bodyStyle={{ padding: 0 }}
+      bodyClassName='p-0'
+      footer={
+        uptimeData.length > 0 ? (
+          <div className='flex flex-wrap gap-2'>
+            {uptimeLegendData.map((legend, index) => (
+              <span key={index} className='console-badge'>
+                <span
+                  className='h-2 w-2 rounded-full'
+                  style={{ backgroundColor: legend.color }}
+                />
+                <span>{legend.label}</span>
+              </span>
+            ))}
+          </div>
+        ) : null
+      }
     >
-      {/* 内容区域 */}
       <div className='relative'>
         <Spin spinning={uptimeLoading}>
           {uptimeData.length > 0 ? (
             uptimeData.length === 1 ? (
-              <ScrollableContainer maxHeight='24rem'>
+              <ScrollableContainer maxHeight='24rem' className='p-4'>
                 {renderMonitorList(uptimeData[0].monitors)}
               </ScrollableContainer>
             ) : (
-              <Tabs
-                type='card'
-                collapsible
-                activeKey={activeUptimeTab}
-                onChange={setActiveUptimeTab}
-                size='small'
-              >
+              <div className='p-4'>
+                <AppTabs
+                  tabs={uptimeTabs}
+                  value={activeUptimeTab}
+                  onChange={setActiveUptimeTab}
+                  className='mb-4'
+                />
                 {uptimeData.map((group, groupIdx) => (
-                  <TabPane
-                    tab={
-                      <span className='flex items-center gap-2'>
-                        <Gauge size={14} />
-                        {group.categoryName}
-                        <Tag
-                          color={
-                            activeUptimeTab === group.categoryName
-                              ? 'red'
-                              : 'grey'
-                          }
-                          size='small'
-                          shape='circle'
-                        >
-                          {group.monitors ? group.monitors.length : 0}
-                        </Tag>
-                      </span>
-                    }
-                    itemKey={group.categoryName}
-                    key={groupIdx}
-                  >
-                    <ScrollableContainer maxHeight='21.5rem'>
+                  activeUptimeTab === group.categoryName ? (
+                    <ScrollableContainer maxHeight='21.5rem' key={groupIdx}>
                       {renderMonitorList(group.monitors)}
                     </ScrollableContainer>
-                  </TabPane>
+                  ) : null
                 ))}
-              </Tabs>
+              </div>
             )
           ) : (
-            <div className='flex justify-center items-center py-8'>
-              <Empty
-                image={<IllustrationConstruction style={ILLUSTRATION_SIZE} />}
-                darkModeImage={
-                  <IllustrationConstructionDark style={ILLUSTRATION_SIZE} />
-                }
+            <div className='p-4'>
+              <AppEmptyState
+                icon={<Gauge size={18} />}
                 title={t('暂无监控数据')}
                 description={t('请联系管理员在系统设置中配置Uptime')}
               />
@@ -128,24 +110,7 @@ const UptimePanel = ({
           )}
         </Spin>
       </div>
-
-      {/* 图例 */}
-      {uptimeData.length > 0 && (
-        <div className='p-3 bg-gray-50 rounded-b-2xl'>
-          <div className='flex flex-wrap gap-3 text-xs justify-center'>
-            {uptimeLegendData.map((legend, index) => (
-              <div key={index} className='flex items-center gap-1'>
-                <div
-                  className='w-2 h-2 rounded-full'
-                  style={{ backgroundColor: legend.color }}
-                />
-                <span className='text-gray-600'>{legend.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </Card>
+    </AppCard>
   );
 };
 

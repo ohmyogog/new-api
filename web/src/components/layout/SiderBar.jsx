@@ -304,7 +304,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
   }, [collapsed]);
 
   // 选中高亮颜色（统一）
-  const SELECTED_COLOR = 'var(--semi-color-primary)';
+  const SELECTED_COLOR = 'var(--app-primary)';
 
   // 渲染自定义菜单项
   const renderNavItem = (item) => {
@@ -507,7 +507,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
               <ChevronLeft
                 size={16}
                 strokeWidth={2.5}
-                color='var(--semi-color-text-2)'
+                color='var(--app-text-muted)'
                 style={{
                   transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)',
                 }}

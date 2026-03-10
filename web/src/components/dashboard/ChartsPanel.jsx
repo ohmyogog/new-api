@@ -17,10 +17,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React from 'react';
-import { Card, Tabs, TabPane } from '@douyinfe/semi-ui';
-import { PieChart } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { BarChart3, LineChart, PieChart, Radar } from 'lucide-react';
 import { VChart } from '@visactor/react-vchart';
+import AppCard from '../app-ui/Card';
+import AppTabs from '../app-ui/Tabs';
 
 const ChartsPanel = ({
   activeChartTab,
@@ -29,37 +30,35 @@ const ChartsPanel = ({
   spec_model_line,
   spec_pie,
   spec_rank_bar,
-  CARD_PROPS,
   CHART_CONFIG,
-  FLEX_CENTER_GAP2,
   hasApiInfoPanel,
   t,
 }) => {
+  const chartTabs = useMemo(
+    () => [
+      { value: '1', label: t('消耗分布'), icon: <BarChart3 size={14} /> },
+      { value: '2', label: t('消耗趋势'), icon: <LineChart size={14} /> },
+      { value: '3', label: t('调用次数分布'), icon: <PieChart size={14} /> },
+      { value: '4', label: t('调用次数排行'), icon: <Radar size={14} /> },
+    ],
+    [t],
+  );
+
   return (
-    <Card
-      {...CARD_PROPS}
+    <AppCard
       className={`!rounded-2xl ${hasApiInfoPanel ? 'lg:col-span-3' : ''}`}
-      title={
-        <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between w-full gap-3'>
-          <div className={FLEX_CENTER_GAP2}>
-            <PieChart size={16} />
-            {t('模型数据分析')}
-          </div>
-          <Tabs
-            type='slash'
-            activeKey={activeChartTab}
-            onChange={setActiveChartTab}
-          >
-            <TabPane tab={<span>{t('消耗分布')}</span>} itemKey='1' />
-            <TabPane tab={<span>{t('消耗趋势')}</span>} itemKey='2' />
-            <TabPane tab={<span>{t('调用次数分布')}</span>} itemKey='3' />
-            <TabPane tab={<span>{t('调用次数排行')}</span>} itemKey='4' />
-          </Tabs>
-        </div>
+      title={t('模型数据分析')}
+      subtitle={t('洞察模型消耗、调用趋势与请求占比。')}
+      actions={
+        <AppTabs
+          tabs={chartTabs}
+          value={activeChartTab}
+          onChange={setActiveChartTab}
+        />
       }
-      bodyStyle={{ padding: 0 }}
+      bodyClassName='p-0'
     >
-      <div className='h-96 p-2'>
+      <div className='h-96 px-2 pb-2 pt-1'>
         {activeChartTab === '1' && (
           <VChart spec={spec_line} option={CHART_CONFIG} />
         )}
@@ -73,7 +72,7 @@ const ChartsPanel = ({
           <VChart spec={spec_rank_bar} option={CHART_CONFIG} />
         )}
       </div>
-    </Card>
+    </AppCard>
   );
 };
 

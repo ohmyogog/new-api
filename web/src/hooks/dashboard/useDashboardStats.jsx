@@ -32,6 +32,25 @@ import {
 import { renderQuota } from '../../helpers';
 import { createSectionTitle } from '../../helpers/dashboard';
 
+const groupMeta = {
+  account: {
+    eyebrow: 'FINANCE',
+    accent: 'bg-[rgba(88,103,216,0.08)] text-[var(--app-primary)]',
+  },
+  usage: {
+    eyebrow: 'USAGE',
+    accent: 'bg-[rgba(18,183,106,0.1)] text-[var(--app-success)]',
+  },
+  resources: {
+    eyebrow: 'CONSUMPTION',
+    accent: 'bg-[rgba(247,144,9,0.1)] text-[var(--app-warning)]',
+  },
+  performance: {
+    eyebrow: 'PERFORMANCE',
+    accent: 'bg-[rgba(46,144,250,0.1)] text-[var(--app-info)]',
+  },
+};
+
 export const useDashboardStats = (
   userState,
   consumeQuota,
@@ -45,8 +64,9 @@ export const useDashboardStats = (
   const groupedStatsData = useMemo(
     () => [
       {
+        key: 'account',
         title: createSectionTitle(Wallet, t('账户数据')),
-        color: 'bg-blue-50',
+        ...groupMeta.account,
         items: [
           {
             title: t('当前余额'),
@@ -67,8 +87,9 @@ export const useDashboardStats = (
         ],
       },
       {
+        key: 'usage',
         title: createSectionTitle(Activity, t('使用统计')),
-        color: 'bg-green-50',
+        ...groupMeta.usage,
         items: [
           {
             title: t('请求次数'),
@@ -89,8 +110,9 @@ export const useDashboardStats = (
         ],
       },
       {
+        key: 'resources',
         title: createSectionTitle(Zap, t('资源消耗')),
-        color: 'bg-yellow-50',
+        ...groupMeta.resources,
         items: [
           {
             title: t('统计额度'),
@@ -111,8 +133,9 @@ export const useDashboardStats = (
         ],
       },
       {
+        key: 'performance',
         title: createSectionTitle(Gauge, t('性能指标')),
-        color: 'bg-indigo-50',
+        ...groupMeta.performance,
         items: [
           {
             title: t('平均RPM'),
