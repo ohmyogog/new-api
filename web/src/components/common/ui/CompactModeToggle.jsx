@@ -21,6 +21,7 @@ import React from 'react';
 import { Button } from '@douyinfe/semi-ui';
 import PropTypes from 'prop-types';
 import { useIsMobile } from '../../../hooks/common/useIsMobile';
+import { cn } from '../../../lib/cn';
 
 /**
  * 紧凑模式切换按钮组件
@@ -47,7 +48,7 @@ const CompactModeToggle = ({
     <Button
       type={type}
       size={size}
-      className={`w-full md:w-auto ${className}`}
+      className={cn('w-full md:w-auto', className)}
       onClick={() => setCompactMode(!compactMode)}
       {...props}
     >

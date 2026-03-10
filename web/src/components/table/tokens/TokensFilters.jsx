@@ -18,8 +18,9 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useRef } from 'react';
-import { Form, Button } from '@douyinfe/semi-ui';
+import { Form } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
+import AppButton from '../../app-ui/Button';
 
 const TokensFilters = ({
   formInitValues,
@@ -79,24 +80,23 @@ const TokensFilters = ({
         </div>
 
         <div className='flex gap-2 w-full md:w-auto'>
-          <Button
-            type='tertiary'
-            htmlType='submit'
-            loading={loading || searching}
+          <AppButton
+            as='button'
+            variant='secondary'
+            type='submit'
+            disabled={loading || searching}
             className='flex-1 md:flex-initial md:w-auto'
-            size='small'
           >
             {t('查询')}
-          </Button>
+          </AppButton>
 
-          <Button
-            type='tertiary'
+          <AppButton
+            variant='ghost'
             onClick={handleReset}
             className='flex-1 md:flex-initial md:w-auto'
-            size='small'
           >
             {t('重置')}
-          </Button>
+          </AppButton>
         </div>
       </div>
     </Form>

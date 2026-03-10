@@ -18,10 +18,11 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Tag, Space, Skeleton } from '@douyinfe/semi-ui';
+import { Skeleton } from '@douyinfe/semi-ui';
 import { renderQuota } from '../../../helpers';
 import CompactModeToggle from '../../common/ui/CompactModeToggle';
 import { useMinimumLoadingTime } from '../../../hooks/common/useMinimumLoadingTime';
+import AppBadge from '../../app-ui/Badge';
 
 const LogsActions = ({
   stat,
@@ -45,42 +46,13 @@ const LogsActions = ({
   return (
     <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-2 w-full'>
       <Skeleton loading={needSkeleton} active placeholder={placeholder}>
-        <Space>
-          <Tag
-            color='blue'
-            style={{
-              fontWeight: 500,
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-              padding: 13,
-            }}
-            className='!rounded-lg'
-          >
+        <div className='flex flex-wrap gap-2'>
+          <AppBadge variant='primary'>
             {t('消耗额度')}: {renderQuota(stat.quota)}
-          </Tag>
-          <Tag
-            color='pink'
-            style={{
-              fontWeight: 500,
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-              padding: 13,
-            }}
-            className='!rounded-lg'
-          >
-            RPM: {stat.rpm}
-          </Tag>
-          <Tag
-            color='white'
-            style={{
-              border: 'none',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-              fontWeight: 500,
-              padding: 13,
-            }}
-            className='!rounded-lg'
-          >
-            TPM: {stat.tpm}
-          </Tag>
-        </Space>
+          </AppBadge>
+          <AppBadge variant='neutral'>RPM: {stat.rpm}</AppBadge>
+          <AppBadge variant='neutral'>TPM: {stat.tpm}</AppBadge>
+        </div>
       </Skeleton>
 
       <CompactModeToggle

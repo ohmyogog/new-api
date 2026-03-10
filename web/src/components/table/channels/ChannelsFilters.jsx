@@ -20,6 +20,7 @@ For commercial licensing, please contact support@quantumnous.com
 import React from 'react';
 import { Button, Form } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
+import AppButton from '../../app-ui/Button';
 
 const ChannelsFilters = ({
   setEditingChannel,
@@ -39,10 +40,8 @@ const ChannelsFilters = ({
   return (
     <div className='flex flex-col md:flex-row justify-between items-center gap-2 w-full'>
       <div className='flex gap-2 w-full md:w-auto order-2 md:order-1'>
-        <Button
-          size='small'
-          theme='light'
-          type='primary'
+        <AppButton
+          variant='primary'
           className='w-full md:w-auto'
           onClick={() => {
             setEditingChannel({
@@ -52,25 +51,19 @@ const ChannelsFilters = ({
           }}
         >
           {t('添加渠道')}
-        </Button>
+        </AppButton>
 
-        <Button
-          size='small'
-          type='tertiary'
-          className='w-full md:w-auto'
-          onClick={refresh}
-        >
+        <AppButton variant='secondary' className='w-full md:w-auto' onClick={refresh}>
           {t('刷新')}
-        </Button>
+        </AppButton>
 
-        <Button
-          size='small'
-          type='tertiary'
+        <AppButton
+          variant='ghost'
           onClick={() => setShowColumnSelector(true)}
           className='w-full md:w-auto'
         >
           {t('列设置')}
-        </Button>
+        </AppButton>
       </div>
 
       <div className='flex flex-col md:flex-row items-center gap-2 w-full md:w-auto order-1 md:order-2'>

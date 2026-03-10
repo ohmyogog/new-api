@@ -20,6 +20,7 @@ For commercial licensing, please contact support@quantumnous.com
 import React from 'react';
 import { Button, Form } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
+import AppButton from '../../app-ui/Button';
 
 import { DATE_RANGE_PRESETS } from '../../../constants/console.constants';
 
@@ -153,16 +154,11 @@ const LogsFilters = ({
           </div>
 
           <div className='flex gap-2 w-full sm:w-auto justify-end'>
-            <Button
-              type='tertiary'
-              htmlType='submit'
-              loading={loading}
-              size='small'
-            >
+            <AppButton as='button' variant='secondary' type='submit' disabled={loading}>
               {t('查询')}
-            </Button>
-            <Button
-              type='tertiary'
+            </AppButton>
+            <AppButton
+              variant='ghost'
               onClick={() => {
                 if (formApi) {
                   formApi.reset();
@@ -172,17 +168,12 @@ const LogsFilters = ({
                   }, 100);
                 }
               }}
-              size='small'
             >
               {t('重置')}
-            </Button>
-            <Button
-              type='tertiary'
-              onClick={() => setShowColumnSelector(true)}
-              size='small'
-            >
+            </AppButton>
+            <AppButton variant='ghost' onClick={() => setShowColumnSelector(true)}>
               {t('列设置')}
-            </Button>
+            </AppButton>
           </div>
         </div>
       </div>

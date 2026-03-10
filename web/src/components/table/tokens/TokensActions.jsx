@@ -18,10 +18,11 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useState } from 'react';
-import { Button, Space } from '@douyinfe/semi-ui';
+import { Space } from '@douyinfe/semi-ui';
 import { showError } from '../../../helpers';
 import CopyTokensModal from './modals/CopyTokensModal';
 import DeleteTokensModal from './modals/DeleteTokensModal';
+import AppButton from '../../app-ui/Button';
 
 const TokensActions = ({
   selectedKeys,
@@ -63,8 +64,8 @@ const TokensActions = ({
   return (
     <>
       <div className='flex flex-wrap gap-2 w-full md:w-auto order-2 md:order-1'>
-        <Button
-          type='primary'
+        <AppButton
+          variant='primary'
           className='flex-1 md:flex-initial'
           onClick={() => {
             setEditingToken({
@@ -72,28 +73,25 @@ const TokensActions = ({
             });
             setShowEdit(true);
           }}
-          size='small'
         >
           {t('添加令牌')}
-        </Button>
+        </AppButton>
 
-        <Button
-          type='tertiary'
+        <AppButton
+          variant='secondary'
           className='flex-1 md:flex-initial'
           onClick={handleCopySelectedTokens}
-          size='small'
         >
           {t('复制所选令牌')}
-        </Button>
+        </AppButton>
 
-        <Button
-          type='danger'
-          className='w-full md:w-auto'
+        <AppButton
+          variant='ghost'
+          className='w-full md:w-auto border-[rgba(240,68,56,0.22)] bg-[rgba(240,68,56,0.08)] text-[var(--app-danger)] hover:border-[rgba(240,68,56,0.3)] hover:bg-[rgba(240,68,56,0.12)]'
           onClick={handleDeleteSelectedTokens}
-          size='small'
         >
           {t('删除所选令牌')}
-        </Button>
+        </AppButton>
       </div>
 
       <CopyTokensModal
