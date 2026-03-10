@@ -195,3 +195,31 @@ For commercial licensing, please contact support@quantumnous.com
 .console-shell .semi-progress-line {
   background: rgba(15, 23, 42, 0.06);
 }
+
+.console-shell .semi-table {
+  border-radius: var(--app-radius-lg);
+  border: 1px solid var(--app-border);
+  overflow: hidden;
+}
+
+.console-shell .semi-table-thead > .semi-table-row > .semi-table-row-head,
+.console-shell .semi-table-thead > .semi-table-row > .semi-table-row-head .semi-table-cell {
+  background: rgba(248, 250, 252, 0.92) !important;
+  color: var(--app-text-muted) !important;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.console-shell .semi-table-tbody > .semi-table-row:hover {
+  background: rgba(88, 103, 216, 0.04) !important;
+}
+
+.console-shell .semi-table .semi-table-cell {
+  border-bottom: 1px solid var(--app-border) !important;
+}
+
+.console-shell .semi-pagination {
+  border-radius: 999px;
+}

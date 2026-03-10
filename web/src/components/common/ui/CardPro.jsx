@@ -22,6 +22,7 @@ import { Card, Divider, Typography, Button } from '@douyinfe/semi-ui';
 import PropTypes from 'prop-types';
 import { useIsMobile } from '../../../hooks/common/useIsMobile';
 import { IconEyeOpened, IconEyeClosed } from '@douyinfe/semi-icons';
+import { cn } from '../../../lib/cn';
 
 const { Text } = Typography;
 
@@ -160,7 +161,10 @@ const CardPro = ({
 
   return (
     <Card
-      className={`table-scroll-card !rounded-2xl ${className}`}
+      className={cn(
+        'table-scroll-card !rounded-2xl console-card console-card-elevated',
+        className,
+      )}
       title={headerContent}
       footer={footerContent}
       shadows={shadows}

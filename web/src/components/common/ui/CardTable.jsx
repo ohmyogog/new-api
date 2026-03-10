@@ -32,6 +32,7 @@ import { IconChevronDown, IconChevronUp } from '@douyinfe/semi-icons';
 import PropTypes from 'prop-types';
 import { useIsMobile } from '../../../hooks/common/useIsMobile';
 import { useMinimumLoadingTime } from '../../../hooks/common/useMinimumLoadingTime';
+import { cn } from '../../../lib/cn';
 
 /**
  * CardTable 响应式表格组件
@@ -68,6 +69,7 @@ const CardTable = ({
         dataSource={dataSource}
         loading={loading}
         rowKey={rowKey}
+        className={cn('console-table', tableProps.className)}
         {...finalTableProps}
       />
     );
@@ -115,7 +117,7 @@ const CardTable = ({
       );
 
       return (
-        <Card key={key} className='!rounded-2xl shadow-sm'>
+        <Card key={key} className='!rounded-2xl shadow-sm console-card console-card-elevated'>
           <Skeleton loading={true} active placeholder={placeholder}></Skeleton>
         </Card>
       );
@@ -139,7 +141,7 @@ const CardTable = ({
       (!tableProps.rowExpandable || tableProps.rowExpandable(record));
 
     return (
-      <Card key={rowKeyVal} className='!rounded-2xl shadow-sm'>
+      <Card key={rowKeyVal} className='!rounded-2xl shadow-sm console-card console-card-elevated'>
         {columns.map((col, colIdx) => {
           if (
             tableProps?.visibleColumns &&
@@ -167,7 +169,7 @@ const CardTable = ({
               className='flex justify-between items-start py-1 border-b last:border-b-0 border-dashed'
               style={{ borderColor: 'var(--semi-color-border)' }}
             >
-              <span className='font-medium text-gray-600 mr-2 whitespace-nowrap select-none'>
+              <span className='font-medium mr-2 whitespace-nowrap select-none text-[var(--app-text-muted)]'>
                 {title}
               </span>
               <div className='flex-1 break-all flex justify-end items-center gap-1'>
