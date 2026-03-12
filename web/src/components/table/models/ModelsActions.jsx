@@ -21,12 +21,13 @@ import React, { useState } from 'react';
 import MissingModelsModal from './modals/MissingModelsModal';
 import PrefillGroupManagement from './modals/PrefillGroupManagement';
 import EditPrefillGroupModal from './modals/EditPrefillGroupModal';
-import { Button, Modal, Popover, RadioGroup, Radio } from '@douyinfe/semi-ui';
+import { Modal, Popover } from '@douyinfe/semi-ui';
 import { showSuccess, showError, copy } from '../../../helpers';
 import CompactModeToggle from '../../common/ui/CompactModeToggle';
 import SelectionNotification from './components/SelectionNotification';
 import UpstreamConflictModal from './modals/UpstreamConflictModal';
 import SyncWizardModal from './modals/SyncWizardModal';
+import AppButton from '../../app-ui/Button';
 
 const ModelsActions = ({
   selectedKeys,
@@ -43,7 +44,6 @@ const ModelsActions = ({
   setCompactMode,
   t,
 }) => {
-  // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showMissingModal, setShowMissingModal] = useState(false);
   const [showGroupManagement, setShowGroupManagement] = useState(false);
@@ -55,7 +55,6 @@ const ModelsActions = ({
   const [syncLocale, setSyncLocale] = useState('zh');
 
   const handleSyncUpstream = async (locale) => {
-    // 先预览
     const data = await previewUpstreamDiff?.({ locale });
     const conflictItems = data?.conflicts || [];
     if (conflictItems.length > 0) {
@@ -63,27 +62,22 @@ const ModelsActions = ({
       setShowConflict(true);
       return;
     }
-    // 无冲突，直接同步缺失
     await syncUpstream?.({ locale });
   };
 
-  // Handle delete selected models with confirmation
   const handleDeleteSelectedModels = () => {
     setShowDeleteModal(true);
   };
 
-  // Handle delete confirmation
   const handleConfirmDelete = () => {
     batchDeleteModels();
     setShowDeleteModal(false);
   };
 
-  // Handle clear selection
   const handleClearSelected = () => {
     setSelectedKeys([]);
   };
 
-  // Handle add selected models to prefill group
   const handleCopyNames = async () => {
     const text = selectedKeys.map((m) => m.model_name).join(',');
     if (!text) return;
@@ -96,7 +90,6 @@ const ModelsActions = ({
   };
 
   const handleAddToPrefill = () => {
-    // Prepare initial data
     const items = selectedKeys.map((m) => m.model_name);
     setPrefillInit({ id: undefined, type: 'model', items });
     setShowAddPrefill(true);
@@ -105,8 +98,8 @@ const ModelsActions = ({
   return (
     <>
       <div className='flex flex-wrap gap-2 w-full md:w-auto order-2 md:order-1'>
-        <Button
-          type='primary'
+        <AppButton
+          variant='primary'
           className='flex-1 md:flex-initial'
           onClick={() => {
             setEditingModel({
@@ -114,19 +107,17 @@ const ModelsActions = ({
             });
             setShowEdit(true);
           }}
-          size='small'
         >
-          {t('添加模型')}
-        </Button>
+          {t('���加模型')}
+        </AppButton>
 
-        <Button
-          type='secondary'
+        <AppButton
+          variant='secondary'
           className='flex-1 md:flex-initial'
-          size='small'
           onClick={() => setShowMissingModal(true)}
         >
           {t('未配置模型')}
-        </Button>
+        </AppButton>
 
         <Popover
           position='bottom'
@@ -135,7 +126,7 @@ const ModelsActions = ({
             <div className='p-2 max-w-[360px]'>
               <div className='text-[var(--semi-color-text-2)] text-sm'>
                 {t(
-                  '模型社区需要大家的共同维护，如发现数据有误或想贡献新的模型数据，请访问：',
+                  '模型社区需要大家的共同维护，如发现数据有误���想贡献新的模型数据，请访问：',
                 )}
               </div>
               <a
@@ -149,28 +140,26 @@ const ModelsActions = ({
             </div>
           }
         >
-          <Button
-            type='secondary'
+          <AppButton
+            variant='secondary'
             className='flex-1 md:flex-initial'
-            size='small'
-            loading={syncing || previewing}
+            disabled={syncing || previewing}
             onClick={() => {
               setSyncLocale('zh');
               setShowSyncModal(true);
             }}
           >
             {t('同步')}
-          </Button>
+          </AppButton>
         </Popover>
 
-        <Button
-          type='secondary'
+        <AppButton
+          variant='secondary'
           className='flex-1 md:flex-initial'
-          size='small'
           onClick={() => setShowGroupManagement(true)}
         >
           {t('预填组管理')}
-        </Button>
+        </AppButton>
 
         <CompactModeToggle
           compactMode={compactMode}

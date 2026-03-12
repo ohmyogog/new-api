@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Button } from '@douyinfe/semi-ui';
+import AppButton from '../../app-ui/Button';
 
 const RedemptionsActions = ({
   selectedKeys,
@@ -28,7 +28,6 @@ const RedemptionsActions = ({
   batchDeleteRedemptions,
   t,
 }) => {
-  // Add new redemption code
   const handleAddRedemption = () => {
     setEditingRedemption({
       id: undefined,
@@ -38,32 +37,29 @@ const RedemptionsActions = ({
 
   return (
     <div className='flex flex-wrap gap-2 w-full md:w-auto order-2 md:order-1'>
-      <Button
-        type='primary'
+      <AppButton
+        variant='primary'
         className='flex-1 md:flex-initial'
         onClick={handleAddRedemption}
-        size='small'
       >
         {t('添加兑换码')}
-      </Button>
+      </AppButton>
 
-      <Button
-        type='tertiary'
+      <AppButton
+        variant='secondary'
         className='flex-1 md:flex-initial'
         onClick={batchCopyRedemptions}
-        size='small'
       >
         {t('复制所选兑换码到剪贴板')}
-      </Button>
+      </AppButton>
 
-      <Button
-        type='danger'
-        className='w-full md:w-auto'
+      <AppButton
+        variant='ghost'
+        className='w-full md:w-auto border-[rgba(240,68,56,0.22)] bg-[rgba(240,68,56,0.08)] text-[var(--app-danger)] hover:border-[rgba(240,68,56,0.3)] hover:bg-[rgba(240,68,56,0.12)]'
         onClick={batchDeleteRedemptions}
-        size='small'
       >
         {t('清除失效兑换码')}
-      </Button>
+      </AppButton>
     </div>
   );
 };

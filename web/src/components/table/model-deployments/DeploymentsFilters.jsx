@@ -18,8 +18,9 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useRef } from 'react';
-import { Form, Button } from '@douyinfe/semi-ui';
+import { Form } from '@douyinfe/semi-ui';
 import { IconSearch, IconRefresh } from '@douyinfe/semi-icons';
+import AppButton from '../../app-ui/Button';
 
 const DeploymentsFilters = ({
   formInitValues,
@@ -69,7 +70,7 @@ const DeploymentsFilters = ({
         <div className='w-full md:w-64'>
           <Form.Input
             field='searchKeyword'
-            placeholder={t('搜索部署名称')}
+            placeholder={t('搜索部署名���')}
             prefix={<IconSearch />}
             showClear
             size='small'
@@ -90,37 +91,30 @@ const DeploymentsFilters = ({
         </div>
 
         <div className='flex gap-2 w-full md:w-auto'>
-          <Button
-            htmlType='submit'
-            type='tertiary'
-            icon={<IconSearch />}
-            loading={searching}
-            disabled={loading}
-            size='small'
+          <AppButton
+            as='button'
+            variant='secondary'
+            type='submit'
+            disabled={loading || searching}
             className='flex-1 md:flex-initial md:w-auto'
           >
             {t('查询')}
-          </Button>
-
-          <Button
-            type='tertiary'
-            icon={<IconRefresh />}
+          </AppButton>
+          <AppButton
+            variant='ghost'
             onClick={handleReset}
             disabled={loading || searching}
-            size='small'
             className='flex-1 md:flex-initial md:w-auto'
           >
             {t('重置')}
-          </Button>
-
-          <Button
-            type='tertiary'
+          </AppButton>
+          <AppButton
+            variant='ghost'
             onClick={() => setShowColumnSelector(true)}
-            size='small'
             className='flex-1 md:flex-initial md:w-auto'
           >
             {t('列设置')}
-          </Button>
+          </AppButton>
         </div>
       </div>
     </Form>

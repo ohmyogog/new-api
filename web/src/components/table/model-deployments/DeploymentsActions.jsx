@@ -18,8 +18,9 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Button, Popconfirm } from '@douyinfe/semi-ui';
+import { Popconfirm } from '@douyinfe/semi-ui';
 import CompactModeToggle from '../../common/ui/CompactModeToggle';
+import AppButton from '../../app-ui/Button';
 
 const DeploymentsActions = ({
   selectedKeys,
@@ -40,7 +41,6 @@ const DeploymentsActions = ({
     if (setShowCreateModal) {
       setShowCreateModal(true);
     } else {
-      // Fallback to old behavior if setShowCreateModal is not provided
       setEditingDeployment({ id: undefined });
       setShowEdit(true);
     }
@@ -56,47 +56,43 @@ const DeploymentsActions = ({
 
   return (
     <div className='flex flex-wrap gap-2 w-full md:w-auto order-2 md:order-1'>
-      <Button
-        type='primary'
+      <AppButton
+        variant='primary'
         className='flex-1 md:flex-initial'
         onClick={handleAddDeployment}
-        size='small'
       >
         {t('新建容器')}
-      </Button>
+      </AppButton>
 
       {hasSelected && (
         <>
           <Popconfirm
             title={t('确认删除')}
-            content={`${t('确定要删除选中的')} ${selectedKeys.length} ${t('个部署吗？此操作不可逆。')}`}
+            content={`${t('确定要删除���中的')} ${selectedKeys.length} ${t('个部署吗？此操作不可逆。')}`}
             okText={t('删除')}
             cancelText={t('取消')}
             okType='danger'
             onConfirm={handleBatchDelete}
           >
-            <Button
-              type='danger'
-              className='flex-1 md:flex-initial'
+            <AppButton
+              variant='ghost'
+              className='flex-1 md:flex-initial border-[rgba(240,68,56,0.22)] bg-[rgba(240,68,56,0.08)] text-[var(--app-danger)] hover:border-[rgba(240,68,56,0.3)] hover:bg-[rgba(240,68,56,0.12)]'
               disabled={selectedKeys.length === 0}
-              size='small'
             >
               {t('批量删除')} ({selectedKeys.length})
-            </Button>
+            </AppButton>
           </Popconfirm>
 
-          <Button
-            type='tertiary'
+          <AppButton
+            variant='ghost'
             className='flex-1 md:flex-initial'
             onClick={handleDeselectAll}
-            size='small'
           >
-            {t('取消选择')}
-          </Button>
+            {t('取消选���')}
+          </AppButton>
         </>
       )}
 
-      {/* Compact Mode */}
       <CompactModeToggle
         compactMode={compactMode}
         setCompactMode={setCompactMode}

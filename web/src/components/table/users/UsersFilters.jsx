@@ -18,8 +18,9 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useRef } from 'react';
-import { Form, Button } from '@douyinfe/semi-ui';
+import { Form } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
+import AppButton from '../../app-ui/Button';
 
 const UsersFilters = ({
   formInitValues,
@@ -65,7 +66,7 @@ const UsersFilters = ({
           <Form.Input
             field='searchKeyword'
             prefix={<IconSearch />}
-            placeholder={t('支持搜索用户的 ID、用户名、显示名称和邮箱地址')}
+            placeholder={t('支持搜索用户的 ID、用户名、显示名称和邮箱���址')}
             showClear
             pure
             size='small'
@@ -77,7 +78,6 @@ const UsersFilters = ({
             placeholder={t('选择分组')}
             optionList={groupOptions}
             onChange={(value) => {
-              // Group change triggers automatic search
               setTimeout(() => {
                 searchUsers(1, pageSize);
               }, 100);
@@ -89,23 +89,22 @@ const UsersFilters = ({
           />
         </div>
         <div className='flex gap-2 w-full md:w-auto'>
-          <Button
-            type='tertiary'
-            htmlType='submit'
-            loading={loading || searching}
+          <AppButton
+            as='button'
+            variant='secondary'
+            type='submit'
+            disabled={loading || searching}
             className='flex-1 md:flex-initial md:w-auto'
-            size='small'
           >
             {t('查询')}
-          </Button>
-          <Button
-            type='tertiary'
+          </AppButton>
+          <AppButton
+            variant='ghost'
             onClick={handleReset}
             className='flex-1 md:flex-initial md:w-auto'
-            size='small'
           >
             {t('重置')}
-          </Button>
+          </AppButton>
         </div>
       </div>
     </Form>

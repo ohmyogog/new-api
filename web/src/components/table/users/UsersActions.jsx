@@ -18,19 +18,22 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import { Button } from '@douyinfe/semi-ui';
+import AppButton from '../../app-ui/Button';
 
 const UsersActions = ({ setShowAddUser, t }) => {
-  // Add new user
   const handleAddUser = () => {
     setShowAddUser(true);
   };
 
   return (
     <div className='flex gap-2 w-full md:w-auto order-2 md:order-1'>
-      <Button className='w-full md:w-auto' onClick={handleAddUser} size='small'>
+      <AppButton
+        variant='primary'
+        className='w-full md:w-auto'
+        onClick={handleAddUser}
+      >
         {t('添加用户')}
-      </Button>
+      </AppButton>
     </div>
   );
 };
