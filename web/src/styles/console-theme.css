@@ -138,15 +138,17 @@ For commercial licensing, please contact support@quantumnous.com
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 40px;
+  gap: 6px;
+  min-height: 36px;
   padding: 0 14px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid var(--app-border);
   background: rgba(255, 255, 255, 0.86);
   color: var(--app-text);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .console-toolbar-button:hover,
@@ -201,22 +203,62 @@ For commercial licensing, please contact support@quantumnous.com
   overflow: hidden;
 }
 
+/* Table header */
 .console-shell .semi-table-thead > .semi-table-row > .semi-table-row-head,
 .console-shell .semi-table-thead > .semi-table-row > .semi-table-row-head .semi-table-cell {
-  background: rgba(248, 250, 252, 0.92) !important;
-  color: var(--app-text-muted) !important;
+  background: rgba(248, 250, 252, 0.96) !important;
+  color: var(--app-text-soft) !important;
   font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: 11px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  height: 42px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Header border bottom */
+.console-shell .semi-table-thead > .semi-table-row > .semi-table-row-head {
+  border-bottom: 2px solid var(--app-border-strong) !important;
+}
+
+/* Body rows */
+.console-shell .semi-table-tbody > .semi-table-row {
+  transition: background 0.12s ease;
 }
 
 .console-shell .semi-table-tbody > .semi-table-row:hover {
   background: rgba(88, 103, 216, 0.04) !important;
 }
 
+/* Zebra striping */
+.console-shell .semi-table-tbody > .semi-table-row:nth-child(even) {
+  background: rgba(248, 250, 252, 0.5);
+}
+
+.console-shell .semi-table-tbody > .semi-table-row:nth-child(even):hover {
+  background: rgba(88, 103, 216, 0.04) !important;
+}
+
+/* Cell styling */
 .console-shell .semi-table .semi-table-cell {
   border-bottom: 1px solid var(--app-border) !important;
+  font-size: 13px;
+  color: var(--app-text);
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  vertical-align: middle;
+}
+
+/* Last row no border */
+.console-shell .semi-table-tbody > .semi-table-row:last-child .semi-table-cell {
+  border-bottom: none !important;
+}
+
+/* Table body text */
+.console-shell .semi-table-tbody .semi-table-cell {
+  color: var(--app-text);
+  line-height: 1.5;
 }
 
 .console-shell .semi-pagination {
@@ -324,4 +366,54 @@ For commercial licensing, please contact support@quantumnous.com
 .console-shell .semi-input-number:focus-within {
   border-color: var(--app-primary) !important;
   box-shadow: 0 0 0 3px var(--app-ring) !important;
+}
+
+/* ===== Semi Button in console ===== */
+
+.console-shell .semi-button {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: 10px;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.console-shell .semi-button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.console-shell .semi-button-primary {
+  background: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
+  box-shadow: 0 4px 12px rgba(88, 103, 216, 0.25);
+}
+
+.console-shell .semi-button-primary:hover {
+  background: #4d5ccc !important;
+  border-color: #4d5ccc !important;
+}
+
+.console-shell .semi-button-danger {
+  background: var(--app-danger) !important;
+  border-color: var(--app-danger) !important;
+}
+
+/* ===== Table checkbox ===== */
+
+.console-shell .semi-table .semi-checkbox-inner {
+  border-radius: 6px;
+  border-color: var(--app-border-strong);
+}
+
+.console-shell .semi-table .semi-checkbox-checked .semi-checkbox-inner {
+  background: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+/* ===== Semi Tag in table ===== */
+
+.console-shell .semi-table .semi-tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
