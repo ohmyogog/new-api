@@ -49,6 +49,7 @@ import DrawingSetting from '../../components/settings/DrawingSetting';
 import PaymentSetting from '../../components/settings/PaymentSetting';
 import ModelDeploymentSetting from '../../components/settings/ModelDeploymentSetting';
 import PerformanceSetting from '../../components/settings/PerformanceSetting';
+import AppSectionHeader from '../../components/app-ui/SectionHeader';
 
 const Setting = () => {
   const { t } = useTranslation();
@@ -193,7 +194,14 @@ const Setting = () => {
     }
   }, [location.search]);
   return (
-    <div className='mt-[60px] px-2'>
+    <div className='mt-[60px] px-2 console-shell'>
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<Cog size={18} />}
+          title={t('系统设置')}
+          subtitle={t('配置运营、模型、速率限制、支付等系统参数。')}
+        />
+      </div>
       <Layout>
         <Layout.Content>
           <Tabs

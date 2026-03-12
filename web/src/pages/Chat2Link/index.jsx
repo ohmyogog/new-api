@@ -36,7 +36,7 @@ const chat2page = () => {
   }
 
   return (
-    <div className='mt-[60px] px-2'>
+    <div className='mt-[60px] px-2 console-shell'>
       <h3>正在加载，请稍候...</h3>
     </div>
   );
