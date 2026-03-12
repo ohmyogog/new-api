@@ -300,7 +300,7 @@ const EditTokenModal = (props) => {
       visible={props.visiable}
       width={isMobile ? '100%' : 600}
       footer={
-        <div className='flex justify-end bg-white'>
+        <div className='flex justify-end' style={{ background: 'var(--app-surface-strong)' }}>
           <Space>
             <Button
               theme='solid'
@@ -336,14 +336,14 @@ const EditTokenModal = (props) => {
           {({ values }) => (
             <div className='p-2'>
               {/* 基本信息 */}
-              <Card className='!rounded-2xl shadow-sm border-0'>
-                <div className='flex items-center mb-2'>
-                  <Avatar size='small' color='blue' className='mr-2 shadow-md'>
+              <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
+                <div className='flex items-center mb-3'>
+                  <Avatar size='small' color='blue' className='mr-2' style={{ borderRadius: 10 }}>
                     <IconKey size={16} />
                   </Avatar>
                   <div>
-                    <Text className='text-lg font-medium'>{t('基本信息')}</Text>
-                    <div className='text-xs text-gray-600'>
+                    <Text className='text-base font-semibold'>{t('基本信息')}</Text>
+                    <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                       {t('设置令牌的基本信息')}
                     </div>
                   </div>
@@ -475,14 +475,14 @@ const EditTokenModal = (props) => {
               </Card>
 
               {/* 额度设置 */}
-              <Card className='!rounded-2xl shadow-sm border-0'>
-                <div className='flex items-center mb-2'>
-                  <Avatar size='small' color='green' className='mr-2 shadow-md'>
+              <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
+                <div className='flex items-center mb-3'>
+                  <Avatar size='small' color='green' className='mr-2' style={{ borderRadius: 10 }}>
                     <IconCreditCard size={16} />
                   </Avatar>
                   <div>
-                    <Text className='text-lg font-medium'>{t('额度设置')}</Text>
-                    <div className='text-xs text-gray-600'>
+                    <Text className='text-base font-semibold'>{t('额度设置')}</Text>
+                    <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                       {t('设置令牌可用额度和数量')}
                     </div>
                   </div>
@@ -525,18 +525,19 @@ const EditTokenModal = (props) => {
               </Card>
 
               {/* 访问限制 */}
-              <Card className='!rounded-2xl shadow-sm border-0'>
-                <div className='flex items-center mb-2'>
+              <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
+                <div className='flex items-center mb-3'>
                   <Avatar
                     size='small'
                     color='purple'
-                    className='mr-2 shadow-md'
+                    className='mr-2'
+                    style={{ borderRadius: 10 }}
                   >
                     <IconLink size={16} />
                   </Avatar>
                   <div>
-                    <Text className='text-lg font-medium'>{t('访问限制')}</Text>
-                    <div className='text-xs text-gray-600'>
+                    <Text className='text-base font-semibold'>{t('访问限制')}</Text>
+                    <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                       {t('设置令牌的访问限制')}
                     </div>
                   </div>

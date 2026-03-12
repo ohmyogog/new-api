@@ -368,6 +368,47 @@ For commercial licensing, please contact support@quantumnous.com
   box-shadow: 0 0 0 3px var(--app-ring) !important;
 }
 
+/* ===== SideSheet enterprise styling ===== */
+
+.semi-sidesheet-inner-wrap {
+  background: var(--app-surface-muted) !important;
+}
+
+.semi-sidesheet-title-bar {
+  background: var(--app-surface-strong) !important;
+  border-bottom: 1px solid var(--app-border) !important;
+  padding: 16px 20px !important;
+}
+
+.semi-sidesheet-footer {
+  background: var(--app-surface-strong) !important;
+  border-top: 1px solid var(--app-border) !important;
+  padding: 12px 20px !important;
+}
+
+.semi-sidesheet-body {
+  background: var(--app-surface-muted) !important;
+}
+
+/* Cards inside SideSheet */
+.semi-sidesheet-body .semi-card {
+  border-radius: var(--app-radius-md) !important;
+  border: 1px solid var(--app-border) !important;
+  box-shadow: var(--app-shadow-xs) !important;
+  background: var(--app-surface-strong) !important;
+  margin-bottom: 12px;
+}
+
+/* Section header in modal cards */
+.semi-sidesheet-body .semi-card .text-gray-600 {
+  color: var(--app-text-muted) !important;
+}
+
+/* Avatar in modal section headers */
+.semi-sidesheet-body .semi-avatar {
+  border-radius: 10px !important;
+}
+
 /* ===== Semi Button in console ===== */
 
 .console-shell .semi-button {
