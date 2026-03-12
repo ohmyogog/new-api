@@ -21,6 +21,9 @@ import React from 'react';
 import { Banner } from '@douyinfe/semi-ui';
 import { IconAlertTriangle } from '@douyinfe/semi-icons';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { Radio } from 'lucide-react';
 import ChannelsTable from './ChannelsTable';
 import ChannelsActions from './ChannelsActions';
 import ChannelsFilters from './ChannelsFilters';
@@ -39,6 +42,7 @@ import { createCardProPagination } from '../../../helpers/utils';
 const ChannelsPage = () => {
   const channelsData = useChannelsData();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -73,6 +77,15 @@ const ChannelsPage = () => {
         onConfirm={channelsData.applyUpstreamUpdates}
         onCancel={channelsData.closeUpstreamUpdateModal}
       />
+
+      {/* Page Header */}
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<Radio size={18} />}
+          title={t('渠道管理')}
+          subtitle={t('配置和管理上游 AI 服务提供商的接入渠道。')}
+        />
+      </div>
 
       {/* Main Content */}
       {channelsData.globalPassThroughEnabled ? (

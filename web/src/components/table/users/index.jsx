@@ -19,6 +19,9 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { Users } from 'lucide-react';
 import UsersTable from './UsersTable';
 import UsersActions from './UsersActions';
 import UsersFilters from './UsersFilters';
@@ -32,6 +35,7 @@ import { createCardProPagination } from '../../../helpers/utils';
 const UsersPage = () => {
   const usersData = useUsersData();
   const isMobile = useIsMobile();
+  const { t: tPage } = useTranslation();
 
   const {
     // Modal state
@@ -76,6 +80,14 @@ const UsersPage = () => {
         handleClose={closeEditUser}
         editingUser={editingUser}
       />
+
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<Users size={18} />}
+          title={tPage('用户管理')}
+          subtitle={tPage('查看和管理平台注册用户、权限分组与账户状态。')}
+        />
+      </div>
 
       <CardPro
         type='type1'

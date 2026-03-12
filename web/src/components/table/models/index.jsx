@@ -21,6 +21,9 @@ import React, { useState } from 'react';
 import { Banner, Button, Modal } from '@douyinfe/semi-ui';
 import { IconAlertTriangle, IconClose } from '@douyinfe/semi-icons';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { Cpu } from 'lucide-react';
 import ModelsTable from './ModelsTable';
 import ModelsActions from './ModelsActions';
 import ModelsFilters from './ModelsFilters';
@@ -37,6 +40,7 @@ const MARKETPLACE_DISPLAY_NOTICE_STORAGE_KEY =
 const ModelsPage = () => {
   const modelsData = useModelsData();
   const isMobile = useIsMobile();
+  const { t: tPage } = useTranslation();
 
   const {
     // Edit state
@@ -129,6 +133,14 @@ const ModelsPage = () => {
           refresh();
         }}
       />
+
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<Cpu size={18} />}
+          title={tPage('模型管理')}
+          subtitle={tPage('管理模型广场展示配置、供应商信息与预填分组。')}
+        />
+      </div>
 
       {showMarketplaceDisplayNotice ? (
         <div style={{ position: 'relative', marginBottom: 12 }}>

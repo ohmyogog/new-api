@@ -19,6 +19,9 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { Ticket } from 'lucide-react';
 import RedemptionsTable from './RedemptionsTable';
 import RedemptionsActions from './RedemptionsActions';
 import RedemptionsFilters from './RedemptionsFilters';
@@ -31,6 +34,7 @@ import { createCardProPagination } from '../../../helpers/utils';
 const RedemptionsPage = () => {
   const redemptionsData = useRedemptionsData();
   const isMobile = useIsMobile();
+  const { t: tPage } = useTranslation();
 
   const {
     // Edit state
@@ -69,6 +73,14 @@ const RedemptionsPage = () => {
         visiable={showEdit}
         handleClose={closeEdit}
       />
+
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<Ticket size={18} />}
+          title={tPage('兑换码管理')}
+          subtitle={tPage('生成和管理额度兑换码，用于向用户分发充值凭证。')}
+        />
+      </div>
 
       <CardPro
         type='type1'

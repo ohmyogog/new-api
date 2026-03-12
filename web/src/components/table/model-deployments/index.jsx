@@ -19,6 +19,9 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React, { useState } from 'react';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { Container } from 'lucide-react';
 import DeploymentsTable from './DeploymentsTable';
 import DeploymentsActions from './DeploymentsActions';
 import DeploymentsFilters from './DeploymentsFilters';
@@ -32,6 +35,7 @@ import { createCardProPagination } from '../../../helpers/utils';
 const DeploymentsPage = () => {
   const deploymentsData = useDeploymentsData();
   const isMobile = useIsMobile();
+  const { t: tPage } = useTranslation();
 
   // Create deployment modal state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -98,6 +102,14 @@ const DeploymentsPage = () => {
         columnKeys={COLUMN_KEYS}
         t={t}
       />
+
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<Container size={18} />}
+          title={tPage('模型部署')}
+          subtitle={tPage('管理 io.net 容器化模型的部署实例与运行状态。')}
+        />
+      </div>
 
       {/* Main Content */}
       <CardPro

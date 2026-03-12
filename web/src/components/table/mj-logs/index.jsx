@@ -20,6 +20,9 @@ For commercial licensing, please contact support@quantumnous.com
 import React from 'react';
 import { Layout } from '@douyinfe/semi-ui';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { ImageIcon } from 'lucide-react';
 import MjLogsTable from './MjLogsTable';
 import MjLogsActions from './MjLogsActions';
 import MjLogsFilters from './MjLogsFilters';
@@ -32,12 +35,21 @@ import { createCardProPagination } from '../../../helpers/utils';
 const MjLogsPage = () => {
   const mjLogsData = useMjLogsData();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   return (
     <>
       {/* Modals */}
       <ColumnSelectorModal {...mjLogsData} />
       <ContentModal {...mjLogsData} />
+
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<ImageIcon size={18} />}
+          title={t('绘图日志')}
+          subtitle={t('查看 Midjourney 绘图任务的执行记录与结果详情。')}
+        />
+      </div>
 
       <Layout>
         <CardPro

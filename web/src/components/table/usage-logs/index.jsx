@@ -19,6 +19,9 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React from 'react';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { ScrollText } from 'lucide-react';
 import LogsTable from './UsageLogsTable';
 import LogsActions from './UsageLogsActions';
 import LogsFilters from './UsageLogsFilters';
@@ -32,6 +35,7 @@ import { createCardProPagination } from '../../../helpers/utils';
 const LogsPage = () => {
   const logsData = useLogsData();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -41,6 +45,13 @@ const LogsPage = () => {
       <ChannelAffinityUsageCacheModal {...logsData} />
 
       {/* Main Content */}
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<ScrollText size={18} />}
+          title={t('使用日志')}
+          subtitle={t('查看所有 API 调用记录、消耗统计与错误详情。')}
+        />
+      </div>
       <CardPro
         type='type2'
         statsArea={<LogsActions {...logsData} />}

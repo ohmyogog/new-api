@@ -20,6 +20,9 @@ For commercial licensing, please contact support@quantumnous.com
 import React, { useContext } from 'react';
 import { Banner } from '@douyinfe/semi-ui';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { CreditCard } from 'lucide-react';
 import SubscriptionsTable from './SubscriptionsTable';
 import SubscriptionsActions from './SubscriptionsActions';
 import SubscriptionsDescription from './SubscriptionsDescription';
@@ -33,6 +36,7 @@ const SubscriptionsPage = () => {
   const subscriptionsData = useSubscriptionsData();
   const isMobile = useIsMobile();
   const [statusState] = useContext(StatusContext);
+  const { t: tPage } = useTranslation();
   const enableEpay = !!statusState?.status?.enable_online_topup;
 
   const {
@@ -57,6 +61,14 @@ const SubscriptionsPage = () => {
         refresh={refresh}
         t={t}
       />
+
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<CreditCard size={18} />}
+          title={tPage('订阅管理')}
+          subtitle={tPage('管理订阅套餐与用户付费计划。')}
+        />
+      </div>
 
       <CardPro
         type='type1'

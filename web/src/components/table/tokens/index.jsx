@@ -33,6 +33,9 @@ import {
   selectFilter,
 } from '../../../helpers';
 import CardPro from '../../common/ui/CardPro';
+import AppSectionHeader from '../../app-ui/SectionHeader';
+import { useTranslation } from 'react-i18next';
+import { KeyRound } from 'lucide-react';
 import TokensTable from './TokensTable';
 import TokensActions from './TokensActions';
 import TokensFilters from './TokensFilters';
@@ -52,6 +55,7 @@ function TokensPage() {
     (key) => openCCSwitchModalRef.current?.(key),
   );
   const isMobile = useIsMobile();
+  const { t: tPage } = useTranslation();
   const latestRef = useRef({
     tokens: [],
     selectedKeys: [],
@@ -383,6 +387,14 @@ function TokensPage() {
         tokenKey={ccSwitchKey}
         modelOptions={modelOptions}
       />
+
+      <div className='mb-6 rounded-[28px] border border-[var(--app-border)] bg-[rgba(255,255,255,0.72)] px-6 py-6 shadow-[var(--app-shadow-sm)] backdrop-blur-2xl'>
+        <AppSectionHeader
+          icon={<KeyRound size={18} />}
+          title={tPage('令牌管理')}
+          subtitle={tPage('创建和管理 API 访问令牌。')}
+        />
+      </div>
 
       <CardPro
         type='type1'
