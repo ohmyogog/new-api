@@ -223,3 +223,16 @@ For commercial licensing, please contact support@quantumnous.com
 .console-shell .semi-pagination {
   border-radius: 999px;
 }
+
+.console-shell .semi-pagination-item,
+.console-shell .semi-pagination-item-active,
+.console-shell .semi-pagination-prev,
+.console-shell .semi-pagination-next {
+  border-radius: 999px;
+}
+
+.console-shell .semi-pagination-item-active {
+  background: var(--app-primary-soft);
+  border-color: rgba(88, 103, 216, 0.18);
+  color: var(--app-primary);
+}

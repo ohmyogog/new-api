@@ -103,7 +103,14 @@ const TokensTable = (tokensData) => {
       }}
       hidePagination={true}
       loading={loading}
-      rowSelection={rowSelection}
+      rowSelection={
+        rowSelection
+          ? {
+              ...rowSelection,
+              type: rowSelection.type || 'checkbox',
+            }
+          : null
+      }
       onRow={handleRow}
       empty={
         <Empty

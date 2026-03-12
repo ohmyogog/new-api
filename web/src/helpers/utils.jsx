@@ -914,8 +914,7 @@ export const createCardProPagination = ({
       {/* 桌面端左侧总数信息 */}
       {!isMobile && (
         <span
-          className='text-sm select-none'
-          style={{ color: 'var(--semi-color-text-2)' }}
+          className='console-text-muted text-sm select-none'
         >
           {totalText}
         </span>
