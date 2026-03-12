@@ -214,7 +214,7 @@ const PageLayout = () => {
               flex: '1 0 auto',
               overflowY: isMobile ? 'visible' : 'hidden',
               WebkitOverflowScrolling: 'touch',
-              padding: shouldInnerPadding ? (isMobile ? '8px' : '28px') : '0',
+              padding: shouldInnerPadding ? (isMobile ? '8px' : '16px 20px') : '0',
               position: 'relative',
               background: 'transparent',
             }}
