@@ -252,7 +252,7 @@ const EditModelModal = (props) => {
       visible={props.visiable}
       width={isMobile ? '100%' : 600}
       footer={
-        <div className='flex justify-end bg-white'>
+        <div className='flex justify-end' style={{ background: 'var(--app-surface-strong)' }}>
           <Space>
             <Button
               theme='solid'
@@ -288,14 +288,14 @@ const EditModelModal = (props) => {
           {({ values }) => (
             <div className='p-2'>
               {/* 基本信息 */}
-              <Card className='!rounded-2xl shadow-sm border-0'>
+              <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                 <div className='flex items-center mb-2'>
-                  <Avatar size='small' color='green' className='mr-2 shadow-md'>
+                  <Avatar size='small' color='green' className='mr-2' style={{ borderRadius: 10 }}>
                     <FileText size={16} />
                   </Avatar>
                   <div>
-                    <Text className='text-lg font-medium'>{t('基本信息')}</Text>
-                    <div className='text-xs text-gray-600'>
+                    <Text className='text-base font-semibold'>{t('基本信息')}</Text>
+                    <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                       {t('设置模型的基本信息')}
                     </div>
                   </div>

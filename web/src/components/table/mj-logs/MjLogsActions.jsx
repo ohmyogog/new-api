@@ -45,7 +45,7 @@ const MjLogsActions = ({
         <div className='flex items-center'>
           {isAdminUser && showBanner ? (
             <AppBadge variant='warning'>
-              {t('当前未开启Midjourney回调，部分项目可能无法获得绘图结果，可在运营设置中���启。')}
+              {t('当前未开启Midjourney回调，部分项目可能无法获得绘图结果，可在运营设置中开启。')}
             </AppBadge>
           ) : (
             <AppBadge variant='neutral'>

@@ -153,14 +153,14 @@ const ModelPricingTable = ({
   };
 
   return (
-    <Card className='!rounded-2xl shadow-sm border-0'>
+    <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
       <div className='flex items-center mb-4'>
-        <Avatar size='small' color='orange' className='mr-2 shadow-md'>
+        <Avatar size='small' color='orange' className='mr-2' style={{ borderRadius: 10 }}>
           <IconCoinMoneyStroked size={16} />
         </Avatar>
         <div>
-          <Text className='text-lg font-medium'>{t('分组价格')}</Text>
-          <div className='text-xs text-gray-600'>
+          <Text className='text-base font-semibold'>{t('分组价格')}</Text>
+          <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
             {t('不同用户分组的价格信息')}
           </div>
         </div>

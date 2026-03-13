@@ -2102,7 +2102,7 @@ const EditChannelModal = (props) => {
         visible={props.visible}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-between items-center bg-white'>
+          <div className='flex justify-between items-center' style={{ background: 'var(--app-surface-strong)' }}>
             <div className='flex gap-2'>
               <Button
                 size='small'
@@ -2169,21 +2169,21 @@ const EditChannelModal = (props) => {
             <Spin spinning={loading}>
               <div className='p-2 space-y-3' ref={formContainerRef}>
                 <div ref={(el) => (formSectionRefs.current.basicInfo = el)}>
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
+                  <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                     {/* Header: Basic Info */}
                     <div className='flex items-center mb-2'>
                       <Avatar
                         size='small'
                         color='blue'
-                        className='mr-2 shadow-md'
+                        className='mr-2' style={{ borderRadius: 10 }}
                       >
                         <IconServer size={16} />
                       </Avatar>
                       <div>
-                        <Text className='text-lg font-medium'>
+                        <Text className='text-base font-semibold'>
                           {t('基本信息')}
                         </Text>
-                        <div className='text-xs text-gray-600'>
+                        <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                           {t('渠道的基本配置信息')}
                         </div>
                       </div>
@@ -2843,7 +2843,7 @@ const EditChannelModal = (props) => {
                 {/* API Configuration Card */}
                 {showApiConfigCard && (
                   <div ref={(el) => (formSectionRefs.current.apiConfig = el)}>
-                    <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
+                    <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                       {/* Header: API Config */}
                       <div
                         className='flex items-center mb-2'
@@ -2852,15 +2852,15 @@ const EditChannelModal = (props) => {
                         <Avatar
                           size='small'
                           color='green'
-                          className='mr-2 shadow-md'
+                          className='mr-2' style={{ borderRadius: 10 }}
                         >
                           <IconGlobe size={16} />
                         </Avatar>
                         <div>
-                          <Text className='text-lg font-medium'>
+                          <Text className='text-base font-semibold'>
                             {t('API 配置')}
                           </Text>
-                          <div className='text-xs text-gray-600'>
+                          <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                             {t('API 地址和相关配置')}
                           </div>
                         </div>
@@ -3077,21 +3077,21 @@ const EditChannelModal = (props) => {
 
                 {/* Model Configuration Card */}
                 <div ref={(el) => (formSectionRefs.current.modelConfig = el)}>
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
+                  <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                     {/* Header: Model Config */}
                     <div className='flex items-center mb-2'>
                       <Avatar
                         size='small'
                         color='purple'
-                        className='mr-2 shadow-md'
+                        className='mr-2' style={{ borderRadius: 10 }}
                       >
                         <IconCode size={16} />
                       </Avatar>
                       <div>
-                        <Text className='text-lg font-medium'>
+                        <Text className='text-base font-semibold'>
                           {t('模型配置')}
                         </Text>
-                        <div className='text-xs text-gray-600'>
+                        <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                           {t('模型选择和映射设置')}
                         </div>
                       </div>
@@ -3285,7 +3285,7 @@ const EditChannelModal = (props) => {
                             '开启后由后端定时任务检测该渠道上游模型变化',
                           )}
                         />
-                        <div className='text-xs text-gray-500 mb-2'>
+                        <div className='text-xs mb-2' style={{ color: 'var(--app-text-muted)' }}>
                           {t('上次检测时间')}:&nbsp;
                           {formatUnixTime(
                             inputs.upstream_model_update_last_check_time,
@@ -3366,21 +3366,21 @@ const EditChannelModal = (props) => {
                 <div
                   ref={(el) => (formSectionRefs.current.advancedSettings = el)}
                 >
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
+                  <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                     {/* Header: Advanced Settings */}
                     <div className='flex items-center mb-2'>
                       <Avatar
                         size='small'
                         color='orange'
-                        className='mr-2 shadow-md'
+                        className='mr-2' style={{ borderRadius: 10 }}
                       >
                         <IconSetting size={16} />
                       </Avatar>
                       <div>
-                        <Text className='text-lg font-medium'>
+                        <Text className='text-base font-semibold'>
                           {t('高级设置')}
                         </Text>
-                        <div className='text-xs text-gray-600'>
+                        <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                           {t('渠道的高级配置选项')}
                         </div>
                       </div>
@@ -3803,18 +3803,18 @@ const EditChannelModal = (props) => {
                     (formSectionRefs.current.channelExtraSettings = el)
                   }
                 >
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
+                  <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                     {/* Header: Channel Extra Settings */}
                     <div className='flex items-center mb-2'>
                       <Avatar
                         size='small'
                         color='violet'
-                        className='mr-2 shadow-md'
+                        className='mr-2' style={{ borderRadius: 10 }}
                       >
                         <IconBolt size={16} />
                       </Avatar>
                       <div>
-                        <Text className='text-lg font-medium'>
+                        <Text className='text-base font-semibold'>
                           {t('渠道额外设置')}
                         </Text>
                       </div>

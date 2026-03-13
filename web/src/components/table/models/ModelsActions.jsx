@@ -108,7 +108,7 @@ const ModelsActions = ({
             setShowEdit(true);
           }}
         >
-          {t('���加模型')}
+          {t('添加模型')}
         </AppButton>
 
         <AppButton
@@ -126,7 +126,7 @@ const ModelsActions = ({
             <div className='p-2 max-w-[360px]'>
               <div className='text-[var(--semi-color-text-2)] text-sm'>
                 {t(
-                  '模型社区需要大家的共同维护，如发现数据有误���想贡献新的模型数据，请访问：',
+                  '模型社区需要大家的共同维护，如发现数据有误或想贡献新的模型数据，请访问：',
                 )}
               </div>
               <a

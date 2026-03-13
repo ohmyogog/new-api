@@ -219,7 +219,7 @@ const AddEditSubscriptionModal = ({
         visible={visible}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-end bg-white'>
+          <div className='flex justify-end' style={{ background: 'var(--app-surface-strong)' }}>
             <Space>
               <Button
                 theme='solid'
@@ -253,20 +253,20 @@ const AddEditSubscriptionModal = ({
             {({ values }) => (
               <div className='p-2'>
                 {/* 基本信息 */}
-                <Card className='!rounded-2xl shadow-sm border-0 mb-4'>
+                <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
                       color='blue'
-                      className='mr-2 shadow-md'
+                      className='mr-2' style={{ borderRadius: 10 }}
                     >
                       <IconCalendarClock size={16} />
                     </Avatar>
                     <div>
-                      <Text className='text-lg font-medium'>
+                      <Text className='text-base font-semibold'>
                         {t('基本信息')}
                       </Text>
-                      <div className='text-xs text-gray-600'>
+                      <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                         {t('套餐的基本信息和定价')}
                       </div>
                     </div>
@@ -382,20 +382,20 @@ const AddEditSubscriptionModal = ({
                 </Card>
 
                 {/* 有效期设置 */}
-                <Card className='!rounded-2xl shadow-sm border-0 mb-4'>
+                <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
                       color='green'
-                      className='mr-2 shadow-md'
+                      className='mr-2' style={{ borderRadius: 10 }}
                     >
                       <Clock size={16} />
                     </Avatar>
                     <div>
-                      <Text className='text-lg font-medium'>
+                      <Text className='text-base font-semibold'>
                         {t('有效期设置')}
                       </Text>
-                      <div className='text-xs text-gray-600'>
+                      <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                         {t('配置套餐的有效时长')}
                       </div>
                     </div>
@@ -444,20 +444,20 @@ const AddEditSubscriptionModal = ({
                 </Card>
 
                 {/* 额度重置 */}
-                <Card className='!rounded-2xl shadow-sm border-0 mb-4'>
+                <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
                       color='orange'
-                      className='mr-2 shadow-md'
+                      className='mr-2' style={{ borderRadius: 10 }}
                     >
                       <RefreshCw size={16} />
                     </Avatar>
                     <div>
-                      <Text className='text-lg font-medium'>
+                      <Text className='text-base font-semibold'>
                         {t('额度重置')}
                       </Text>
-                      <div className='text-xs text-gray-600'>
+                      <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                         {t('支持周期性重置套餐权益额度')}
                       </div>
                     </div>
@@ -502,20 +502,20 @@ const AddEditSubscriptionModal = ({
                 </Card>
 
                 {/* 第三方支付配置 */}
-                <Card className='!rounded-2xl shadow-sm border-0 mb-4'>
+                <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
                       color='purple'
-                      className='mr-2 shadow-md'
+                      className='mr-2' style={{ borderRadius: 10 }}
                     >
                       <IconCreditCard size={16} />
                     </Avatar>
                     <div>
-                      <Text className='text-lg font-medium'>
+                      <Text className='text-base font-semibold'>
                         {t('第三方支付配置')}
                       </Text>
-                      <div className='text-xs text-gray-600'>
+                      <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                         {t('Stripe/Creem 商品ID（可选）')}
                       </div>
                     </div>

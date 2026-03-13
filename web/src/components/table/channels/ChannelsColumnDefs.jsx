@@ -114,7 +114,7 @@ const renderType = (type, record = {}, t) => {
       <Tooltip
         content={
           <div className='max-w-xs'>
-            <div className='text-xs text-gray-600'>
+            <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
               {t('来源于 IO.NET 部署')}
             </div>
             {ionetMeta?.deployment_id && (

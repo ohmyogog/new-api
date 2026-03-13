@@ -184,7 +184,7 @@ const EditRedemptionModal = (props) => {
         visible={props.visiable}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-end bg-white'>
+          <div className='flex justify-end' style={{ background: 'var(--app-surface-strong)' }}>
             <Space>
               <Button
                 theme='solid'
@@ -216,21 +216,21 @@ const EditRedemptionModal = (props) => {
           >
             {({ values }) => (
               <div className='p-2'>
-                <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
+                <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                   {/* Header: Basic Info */}
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
                       color='blue'
-                      className='mr-2 shadow-md'
+                      className='mr-2' style={{ borderRadius: 10 }}
                     >
                       <IconGift size={16} />
                     </Avatar>
                     <div>
-                      <Text className='text-lg font-medium'>
+                      <Text className='text-base font-semibold'>
                         {t('基本信息')}
                       </Text>
-                      <div className='text-xs text-gray-600'>
+                      <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                         {t('设置兑换码的基本信息')}
                       </div>
                     </div>
@@ -264,21 +264,21 @@ const EditRedemptionModal = (props) => {
                   </Row>
                 </Card>
 
-                <Card className='!rounded-2xl shadow-sm border-0'>
+                <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                   {/* Header: Quota Settings */}
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
                       color='green'
-                      className='mr-2 shadow-md'
+                      className='mr-2' style={{ borderRadius: 10 }}
                     >
                       <IconCreditCard size={16} />
                     </Avatar>
                     <div>
-                      <Text className='text-lg font-medium'>
+                      <Text className='text-base font-semibold'>
                         {t('额度设置')}
                       </Text>
-                      <div className='text-xs text-gray-600'>
+                      <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                         {t('设置兑换码的额度和数量')}
                       </div>
                     </div>

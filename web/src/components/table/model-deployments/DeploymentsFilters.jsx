@@ -70,7 +70,7 @@ const DeploymentsFilters = ({
         <div className='w-full md:w-64'>
           <Form.Input
             field='searchKeyword'
-            placeholder={t('搜索部署名���')}
+            placeholder={t('搜索部署名称')}
             prefix={<IconSearch />}
             showClear
             size='small'

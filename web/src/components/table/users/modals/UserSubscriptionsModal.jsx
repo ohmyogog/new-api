@@ -285,7 +285,7 @@ const UserSubscriptionsModal = ({ visible, onCancel, user, t, onSuccess }) => {
         render: (_, record) => {
           const sub = record?.subscription;
           return (
-            <div className='text-xs text-gray-600'>
+            <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
               <div>
                 {t('开始')}: {formatTs(sub?.start_time)}
               </div>

@@ -102,7 +102,7 @@ const TaskLogsFilters = ({
                 }
               }}
             >
-              {t('���置')}
+              {t('重置')}
             </AppButton>
             <AppButton variant='ghost' onClick={() => setShowColumnSelector(true)}>
               {t('列设置')}

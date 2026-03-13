@@ -88,7 +88,7 @@ const AddUserModal = (props) => {
         visible={props.visible}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-end bg-white'>
+          <div className='flex justify-end' style={{ background: 'var(--app-surface-strong)' }}>
             <Space>
               <Button
                 theme='solid'
@@ -124,14 +124,14 @@ const AddUserModal = (props) => {
             }}
           >
             <div className='p-2'>
-              <Card className='!rounded-2xl shadow-sm border-0'>
+              <Card className='!rounded-[var(--app-radius-md)] border border-[var(--app-border)] shadow-none bg-white mb-3'>
                 <div className='flex items-center mb-2'>
-                  <Avatar size='small' color='blue' className='mr-2 shadow-md'>
+                  <Avatar size='small' color='blue' className='mr-2' style={{ borderRadius: 10 }}>
                     <IconUserAdd size={16} />
                   </Avatar>
                   <div>
-                    <Text className='text-lg font-medium'>{t('用户信息')}</Text>
-                    <div className='text-xs text-gray-600'>
+                    <Text className='text-base font-semibold'>{t('用户信息')}</Text>
+                    <div className='text-xs' style={{ color: 'var(--app-text-muted)' }}>
                       {t('创建新用户账户')}
                     </div>
                   </div>

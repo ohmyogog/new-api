@@ -68,7 +68,7 @@ const DeploymentsActions = ({
         <>
           <Popconfirm
             title={t('确认删除')}
-            content={`${t('确定要删除���中的')} ${selectedKeys.length} ${t('个部署吗？此操作不可逆。')}`}
+            content={`${t('确定要删除选中的')} ${selectedKeys.length} ${t('个部署吗？此操作不可逆。')}`}
             okText={t('删除')}
             cancelText={t('取消')}
             okType='danger'
@@ -88,7 +88,7 @@ const DeploymentsActions = ({
             className='flex-1 md:flex-initial'
             onClick={handleDeselectAll}
           >
-            {t('取消选���')}
+            {t('取消选择')}
           </AppButton>
         </>
       )}
