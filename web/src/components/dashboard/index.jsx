@@ -22,9 +22,9 @@ import { getRelativeTime } from '../../helpers';
 import { UserContext } from '../../context/User';
 import { StatusContext } from '../../context/Status';
 
-import DashboardHeader from './DashboardHeader';
-import StatsCards from './StatsCards';
-import ChartsPanel from './ChartsPanel';
+import DashboardHeader from '../dashboard-next/DashboardHeader';
+import StatsCards from '../dashboard-next/StatsCards';
+import ChartsPanel from '../dashboard-next/ChartsPanel';
 import ApiInfoPanel from './ApiInfoPanel';
 import AnnouncementsPanel from './AnnouncementsPanel';
 import FaqPanel from './FaqPanel';
