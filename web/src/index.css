@@ -13,71 +13,190 @@
   @tailwind utilities;
 }
 
+/* ==================== Dashboard 暖色主题工具类 ==================== */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border));
+}
+
+.dark .glass-panel {
+  background: rgba(30, 25, 22, 0.7);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, hsl(14 100% 60%), hsl(20 100% 78%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-effect {
+  box-shadow: 0 10px 30px -10px hsl(14 100% 60% / 0.2);
+}
+
+.dashboard-grid-bg {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 90 54 / 0.03)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  -webkit-mask-image: linear-gradient(to bottom, white, transparent);
+  mask-image: linear-gradient(to bottom, white, transparent);
+}
+
 /* ==================== 全局基础样式 ==================== */
 :root {
   --sidebar-width: 220px;
   --sidebar-width-collapsed: 60px;
   --sidebar-current-width: var(--sidebar-width);
 
-  /* ---- shadcn/ui design tokens (zinc) ---- */
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  /* ---- shadcn/ui design tokens (warm coral) ---- */
+  --background: 30 100% 99%;
+  --foreground: 20 20% 15%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 20 20% 15%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
+  --popover-foreground: 20 20% 15%;
+  --primary: 14 100% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 25 30% 96%;
+  --secondary-foreground: 20 20% 15%;
+  --muted: 25 30% 96%;
+  --muted-foreground: 20 15% 37%;
+  --accent: 25 30% 96%;
+  --accent-foreground: 20 20% 15%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 5.9% 10%;
-  --radius: 0.5rem;
-  --sidebar-background: 0 0% 98%;
-  --sidebar-foreground: 240 5.3% 26.1%;
-  --sidebar-primary: 240 5.9% 10%;
-  --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 240 4.8% 95.9%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  --border: 25 50% 90%;
+  --input: 25 50% 90%;
+  --ring: 14 100% 60%;
+  --radius: 0.625rem;
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 20 15% 37%;
+  --sidebar-primary: 14 100% 60%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 25 30% 96%;
+  --sidebar-accent-foreground: 20 20% 15%;
+  --sidebar-border: 25 50% 93%;
+  --sidebar-ring: 14 100% 60%;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
+  --background: 20 14% 6%;
+  --foreground: 30 20% 92%;
+  --card: 20 10% 9%;
+  --card-foreground: 30 20% 92%;
+  --popover: 20 10% 9%;
+  --popover-foreground: 30 20% 92%;
+  --primary: 14 100% 65%;
+  --primary-foreground: 20 20% 8%;
+  --secondary: 20 8% 14%;
+  --secondary-foreground: 30 20% 92%;
+  --muted: 20 8% 14%;
+  --muted-foreground: 25 10% 58%;
+  --accent: 20 8% 14%;
+  --accent-foreground: 30 20% 92%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
-  --sidebar-background: 240 5.9% 10%;
-  --sidebar-foreground: 240 4.8% 95.9%;
-  --sidebar-primary: 224.3 76.3% 48%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 240 3.7% 15.9%;
-  --sidebar-accent-foreground: 240 4.8% 95.9%;
-  --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  --border: 20 8% 18%;
+  --input: 20 8% 18%;
+  --ring: 14 100% 65%;
+  --sidebar-background: 20 14% 6%;
+  --sidebar-foreground: 30 20% 92%;
+  --sidebar-primary: 14 100% 65%;
+  --sidebar-primary-foreground: 20 20% 8%;
+  --sidebar-accent: 20 8% 14%;
+  --sidebar-accent-foreground: 30 20% 92%;
+  --sidebar-border: 20 8% 18%;
+  --sidebar-ring: 14 100% 65%;
+}
+
+/* ==================== Semi Design 暖珊瑚橙主题覆盖 ==================== */
+body:not([theme-mode="dark"]) {
+  /* Primary: #ff5a36 = rgb(255, 90, 54) */
+  --semi-color-primary: rgba(255, 90, 54, 1);
+  --semi-color-primary-hover: rgba(230, 75, 42, 1);
+  --semi-color-primary-active: rgba(204, 62, 32, 1);
+  --semi-color-primary-disabled: rgba(255, 90, 54, 0.4);
+  --semi-color-primary-light-default: rgba(255, 90, 54, 0.08);
+  --semi-color-primary-light-hover: rgba(255, 90, 54, 0.15);
+  --semi-color-primary-light-active: rgba(255, 90, 54, 0.22);
+
+  /* Background: warm off-white */
+  --semi-color-bg-0: #fffcf9;
+  --semi-color-bg-1: #ffffff;
+  --semi-color-bg-2: #faf6f2;
+  --semi-color-bg-3: #f5efe9;
+  --semi-color-bg-4: #f0e8e0;
+
+  /* Text: warm grays */
+  --semi-color-text-0: #2d241e;
+  --semi-color-text-1: #4a3f36;
+  --semi-color-text-2: #6b5e54;
+  --semi-color-text-3: #9a8d82;
+
+  /* Border & Fill */
+  --semi-color-border: #f1e3d6;
+  --semi-color-fill-0: #faf6f2;
+  --semi-color-fill-1: #f5efe9;
+  --semi-color-fill-2: #f0e8e0;
+
+  /* Link */
+  --semi-color-link: rgba(255, 90, 54, 1);
+  --semi-color-link-hover: rgba(230, 75, 42, 1);
+  --semi-color-link-active: rgba(204, 62, 32, 1);
+  --semi-color-link-visited: rgba(204, 62, 32, 1);
+
+  /* Focus ring */
+  --semi-color-focus-border: rgba(255, 90, 54, 0.5);
+
+  /* RGB 分量变量（用于 rgba() 调用） */
+  --semi-blue-0: 255, 90, 54;
+  --semi-blue-1: 255, 110, 80;
+  --semi-blue-2: 255, 130, 100;
+  --semi-blue-3: 255, 150, 120;
+  --semi-blue-4: 255, 90, 54;
+  --semi-blue-5: 230, 75, 42;
+  --semi-blue-6: 204, 62, 32;
+}
+
+body[theme-mode="dark"] {
+  --semi-color-primary: rgba(255, 120, 80, 1);
+  --semi-color-primary-hover: rgba(255, 140, 100, 1);
+  --semi-color-primary-active: rgba(255, 100, 65, 1);
+  --semi-color-primary-disabled: rgba(255, 120, 80, 0.4);
+  --semi-color-primary-light-default: rgba(255, 120, 80, 0.12);
+  --semi-color-primary-light-hover: rgba(255, 120, 80, 0.2);
+  --semi-color-primary-light-active: rgba(255, 120, 80, 0.28);
+
+  --semi-color-bg-0: #1a1512;
+  --semi-color-bg-1: #211c18;
+  --semi-color-bg-2: #2a2420;
+  --semi-color-bg-3: #332c26;
+  --semi-color-bg-4: #3d342d;
+
+  --semi-color-text-0: #ede6df;
+  --semi-color-text-1: #c9bfb5;
+  --semi-color-text-2: #9a8d82;
+  --semi-color-text-3: #6b5e54;
+
+  --semi-color-border: #3d342d;
+  --semi-color-fill-0: #2a2420;
+  --semi-color-fill-1: #332c26;
+  --semi-color-fill-2: #3d342d;
+
+  --semi-color-link: rgba(255, 120, 80, 1);
+  --semi-color-link-hover: rgba(255, 140, 100, 1);
+  --semi-color-link-active: rgba(255, 100, 65, 1);
+  --semi-color-link-visited: rgba(255, 100, 65, 1);
+
+  --semi-color-focus-border: rgba(255, 120, 80, 0.5);
+
+  --semi-blue-0: 255, 120, 80;
+  --semi-blue-1: 255, 140, 100;
+  --semi-blue-2: 255, 160, 120;
+  --semi-blue-3: 255, 180, 140;
+  --semi-blue-4: 255, 120, 80;
+  --semi-blue-5: 255, 100, 65;
+  --semi-blue-6: 230, 85, 55;
 }
 
 body.sidebar-collapsed {
@@ -85,7 +204,7 @@ body.sidebar-collapsed {
 }
 
 body {
-  font-family: Lato, 'Helvetica Neue', Arial, Helvetica, 'Microsoft YaHei',
+  font-family: 'Inter', Lato, 'Helvetica Neue', Arial, Helvetica, 'Microsoft YaHei',
     sans-serif;
   color: var(--semi-color-text-0);
   background-color: var(--semi-color-bg-0);
@@ -209,12 +328,12 @@ code {
 }
 
 .sidebar-nav-item:hover {
-  background-color: rgba(var(--semi-blue-0), 0.08);
+  background-color: rgba(255, 90, 54, 0.08);
   color: var(--semi-color-primary);
 }
 
 .sidebar-nav-item-selected {
-  background-color: rgba(var(--semi-blue-0), 0.12);
+  background-color: rgba(255, 90, 54, 0.12);
   color: var(--semi-color-primary);
   font-weight: 500;
 }
@@ -808,8 +927,8 @@ html.dark .sbg-variant-green {
 }
 
 .blur-ball-indigo {
-  background: #6366f1;
-  /* indigo-500 */
+  background: #ff5a36;
+  /* coral */
   top: 40px;
   left: 50%;
   transform: translateX(-50%);
@@ -817,8 +936,8 @@ html.dark .sbg-variant-green {
 }
 
 .blur-ball-teal {
-  background: #14b8a6;
-  /* teal-400 */
+  background: #ff8a65;
+  /* warm orange */
   top: 200px;
   left: 30%;
   opacity: 0.4;
@@ -839,14 +958,14 @@ html:not(.dark) .blur-ball-teal {
   position: relative;
   overflow: hidden;
   /* 默认变量（明亮模式） */
-  --pb1: #ffd1dc;
-  /* 粉 */
-  --pb2: #e5d4ff;
-  /* 薰衣草 */
-  --pb3: #d1fff6;
-  /* 薄荷 */
-  --pb4: #ffe5d9;
-  /* 桃 */
+  --pb1: #ffe5d9;
+  /* peach */
+  --pb2: #ffd1c4;
+  /* salmon */
+  --pb3: #fff0e6;
+  /* cream */
+  --pb4: #ffe0cc;
+  /* apricot */
   --pb-opacity: 0.55;
   --pb-blur: 60px;
 }
@@ -872,15 +991,15 @@ html:not(.dark) .blur-ball-teal {
 
 /* 暗黑模式下更柔和的色彩和透明度 */
 html.dark .with-pastel-balls {
-  /* 使用与明亮模式一致的“刚才那组”马卡龙色，但整体更柔和 */
-  --pb1: #ffd1dc;
-  /* 粉 */
-  --pb2: #e5d4ff;
-  /* 薰衣草 */
-  --pb3: #d1fff6;
-  /* 薄荷 */
-  --pb4: #ffe5d9;
-  /* 桃 */
+  /* 使用暖色系马卡龙色 */
+  --pb1: #ffe5d9;
+  /* peach */
+  --pb2: #ffd1c4;
+  /* salmon */
+  --pb3: #fff0e6;
+  /* cream */
+  --pb4: #ffe0cc;
+  /* apricot */
   --pb-opacity: 0.36;
   --pb-blur: 65px;
 }
@@ -1015,6 +1134,74 @@ html.dark .with-pastel-balls::before {
   gap: 0.25rem;
 }
 
+/* ==================== Semi Table 暖色主题覆盖 ==================== */
+.semi-table-wrapper {
+  border-radius: 24px !important;
+  overflow: hidden;
+  border: 1px solid var(--semi-color-border);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -2px rgba(0, 0, 0, 0.02);
+}
+
+.semi-table thead th {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  color: var(--semi-color-text-2) !important;
+  padding: 16px 24px !important;
+  background: var(--semi-color-fill-0) !important;
+}
+
+.semi-table tbody td {
+  padding: 14px 24px !important;
+}
+
+.semi-table tbody tr:hover td {
+  background: var(--semi-color-fill-0) !important;
+}
+
+/* Semi Button 暖色阴影 */
+.semi-button-primary {
+  box-shadow: 0 10px 15px -3px rgba(255, 90, 54, 0.15), 0 4px 6px -4px rgba(255, 90, 54, 0.1) !important;
+}
+
+.semi-button-primary:hover {
+  box-shadow: 0 10px 15px -3px rgba(255, 90, 54, 0.25), 0 4px 6px -4px rgba(255, 90, 54, 0.15) !important;
+}
+
+/* Semi Modal 暖色圆角 */
+.semi-modal-content {
+  border-radius: 24px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.semi-sidesheet-inner {
+  border-radius: 24px 0 0 24px !important;
+}
+
+/* Semi Input/Select 暖色聚焦 */
+.semi-input-wrapper:focus-within,
+.semi-select:focus-within {
+  border-color: var(--semi-color-primary) !important;
+  box-shadow: 0 0 0 4px rgba(255, 90, 54, 0.05) !important;
+}
+
+/* Semi Tag 药丸形 */
+.semi-tag {
+  border-radius: 9999px !important;
+}
+
+/* Semi Card 暖色圆角 */
+.semi-card {
+  border-radius: 24px !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -2px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Semi Pagination 圆角 */
+.semi-page-item {
+  border-radius: 12px !important;
+}
+
 /* ==================== 自定义圆角样式 ==================== */
 .semi-radio,
 .semi-tagInput,
@@ -1029,5 +1216,5 @@ html.dark .with-pastel-balls::before {
 .semi-select,
 .semi-button,
 .semi-datepicker-range-input {
-  border-radius: 10px !important;
+  border-radius: 16px !important;
 }

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PieChart } from 'lucide-react';
 import { VChart } from '@visactor/react-vchart';
 
@@ -18,24 +17,24 @@ const ChartsPanel = ({
   t,
 }) => {
   return (
-    <Card className={hasApiInfoPanel ? 'lg:col-span-3' : ''}>
-      <CardHeader className='pb-3'>
+    <div className={`glass-panel rounded-2xl overflow-hidden ${hasApiInfoPanel ? 'lg:col-span-3' : ''}`}>
+      <div className='p-6 pb-3'>
         <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3'>
-          <CardTitle className='flex items-center gap-2 text-base'>
-            <PieChart className='h-4 w-4 text-muted-foreground' />
+          <h3 className='flex items-center gap-2 text-base font-bold'>
+            <PieChart className='h-4 w-4 text-primary/40' />
             {t('模型数据分析')}
-          </CardTitle>
+          </h3>
           <Tabs value={activeChartTab} onValueChange={setActiveChartTab}>
-            <TabsList>
-              <TabsTrigger value='1'>{t('消耗分布')}</TabsTrigger>
-              <TabsTrigger value='2'>{t('消耗趋势')}</TabsTrigger>
-              <TabsTrigger value='3'>{t('调用次数分布')}</TabsTrigger>
-              <TabsTrigger value='4'>{t('调用次数排行')}</TabsTrigger>
+            <TabsList className='bg-primary/5'>
+              <TabsTrigger value='1' className='data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'>{t('消耗分布')}</TabsTrigger>
+              <TabsTrigger value='2' className='data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'>{t('消耗趋势')}</TabsTrigger>
+              <TabsTrigger value='3' className='data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'>{t('调用次数分布')}</TabsTrigger>
+              <TabsTrigger value='4' className='data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'>{t('调用次数排行')}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className='px-6 pb-6'>
         <div className='h-[300px]'>
           {activeChartTab === '1' && spec_pie && (
             <VChart spec={spec_pie} option={CHART_CONFIG} />
@@ -50,8 +49,8 @@ const ChartsPanel = ({
             <VChart spec={spec_rank_bar} option={CHART_CONFIG} />
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

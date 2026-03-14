@@ -25,11 +25,11 @@ import { StatusContext } from '../../context/Status';
 import DashboardHeader from '../dashboard-next/DashboardHeader';
 import StatsCards from '../dashboard-next/StatsCards';
 import ChartsPanel from '../dashboard-next/ChartsPanel';
-import ApiInfoPanel from './ApiInfoPanel';
-import AnnouncementsPanel from './AnnouncementsPanel';
-import FaqPanel from './FaqPanel';
-import UptimePanel from './UptimePanel';
-import SearchModal from './modals/SearchModal';
+import ApiInfoPanel from '../dashboard-next/ApiInfoPanel';
+import AnnouncementsPanel from '../dashboard-next/AnnouncementsPanel';
+import FaqPanel from '../dashboard-next/FaqPanel';
+import UptimePanel from '../dashboard-next/UptimePanel';
+import SearchModal from '../dashboard-next/SearchModal';
 
 import { useDashboardData } from '../../hooks/dashboard/useDashboardData';
 import { useDashboardStats } from '../../hooks/dashboard/useDashboardStats';
@@ -139,7 +139,13 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className='h-full'>
+    <div className='h-full relative'>
+      {/* 背景装饰 */}
+      <div className='fixed inset-0 z-0 pointer-events-none dashboard-grid-bg' />
+      <div className='fixed top-[-20%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-0' />
+      <div className='fixed bottom-[-20%] right-[-10%] w-[40%] h-[40%] rounded-full bg-orange-400/5 blur-[120px] pointer-events-none z-0' />
+
+      <div className='relative z-10'>
       <DashboardHeader
         getGreeting={dashboardData.getGreeting}
         greetingVisible={dashboardData.greetingVisible}
@@ -171,9 +177,9 @@ const Dashboard = () => {
       />
 
       {/* API信息和图表面板 */}
-      <div className='mb-4'>
+      <div className='mb-5'>
         <div
-          className={`grid grid-cols-1 gap-4 ${dashboardData.hasApiInfoPanel ? 'lg:grid-cols-4' : ''}`}
+          className={`grid grid-cols-1 gap-5 ${dashboardData.hasApiInfoPanel ? 'lg:grid-cols-4' : ''}`}
         >
           <ChartsPanel
             activeChartTab={dashboardData.activeChartTab}
@@ -194,9 +200,6 @@ const Dashboard = () => {
               apiInfoData={apiInfoData}
               handleCopyUrl={(url) => handleCopyUrl(url, dashboardData.t)}
               handleSpeedTest={handleSpeedTest}
-              CARD_PROPS={CARD_PROPS}
-              FLEX_CENTER_GAP2={FLEX_CENTER_GAP2}
-              ILLUSTRATION_SIZE={ILLUSTRATION_SIZE}
               t={dashboardData.t}
             />
           )}
@@ -205,8 +208,8 @@ const Dashboard = () => {
 
       {/* 系统公告和常见问答卡片 */}
       {dashboardData.hasInfoPanels && (
-        <div className='mb-4'>
-          <div className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
+        <div className='mb-5'>
+          <div className='grid grid-cols-1 lg:grid-cols-4 gap-5'>
             {/* 公告卡片 */}
             {dashboardData.announcementsEnabled && (
               <AnnouncementsPanel
@@ -217,8 +220,6 @@ const Dashboard = () => {
                     label: dashboardData.t(item.label),
                   }),
                 )}
-                CARD_PROPS={CARD_PROPS}
-                ILLUSTRATION_SIZE={ILLUSTRATION_SIZE}
                 t={dashboardData.t}
               />
             )}
@@ -227,9 +228,6 @@ const Dashboard = () => {
             {dashboardData.faqEnabled && (
               <FaqPanel
                 faqData={faqData}
-                CARD_PROPS={CARD_PROPS}
-                FLEX_CENTER_GAP2={FLEX_CENTER_GAP2}
-                ILLUSTRATION_SIZE={ILLUSTRATION_SIZE}
                 t={dashboardData.t}
               />
             )}
@@ -256,14 +254,13 @@ const Dashboard = () => {
                     dashboardData.t,
                   )
                 }
-                CARD_PROPS={CARD_PROPS}
-                ILLUSTRATION_SIZE={ILLUSTRATION_SIZE}
                 t={dashboardData.t}
               />
             )}
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
