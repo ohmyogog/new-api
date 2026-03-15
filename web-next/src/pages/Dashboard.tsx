@@ -535,24 +535,24 @@ export default function Dashboard() {
 
         {/* API Info Panel */}
         {showApiInfo && (
-          <div className="bg-white rounded-2xl soft-shadow p-6 lg:col-span-1">
+          <div className="bg-white rounded-2xl soft-shadow p-6 lg:col-span-1 flex flex-col">
             <div className="flex items-center gap-2 mb-6">
-              <div className="size-6 rounded bg-primary/10 flex items-center justify-center">
+              <div className="size-6 rounded bg-[#f9f4f0] flex items-center justify-center">
                 <Link className="size-3 text-primary" />
               </div>
               <span className="font-semibold text-foreground">API 接入</span>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1">
               {apiInfoEntries.map(entry => (
-                <div key={entry.id} className="bg-[#fdfaf6] p-3 rounded-xl border border-[#f5e8df] group relative">
+                <div key={entry.id} className="bg-[#fdfaf6] p-3 rounded-xl border border-[#f9f4f0] relative group">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-white" style={{ backgroundColor: entry.color || '#94a3b8' }}>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-white" style={{ backgroundColor: entry.color || '#ff6b4a' }}>
                         {entry.route.slice(0, 2)}
                       </span>
                       <span className="font-medium text-sm">{entry.route}</span>
                     </div>
-                    <button onClick={() => handleCopyUrl(entry.url)} className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
+                    <button onClick={() => handleCopyUrl(entry.url)} className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex items-center gap-0.5">
                       复制 <Copy className="size-3" />
                     </button>
                   </div>
