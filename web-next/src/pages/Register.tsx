@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { API, updateAPI } from '@/api/client';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
 interface StatusData {
   github_oauth?: boolean;
