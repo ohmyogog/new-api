@@ -126,16 +126,16 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#fcf9f5] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 mb-8">
-          <div className="size-10 bg-primary rounded-xl flex items-center justify-center">
-            <Zap className="size-5 text-white" />
+        {/* Logo - centered vertically */}
+        <div className="flex flex-col items-center mb-10">
+          <div className="size-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-3">
+            <Zap className="size-7 text-white" />
           </div>
           <span className="text-xl font-bold text-slate-800">Ogog AI</span>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl border border-slate-100 soft-shadow p-8">
+        <div className="bg-white rounded-3xl border border-slate-100 soft-shadow px-10 py-8">
           <h1 className="text-xl font-bold text-slate-800 text-center mb-8">注册</h1>
 
           {/* OAuth view */}
@@ -154,50 +154,50 @@ export default function RegisterPage() {
               </div>
 
               <button type="button" onClick={() => setShowForm(true)}
-                className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-primary/15 flex items-center justify-center gap-2 transition-all">
+                className="w-full bg-primary hover:bg-primary/90 text-white py-3.5 rounded-full font-bold shadow-xl shadow-primary/15 flex items-center justify-center gap-2 transition-all">
                 <Mail className="size-4" />使用用户名注册
               </button>
             </div>
           ) : (
             /* Registration form */
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">用户名</label>
-                <Input placeholder="请输入用户名" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
+                <label className="text-sm font-medium text-slate-600 mb-2 block">用户名</label>
+                <Input placeholder="请输入用户名" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" className="h-12 rounded-xl" />
               </div>
 
               {showEmailVerification && (
                 <>
                   <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">邮箱</label>
+                    <label className="text-sm font-medium text-slate-600 mb-2 block">邮箱</label>
                     <div className="flex gap-2">
-                      <Input placeholder="输入邮箱地址" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="flex-1" />
+                      <Input placeholder="输入邮箱地址" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="flex-1 h-12 rounded-xl" />
                       <button type="button" onClick={sendVerificationCode} disabled={codeLoading || countdown > 0}
-                        className="shrink-0 border-2 border-primary/20 text-primary hover:bg-primary/5 px-4 py-3 rounded-2xl text-sm font-bold transition-all disabled:opacity-50">
+                        className="shrink-0 border-2 border-primary/20 text-primary hover:bg-primary/5 px-4 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50">
                         {countdown > 0 ? `${countdown}s` : codeLoading ? '...' : '获取验证码'}
                       </button>
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">验证码</label>
-                    <Input placeholder="输入验证码" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
+                    <label className="text-sm font-medium text-slate-600 mb-2 block">验证码</label>
+                    <Input placeholder="输入验证码" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} className="h-12 rounded-xl" />
                   </div>
                 </>
               )}
 
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">密码</label>
+                <label className="text-sm font-medium text-slate-600 mb-2 block">密码</label>
                 <div className="relative">
-                  <Input type={showPwd ? 'text' : 'password'} placeholder="最短 8 位" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" className="pr-12" />
+                  <Input type={showPwd ? 'text' : 'password'} placeholder="最短 8 位" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" className="pr-12 h-12 rounded-xl" />
                   <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabIndex={-1}>
                     {showPwd ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                   </button>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">确认密码</label>
+                <label className="text-sm font-medium text-slate-600 mb-2 block">确认密码</label>
                 <div className="relative">
-                  <Input type={showPwd2 ? 'text' : 'password'} placeholder="再次输入密码" value={password2} onChange={(e) => setPassword2(e.target.value)} autoComplete="new-password" className="pr-12" />
+                  <Input type={showPwd2 ? 'text' : 'password'} placeholder="再次输入密码" value={password2} onChange={(e) => setPassword2(e.target.value)} autoComplete="new-password" className="pr-12 h-12 rounded-xl" />
                   <button type="button" onClick={() => setShowPwd2(!showPwd2)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabIndex={-1}>
                     {showPwd2 ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                   </button>
@@ -209,7 +209,7 @@ export default function RegisterPage() {
               )}
 
               <Button type="submit" disabled={loading || (needsAgreement && !agreedToTerms)}
-                className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-primary/15">
+                className="w-full bg-primary hover:bg-primary/90 text-white h-12 rounded-full font-bold shadow-xl shadow-primary/15 text-base">
                 {loading && <Loader2 className="size-4 animate-spin mr-2" />}注册
               </Button>
 
@@ -219,7 +219,7 @@ export default function RegisterPage() {
                     <Separator className="flex-1" /><span className="text-xs text-slate-400">或</span><Separator className="flex-1" />
                   </div>
                   <button type="button" onClick={() => setShowForm(false)}
-                    className="w-full border-2 border-primary/20 text-primary hover:bg-primary/5 px-8 py-3 rounded-2xl font-bold transition-all">
+                    className="w-full border-2 border-primary/20 text-primary hover:bg-primary/5 py-3 rounded-full font-bold transition-all">
                     其他注册选项
                   </button>
                 </>
@@ -227,7 +227,7 @@ export default function RegisterPage() {
             </form>
           )}
 
-          <p className="text-center text-sm text-slate-500 mt-6">
+          <p className="text-center text-sm text-slate-500 mt-8">
             已有账户？{' '}
             <Link to="/login" className="text-primary font-semibold hover:underline">登录</Link>
           </p>

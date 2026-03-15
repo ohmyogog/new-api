@@ -195,16 +195,16 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#fcf9f5] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 mb-8">
-          <div className="size-10 bg-primary rounded-xl flex items-center justify-center">
-            <Zap className="size-5 text-white" />
+        {/* Logo - centered vertically */}
+        <div className="flex flex-col items-center mb-10">
+          <div className="size-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-3">
+            <Zap className="size-7 text-white" />
           </div>
           <span className="text-xl font-bold text-slate-800">Ogog AI</span>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl border border-slate-100 soft-shadow p-8">
+        <div className="bg-white rounded-3xl border border-slate-100 soft-shadow px-10 py-8">
           <h1 className="text-xl font-bold text-slate-800 text-center mb-8">登录</h1>
 
           {/* ── OAuth view ── */}
@@ -231,7 +231,6 @@ export default function LoginPage() {
                 </OAuthBtn>
               ))}
 
-              {/* Agreement checkbox */}
               {needsAgreement && (
                 <AgreementCheckbox checked={agreedToTerms} onChange={setAgreedToTerms} hasUA={hasUserAgreement} hasPP={hasPrivacyPolicy} />
               )}
@@ -245,7 +244,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowForm(true)}
-                className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-primary/15 flex items-center justify-center gap-2 transition-all"
+                className="w-full bg-primary hover:bg-primary/90 text-white py-3.5 rounded-full font-bold shadow-xl shadow-primary/15 flex items-center justify-center gap-2 transition-all"
               >
                 <Mail className="size-4" />
                 使用邮箱或用户名登录
@@ -253,18 +252,19 @@ export default function LoginPage() {
             </div>
           ) : (
             /* ── Email/password form ── */
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">用户名或邮箱</label>
+                <label className="text-sm font-medium text-slate-600 mb-2 block">账号</label>
                 <Input
-                  placeholder="请输入用户名或邮箱"
+                  placeholder="手机号或邮箱"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   autoComplete="username"
+                  className="h-12 rounded-xl"
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">密码</label>
+                <label className="text-sm font-medium text-slate-600 mb-2 block">密码</label>
                 <div className="relative">
                   <Input
                     type={showPwd ? 'text' : 'password'}
@@ -272,7 +272,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="current-password"
-                    className="pr-12"
+                    className="pr-12 h-12 rounded-xl"
                   />
                   <button
                     type="button"
@@ -285,6 +285,12 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              <div className="text-right">
+                <Link to="/reset" className="text-sm text-slate-500 hover:text-primary transition-colors">
+                  忘记密码？
+                </Link>
+              </div>
+
               {needsAgreement && (
                 <AgreementCheckbox checked={agreedToTerms} onChange={setAgreedToTerms} hasUA={hasUserAgreement} hasPP={hasPrivacyPolicy} />
               )}
@@ -292,17 +298,11 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading || (needsAgreement && !agreedToTerms)}
-                className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-2xl font-bold shadow-xl shadow-primary/15"
+                className="w-full bg-primary hover:bg-primary/90 text-white h-12 rounded-full font-bold shadow-xl shadow-primary/15 text-base"
               >
                 {loading && <Loader2 className="size-4 animate-spin mr-2" />}
                 登录
               </Button>
-
-              <div className="text-center">
-                <Link to="/reset" className="text-sm text-slate-500 hover:text-primary transition-colors">
-                  忘记密码？
-                </Link>
-              </div>
 
               {hasOAuth && (
                 <>
@@ -314,7 +314,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="w-full border-2 border-primary/20 text-primary hover:bg-primary/5 px-8 py-3 rounded-2xl font-bold transition-all"
+                    className="w-full border-2 border-primary/20 text-primary hover:bg-primary/5 py-3 rounded-full font-bold transition-all"
                   >
                     其他登录选项
                   </button>
@@ -325,7 +325,7 @@ export default function LoginPage() {
 
           {/* Register link */}
           {!status.self_use_mode_enabled && (
-            <p className="text-center text-sm text-slate-500 mt-6">
+            <p className="text-center text-sm text-slate-500 mt-8">
               没有账户？{' '}
               <Link to="/register" className="text-primary font-semibold hover:underline">
                 注册
