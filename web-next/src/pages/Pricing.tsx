@@ -161,44 +161,66 @@ export default function PricingPage() {
   );
 
   const ModelCard = ({ m }: { m: Model }) => {
-    const c = vc(m.vendor); const Icon = typeIcons[m.type]; const expanded = expandedModel === m.id;
+    const c = vc(m.vendor); const Icon = typeIcons[m.type];
+    // Mock ratio data
+    const modelRatio = (m.inputPrice / 20).toFixed(3);
+    const completionRatio = (m.outputPrice / m.inputPrice || 5).toFixed(0);
+    const groupRatio = ((m.inputPrice + m.outputPrice) / 15).toFixed(2);
     return (
-      <div className="bg-white rounded-3xl border border-slate-100 soft-shadow p-5 flex flex-col gap-3 hover:border-slate-200 transition-all">
-        <div className="flex items-start gap-3">
-          <VendorIcon vendor={m.vendor} />
+      <div className="bg-white rounded-3xl border border-slate-100 soft-shadow p-6 flex flex-col hover:border-slate-200 transition-all">
+        {/* Top: icon + name + price + actions */}
+        <div className="flex items-start gap-4">
+          <div className={`w-12 h-12 rounded-2xl ${c.bg} flex items-center justify-center shrink-0 shadow-sm`}>
+            <VendorIcon vendor={m.vendor} />
+          </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-slate-800 text-sm truncate">{m.name}</h3>
-            <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${c.bg} ${c.text}`}>{m.vendor}</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-50 text-slate-500 flex items-center gap-1"><Icon className="w-2.5 h-2.5" />{typeLabels[m.type]}</span>
+            <h3 className="font-bold text-slate-800 text-base truncate">{m.name}</h3>
+            <div className="flex items-center gap-3 mt-1 text-sm">
+              <span className="text-primary font-medium">输入 ${m.inputPrice.toFixed(4)}/M</span>
+              <span className="text-muted-foreground font-medium">输出 ${m.outputPrice.toFixed(4)}/M</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 shrink-0">
+            <button className="size-8 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/5 transition-all">
+              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+            </button>
+            <button className="size-8 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/5 transition-all">
+              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" strokeWidth={2} /></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Separator */}
+        <div className="border-t border-slate-100 my-4" />
+
+        {/* Quota type badge */}
+        <div className="mb-3">
+          <span className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${m.quotaType === 'pay-per-use' ? 'bg-primary/10 text-primary' : 'bg-blue-50 text-blue-600'}`}>
+            {m.quotaType === 'pay-per-use' ? '按量计费' : '按次计费'}
+          </span>
+        </div>
+
+        {/* Ratio info */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <span>倍率信息</span>
+            <svg className="size-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth={2} /><path d="M12 16v-4M12 8h.01" strokeWidth={2} strokeLinecap="round" /></svg>
+          </div>
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <span className="text-muted-foreground">模型: </span>
+              <span className="font-semibold text-foreground">{modelRatio}</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">补全: </span>
+              <span className="font-semibold text-foreground">{completionRatio}</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">分组: </span>
+              <span className="font-semibold text-foreground">{groupRatio}</span>
             </div>
           </div>
         </div>
-        {m.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {m.tags.map(t => <span key={t} className="px-2 py-0.5 rounded-full text-[10px] bg-slate-50 text-slate-400">{t}</span>)}
-          </div>
-        )}
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
-          <div className="text-xs text-slate-500">
-            {m.quotaType === 'pay-per-use' ? (
-              <><span className="text-slate-800 font-semibold">{fmtPrice(m.inputPrice)}</span> / <span className="text-slate-800 font-semibold">{fmtPrice(m.outputPrice)}</span> <span className="text-slate-400">per 1M</span></>
-            ) : <span className="text-slate-800 font-semibold">按次计费</span>}
-          </div>
-          <button onClick={() => setExpandedModel(expanded ? null : m.id)} className="text-xs text-[#ee5a3e] hover:underline flex items-center gap-0.5">
-            {expanded ? '收起' : '详情'}<ChevronDown className={`w-3 h-3 transition-transform ${expanded ? 'rotate-180' : ''}`} />
-          </button>
-        </div>
-        {expanded && (
-          <div className="pt-3 border-t border-slate-50 space-y-2 text-xs text-slate-500">
-            <p>{m.description}</p>
-            <div className="flex gap-4">
-              {m.contextWindow > 0 && <span>上下文: <b className="text-slate-700">{fmtCtx(m.contextWindow)}</b></span>}
-              <span>输入: <b className="text-slate-700">{fmtPrice(m.inputPrice)}</b></span>
-              <span>输出: <b className="text-slate-700">{fmtPrice(m.outputPrice)}</b></span>
-            </div>
-          </div>
-        )}
       </div>
     );
   };
@@ -255,6 +277,87 @@ export default function PricingPage() {
     </div>
   );
 
-  /* PLACEHOLDER_MAIN_RETURN */
-  /* PLACEHOLDER_RETURN */
+  return (
+    <div className="min-h-screen bg-[#fcf9f5]">
+      {/* Top nav */}
+      <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-2 text-sm text-slate-500 hover:text-[#ee5a3e] transition-colors">
+              <ArrowLeft className="w-4 h-4" />返回
+            </Link>
+            <div className="w-px h-5 bg-slate-200" />
+            <span className="font-bold text-slate-800">模型广场</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#ee5a3e]" />
+            <span className="text-xs text-slate-400">{models.length} 个模型</span>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-800">模型广场</h1>
+          <p className="text-slate-500 mt-2">浏览所有可用模型的定价和功能信息</p>
+        </div>
+
+        {/* Search + controls */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input placeholder="搜索模型名称..." value={search} onChange={e => setSearch(e.target.value)}
+              className="pl-10 bg-slate-50 border-slate-200 rounded-2xl h-10" />
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}
+              className={`rounded-2xl gap-1.5 ${activeFilterCount > 0 ? 'border-[#ee5a3e]/30 text-[#ee5a3e]' : ''}`}>
+              <Filter className="w-3.5 h-3.5" />筛选
+              {activeFilterCount > 0 && <Badge className="ml-1 h-4 w-4 p-0 text-[10px] justify-center">{activeFilterCount}</Badge>}
+            </Button>
+            <div className="flex bg-slate-50 rounded-2xl border border-slate-200 p-0.5">
+              {([['grid', LayoutGrid], ['table', TableIcon], ['list', List]] as const).map(([mode, Icon]) => (
+                <button key={mode} onClick={() => setView(mode as ViewMode)}
+                  className={`p-1.5 rounded-xl transition-all ${view === mode ? 'bg-white soft-shadow text-[#ee5a3e]' : 'text-slate-400 hover:text-slate-600'}`}>
+                  <Icon className="w-4 h-4" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Filters panel */}
+        {showFilters && (
+          <div className="mb-6 bg-white rounded-3xl border border-slate-100 soft-shadow p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-slate-700">筛选条件</h2>
+              <button onClick={() => setShowFilters(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
+            </div>
+            <FilterSidebar />
+          </div>
+        )}
+
+        {/* Results count */}
+        <p className="text-xs text-slate-400 mb-4">共 {filtered.length} 个模型</p>
+
+        {/* Views */}
+        {view === 'grid' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filtered.map(m => <ModelCard key={m.id} m={m} />)}
+          </div>
+        )}
+        {view === 'table' && <TableView />}
+        {view === 'list' && <ListView />}
+
+        {filtered.length === 0 && (
+          <div className="text-center py-20">
+            <Search className="w-10 h-10 text-slate-200 mx-auto mb-4" />
+            <p className="text-slate-400">没有找到匹配的模型</p>
+            <button onClick={clearFilters} className="text-sm text-[#ee5a3e] hover:underline mt-2">清除筛选</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
