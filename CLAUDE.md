@@ -7,7 +7,8 @@ This is an AI API gateway/proxy built with Go. It aggregates 40+ upstream AI pro
 ## Tech Stack
 
 - **Backend**: Go 1.22+, Gin web framework, GORM v2 ORM
-- **Frontend**: React 18, Vite, Semi Design UI (@douyinfe/semi-ui)
+- **Frontend (legacy)**: React 18, Vite, Semi Design UI (`web/`)
+- **Frontend (new)**: React 18, Vite, TypeScript, shadcn/ui, Tailwind CSS v4, Recharts (`web-next/`)
 - **Databases**: SQLite, MySQL, PostgreSQL (all three must be supported)
 - **Cache**: Redis (go-redis) + in-memory cache
 - **Auth**: JWT, WebAuthn/Passkeys, OAuth (GitHub, Discord, OIDC, etc.)
@@ -36,6 +37,44 @@ pkg/           — Internal packages (cachex, ionet)
 web/           — React frontend
   web/src/i18n/  — Frontend internationalization (i18next, zh/en/fr/ru/ja/vi)
 ```
+
+## Rule 7: Frontend (web-next) — UIKIT Design System
+
+The `web-next/` frontend MUST strictly follow the UIKIT design system defined in `web/ref.html` (UIKIT) and its extensions (UIKIT-Extension). This is the single source of truth for all UI decisions.
+
+### Design Tokens
+- **Primary color**: `#ee5a3e` (warm coral) — used for accents, active states, buttons, links
+- **Background**: `#fcf9f5` (warm off-white) — NOT pure white
+- **Surface**: `#ffffff` — cards and elevated elements
+- **Font**: Inter — all text
+- **Border color**: `rgba(251, 146, 60, 0.12)` — subtle warm-tinted borders
+
+### Component Patterns
+- **Cards**: `bg-white rounded-3xl border border-slate-100 soft-shadow` — generous rounding, barely-visible shadow
+- **Tables**: `rounded-3xl soft-shadow` wrapper, `bg-slate-50/50` header, `divide-y divide-slate-50` rows, `hover:bg-slate-50/50` row hover
+- **Table headers**: `text-xs font-bold text-slate-400 uppercase tracking-widest`
+- **Buttons (primary)**: `bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20`
+- **Buttons (secondary)**: `border-2 border-primary/20 text-primary hover:bg-primary/5 rounded-2xl font-bold`
+- **Inputs**: `bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary`
+- **Status badges**: `inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold` with semantic colors
+- **Section headers**: icon in `size-10 rounded-xl bg-primary/10` container + `text-2xl font-bold`
+- **Labels**: `text-xs font-bold text-slate-400 uppercase tracking-widest`
+
+### Layout
+- **Sidebar**: fixed `w-72`, `bg-sidebar backdrop-blur-xl`, grouped navigation with separators
+- **Header**: sticky `h-20`, `bg-background/80 backdrop-blur-xl`
+- **Content area**: `px-6 py-6`, no max-width constraint
+
+### Utility Class
+```css
+.soft-shadow {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -2px rgba(0, 0, 0, 0.02);
+}
+```
+
+### Reference Files
+- `web/ref.html` — UIKIT base components (buttons, forms, tables, modals, feedback)
+- When adding new components or pages, check ref.html first for existing patterns before creating custom styles
 
 ## Internationalization (i18n)
 
