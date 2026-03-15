@@ -20,10 +20,10 @@ import MidjourneyPage from '@/pages/Midjourney';
 import TaskPage from '@/pages/Task';
 import PricingPage from '@/pages/Pricing';
 
-// DEV: 临时注入用户，方便开发调试布局，上线前删除
-if (import.meta.env.DEV && !localStorage.getItem('user')) {
-  localStorage.setItem('user', JSON.stringify({ id: 1, username: 'Dev', role: 100 }));
-}
+// DEV: 取消注释下面这行可自动注入开发用户（跳过登录）
+// if (import.meta.env.DEV && !localStorage.getItem('user')) {
+//   localStorage.setItem('user', JSON.stringify({ id: 1, username: 'Dev', role: 100 }));
+// }
 
 function App() {
   return (
