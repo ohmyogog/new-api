@@ -90,7 +90,7 @@ export default function PricingPage() {
   const [selectedTypes, setSelectedTypes] = useState<ModelType[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedQuota, setSelectedQuota] = useState<string>('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [expandedModel, setExpandedModel] = useState<string | null>(null);
 
   const toggle = <T,>(arr: T[], val: T) => arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val];
@@ -287,7 +287,7 @@ export default function PricingPage() {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="px-6 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-800">模型广场</h1>
