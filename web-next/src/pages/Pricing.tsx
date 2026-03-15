@@ -161,64 +161,55 @@ export default function PricingPage() {
   );
 
   const ModelCard = ({ m }: { m: Model }) => {
-    const c = vc(m.vendor); const Icon = typeIcons[m.type];
-    // Mock ratio data
+    const c = vc(m.vendor);
     const modelRatio = (m.inputPrice / 20).toFixed(3);
     const completionRatio = (m.outputPrice / m.inputPrice || 5).toFixed(0);
     const groupRatio = ((m.inputPrice + m.outputPrice) / 15).toFixed(2);
     return (
-      <div className="bg-white rounded-3xl border border-slate-100 soft-shadow p-6 flex flex-col hover:border-slate-200 transition-all">
-        {/* Top: icon + name + price + actions */}
-        <div className="flex items-start gap-4">
-          <div className={`w-12 h-12 rounded-2xl ${c.bg} flex items-center justify-center shrink-0 shadow-sm`}>
-            <VendorIcon vendor={m.vendor} />
+      <div className="bg-white rounded-2xl border border-slate-200 hover:border-slate-300 transition-all p-6 flex flex-col">
+        {/* Section 1: Icon + Vendor badge */}
+        <div className="flex items-start justify-between mb-5">
+          <div className={`w-11 h-11 rounded-xl ${c.bg} flex items-center justify-center shrink-0`}>
+            <span className={`text-lg font-bold ${c.text}`}>{m.vendor[0]}</span>
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-slate-800 text-base truncate">{m.name}</h3>
-            <div className="flex items-center gap-3 mt-1 text-sm">
-              <span className="text-primary font-medium">输入 ${m.inputPrice.toFixed(4)}/M</span>
-              <span className="text-muted-foreground font-medium">输出 ${m.outputPrice.toFixed(4)}/M</span>
-            </div>
+          <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${c.bg} ${c.text} border-current/20`}>
+            {m.vendor}
+          </span>
+        </div>
+
+        {/* Section 2: Name + Description */}
+        <h3 className="font-bold text-slate-900 text-lg leading-tight mb-2">{m.name}</h3>
+        <p className="text-sm text-slate-500 leading-relaxed mb-6 line-clamp-2 min-h-[2.5rem]">{m.description}</p>
+
+        {/* Section 3: Pricing */}
+        <div className="flex items-end gap-6 mb-5">
+          <div>
+            <span className="text-xs text-slate-400 block mb-1">输入</span>
+            <span className="text-lg font-bold text-primary font-mono">${m.inputPrice.toFixed(4)}/M</span>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
-            <button className="size-8 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/5 transition-all">
-              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-            </button>
-            <button className="size-8 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/5 transition-all">
-              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" strokeWidth={2} /></svg>
-            </button>
+          <div>
+            <span className="text-xs text-slate-400 block mb-1">输出</span>
+            <span className="text-lg font-bold text-slate-800 font-mono">${m.outputPrice.toFixed(4)}/M</span>
           </div>
         </div>
 
-        {/* Separator */}
-        <div className="border-t border-slate-100 my-4" />
-
-        {/* Quota type badge */}
-        <div className="mb-3">
+        {/* Section 4: Quota badge */}
+        <div className="mb-5">
           <span className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${m.quotaType === 'pay-per-use' ? 'bg-primary/10 text-primary' : 'bg-blue-50 text-blue-600'}`}>
             {m.quotaType === 'pay-per-use' ? '按量计费' : '按次计费'}
           </span>
         </div>
 
-        {/* Ratio info */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+        {/* Section 5: Ratio info */}
+        <div>
+          <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-2">
             <span>倍率信息</span>
             <svg className="size-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth={2} /><path d="M12 16v-4M12 8h.01" strokeWidth={2} strokeLinecap="round" /></svg>
           </div>
-          <div className="grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <span className="text-muted-foreground">模型: </span>
-              <span className="font-semibold text-foreground">{modelRatio}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">补全: </span>
-              <span className="font-semibold text-foreground">{completionRatio}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">分组: </span>
-              <span className="font-semibold text-foreground">{groupRatio}</span>
-            </div>
+          <div className="flex items-center gap-6 text-sm">
+            <span className="text-slate-500">模型: <b className="text-slate-900">{modelRatio}</b></span>
+            <span className="text-slate-500">补全: <b className="text-slate-900">{completionRatio}</b></span>
+            <span className="text-slate-500">分组: <b className="text-slate-900">{groupRatio}</b></span>
           </div>
         </div>
       </div>
