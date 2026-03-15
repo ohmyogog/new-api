@@ -18,6 +18,7 @@ import UserPage from '@/pages/admin/User';
 import SettingsPage from '@/pages/admin/Settings';
 import MidjourneyPage from '@/pages/Midjourney';
 import TaskPage from '@/pages/Task';
+import PricingPage from '@/pages/Pricing';
 
 // DEV: 临时注入用户，方便开发调试布局，上线前删除
 if (import.meta.env.DEV && !localStorage.getItem('user')) {
@@ -33,7 +34,7 @@ function App() {
       <Route path="/register" element={<AuthRedirect><RegisterPage /></AuthRedirect>} />
       <Route path="/reset" element={<Placeholder />} />
       <Route path="/user/reset" element={<Placeholder />} />
-      <Route path="/pricing" element={<Placeholder />} />
+      <Route path="/pricing" element={<PricingPage />} />
       <Route path="/about" element={<Placeholder />} />
       <Route path="/user-agreement" element={<Placeholder />} />
       <Route path="/privacy-policy" element={<Placeholder />} />
