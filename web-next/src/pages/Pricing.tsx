@@ -334,7 +334,7 @@ export default function PricingPage() {
 
         {/* Views */}
         {view === 'grid' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
             {filtered.map(m => <ModelCard key={m.id} m={m} />)}
           </div>
         )}
