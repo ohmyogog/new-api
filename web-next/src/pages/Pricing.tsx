@@ -178,14 +178,14 @@ export default function PricingPage() {
         </div>
 
         {/* Section 2: Name + Description */}
-        <h3 className="font-bold text-slate-900 text-lg leading-tight mb-2">{m.name}</h3>
+        <h3 className="font-bold text-primary text-lg leading-tight mb-2">{m.name}</h3>
         <p className="text-sm text-slate-500 leading-relaxed mb-6 line-clamp-2 min-h-[2.5rem]">{m.description}</p>
 
         {/* Section 3: Pricing */}
         <div className="flex items-end gap-6 mb-5">
           <div>
             <span className="text-xs text-slate-400 block mb-1">输入</span>
-            <span className="text-lg font-bold text-primary font-mono">${m.inputPrice.toFixed(4)}/M</span>
+            <span className="text-lg font-bold text-slate-800 font-mono">${m.inputPrice.toFixed(4)}/M</span>
           </div>
           <div>
             <span className="text-xs text-slate-400 block mb-1">输出</span>
