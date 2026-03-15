@@ -13,8 +13,6 @@ import {
   ChevronDown,
   ChevronRight,
   BarChart3,
-  PieChart,
-  Trophy,
   Megaphone,
   HelpCircle,
   ExternalLink,
@@ -93,12 +91,6 @@ const faqItems = [
   { q: '调用出错怎么办？', a: '请先检查 API Key 是否有效、余额是否充足。如仍有问题，可查看日志页面获取详细错误信息。' },
 ];
 
-const chartTabs = [
-  { key: 'trend', label: '消费趋势', icon: BarChart3 },
-  { key: 'model', label: '模型分布', icon: PieChart },
-  { key: 'rank', label: '排行', icon: Trophy },
-];
-
 // ── Greeting helper ────────────────────────────────────────
 function getGreeting() {
   const h = new Date().getHours();
@@ -111,7 +103,6 @@ function getGreeting() {
 
 // ── Component ──────────────────────────────────────────────
 export default function Dashboard() {
-  const [activeChart, setActiveChart] = useState('trend');
   const [copied, setCopied] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
@@ -171,86 +162,24 @@ export default function Dashboard() {
             <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
               <BarChart3 className="size-5 text-primary" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground">数据分析</h2>
-          </div>
-          <div className="flex items-center gap-1 bg-slate-50 rounded-xl p-1">
-            {chartTabs.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveChart(tab.key)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                  activeChart === tab.key
-                    ? 'bg-white text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <tab.icon className="size-3.5" />
-                {tab.label}
-              </button>
-            ))}
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">模型消耗分布</h2>
+              <p className="text-sm text-muted-foreground">总计: ${totalCost.toFixed(2)}</p>
+            </div>
           </div>
         </div>
-        {/* Chart content */}
-        {activeChart === 'model' ? (
-          <div>
-            <p className="text-sm text-muted-foreground mb-4">
-              模型消耗分布 &nbsp;&nbsp;<span className="font-bold text-foreground">总计: ${totalCost.toFixed(2)}</span>
-            </p>
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={chartData} margin={{ top: 5, right: 0, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                <XAxis
-                  dataKey="time"
-                  tick={{ fontSize: 11, fill: '#94a3b8' }}
-                  tickLine={false}
-                  axisLine={{ stroke: '#e2e8f0' }}
-                  interval="preserveStartEnd"
-                />
-                <YAxis
-                  tick={{ fontSize: 11, fill: '#94a3b8' }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: '#fff',
-                    border: '1px solid #f1f5f9',
-                    borderRadius: '1rem',
-                    boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)',
-                    fontSize: 12,
-                  }}
-                  cursor={{ fill: 'rgba(238,90,62,0.04)' }}
-                />
-                <Legend
-                  wrapperStyle={{ fontSize: 11, paddingTop: 12 }}
-                  iconType="square"
-                  iconSize={10}
-                />
-                {Object.entries(MODEL_COLORS).map(([model, color]) => (
-                  <Bar
-                    key={model}
-                    dataKey={model}
-                    stackId="a"
-                    fill={color}
-                    radius={[0, 0, 0, 0]}
-                  />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-64 rounded-2xl bg-gradient-to-br from-slate-50 to-orange-50/30 border border-dashed border-slate-200 flex flex-col items-center justify-center gap-3">
-            <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center">
-              {activeChart === 'trend' && <BarChart3 className="size-6 text-primary" />}
-              {activeChart === 'rank' && <Trophy className="size-6 text-primary" />}
-            </div>
-            <p className="text-sm font-medium text-muted-foreground">
-              {activeChart === 'trend' && '消费趋势图表即将上线'}
-              {activeChart === 'rank' && '使用排行即将上线'}
-            </p>
-            <p className="text-xs text-slate-400">数据可视化功能正在开发中</p>
-          </div>
-        )}
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={chartData} margin={{ top: 5, right: 0, left: -10, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} interval="preserveStartEnd" />
+            <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
+            <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
+            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="square" iconSize={10} />
+            {Object.entries(MODEL_COLORS).map(([model, color]) => (
+              <Bar key={model} dataKey={model} stackId="a" fill={color} radius={[0, 0, 0, 0]} />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Bottom grid: API Info + Announcements */}
