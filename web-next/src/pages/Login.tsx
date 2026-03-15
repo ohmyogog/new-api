@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { API, updateAPI } from '@/api/client';
+import { toast } from 'sonner';
 
 interface StatusData {
   github_oauth?: boolean;
@@ -62,14 +63,14 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (searchParams.get('expired')) {
-      alert('未登录或登录已过期，请重新登录');
+      toast.error('未登录或登录已过期，请重新登录');
     }
   }, [searchParams]);
 
   /* ── OAuth redirect helpers ── */
   const oauthRedirect = useCallback((url: string) => {
     if (needsAgreement && !agreedToTerms) {
-      alert('请先阅读并同意用户协议和隐私政策');
+      toast.error('请先阅读并同意用户协议和隐私政策');
       return;
     }
     window.location.href = url;
@@ -96,10 +97,10 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (needsAgreement && !agreedToTerms) {
-      alert('请先阅读并同意用户协议和隐私政策');
+      toast.error('请先阅读并同意用户协议和隐私政策');
       return;
     }
-    if (!username || !password) { alert('请输入用户名和密码'); return; }
+    if (!username || !password) { toast.error('请输入用户名和密码'); return; }
     setLoading(true);
     try {
       const res = await API.post('/api/user/login', { username, password });
@@ -110,9 +111,9 @@ export default function LoginPage() {
         updateAPI();
         navigate('/console');
       } else {
-        alert(message);
+        toast.error(message);
       }
-    } catch { alert('登录失败，请重试'); }
+    } catch { toast.error('登录失败，请重试'); }
     finally { setLoading(false); }
   };
 
@@ -127,8 +128,8 @@ export default function LoginPage() {
         localStorage.setItem('user', JSON.stringify(data));
         updateAPI();
         navigate('/console');
-      } else { alert(message); }
-    } catch { alert('验证失败，请重试'); }
+      } else { toast.error(message); }
+    } catch { toast.error('验证失败，请重试'); }
     finally { setTwoFALoading(false); }
   };
 

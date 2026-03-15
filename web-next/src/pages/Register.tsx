@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { API, updateAPI } from '@/api/client';
+import { toast } from 'sonner';
 
 interface StatusData {
   github_oauth?: boolean;
@@ -87,21 +88,21 @@ export default function RegisterPage() {
   const handleCustomOAuth = (p: { slug: string }) => oauthRedirect(`${window.location.origin}/api/oauth/${p.slug}/redirect`);
 
   const sendVerificationCode = async () => {
-    if (!email) { alert('请输入邮箱地址'); return; }
+    if (!email) { toast.error('请输入邮箱地址'); return; }
     setCodeLoading(true);
     try {
       const res = await API.get(`/api/verification?email=${encodeURIComponent(email)}`);
-      if (res.data.success) { setCountdown(30); } else { alert(res.data.message); }
-    } catch { alert('发送验证码失败'); }
+      if (res.data.success) { setCountdown(30); } else { toast.error(res.data.message); }
+    } catch { toast.error('发送验证码失败'); }
     finally { setCodeLoading(false); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 8) { alert('密码长度不得小于 8 位'); return; }
-    if (password !== password2) { alert('两次输入的密码不一致'); return; }
-    if (!username || !password) { alert('请填写完整信息'); return; }
-    if (needsAgreement && !agreedToTerms) { alert('请先阅读并同意用户协议和隐私政策'); return; }
+    if (password.length < 8) { toast.error('密码长度不得小于 8 位'); return; }
+    if (password !== password2) { toast.error('两次输入的密码不一致'); return; }
+    if (!username || !password) { toast.error('请填写完整信息'); return; }
+    if (needsAgreement && !agreedToTerms) { toast.error('请先阅读并同意用户协议和隐私政策'); return; }
     setLoading(true);
     try {
       const affCode = localStorage.getItem('aff') || '';
@@ -110,9 +111,9 @@ export default function RegisterPage() {
         verification_code: verificationCode,
         aff_code: affCode,
       });
-      if (res.data.success) { navigate('/login'); alert('注册成功！'); }
-      else { alert(res.data.message); }
-    } catch { alert('注册失败，请重试'); }
+      if (res.data.success) { navigate('/login'); toast.success('注册成功！'); }
+      else { toast.error(res.data.message); }
+    } catch { toast.error('注册失败，请重试'); }
     finally { setLoading(false); }
   };
 
