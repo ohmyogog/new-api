@@ -142,9 +142,9 @@ function Sparkline({ data, color = '#94a3b8' }: { data: number[]; color?: string
 }
 
 // ── Custom Tooltip: sorted by value descending ──
-function SortedTooltip({ active, payload, label, colorMap }: {
+function SortedTooltip({ active, payload, label, colorMap, prefix = '' }: {
   active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string;
-  colorMap: Record<string, string>;
+  colorMap: Record<string, string>; prefix?: string;
 }) {
   if (!active || !payload?.length) return null;
   const sorted = [...payload].filter(p => p.value > 0).sort((a, b) => b.value - a.value);
@@ -158,7 +158,7 @@ function SortedTooltip({ active, payload, label, colorMap }: {
             <span className="size-2 rounded-sm flex-shrink-0" style={{ backgroundColor: colorMap[item.name] || item.color }} />
             <span className="truncate max-w-[140px]">{item.name}</span>
           </span>
-          <span className="font-mono text-slate-500 flex-shrink-0">{typeof item.value === 'number' ? item.value.toFixed(4) : item.value}</span>
+          <span className="font-mono text-slate-500 flex-shrink-0">{prefix}{typeof item.value === 'number' ? item.value.toFixed(4) : item.value}</span>
         </div>
       ))}
     </div>
@@ -536,7 +536,7 @@ export default function Dashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                     <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} interval="preserveStartEnd" />
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} />} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
+                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} prefix="$" />} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="square" iconSize={10} />
                     {activeQuotaModels.map(m => <Bar key={m} dataKey={m} stackId="a" fill={modelColorMap[m]} />)}
                   </BarChart>
@@ -551,7 +551,7 @@ export default function Dashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                     <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} interval="preserveStartEnd" />
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} />} />
+                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} prefix="$" />} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="line" iconSize={10} />
                     {activeQuotaModels.map(m => <Line key={m} type="monotone" dataKey={m} stroke={modelColorMap[m]} strokeWidth={2} dot={false} />)}
                   </LineChart>
