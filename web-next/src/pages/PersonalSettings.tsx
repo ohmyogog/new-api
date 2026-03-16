@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Settings, Lock, Shield, Key, Copy, Check,
-  Fingerprint, Trash2, Loader2, Link2, Unlink, LogOut,
+  Fingerprint, Trash2, Loader2, Link2, LogOut,
+  Mail, Globe, Bell, User, Languages,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,16 @@ interface TwoFASetupData {
 
 const roleName = (r: number) => r >= 100 ? '管理员' : r >= 10 ? '普通用户' : '访客';
 
+function renderQuota(quota: number, digits = 2): string {
+  const quotaPerUnit = parseFloat(localStorage.getItem('quota_per_unit') || '500000');
+  const displayType = localStorage.getItem('quota_display_type') || 'USD';
+  if (displayType === 'TOKENS') return quota.toLocaleString();
+  const resultUSD = quota / quotaPerUnit;
+  let symbol = '$'; let value = resultUSD;
+  if (displayType === 'CNY') { try { const s = JSON.parse(localStorage.getItem('status') || '{}'); value = resultUSD * (s?.usd_exchange_rate || 7); } catch { /* ignore */ } symbol = '¥'; }
+  return symbol + value.toFixed(digits);
+}
+
 // ── Passkey WebAuthn helpers (inline, no external dep) ──
 
 function base64UrlToBuffer(b64url: string): ArrayBuffer {
@@ -90,19 +101,36 @@ function buildRegistrationResult(cred: PublicKeyCredential) {
   };
 }
 
-// ── Section card wrapper ──
-function SectionCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`bg-white rounded-3xl border border-slate-100 soft-shadow p-8 ${className}`}>{children}</div>;
+// ── Tab component ──
+function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`pb-2 flex items-center gap-1.5 text-sm cursor-pointer transition-colors ${active ? 'text-primary border-b-2 border-primary font-medium' : 'text-muted-foreground border-b-2 border-transparent hover:text-foreground'}`}
+    >
+      {children}
+    </button>
+  );
 }
 
-function SectionHeader({ icon, iconBg, title, subtitle }: { icon: React.ReactNode; iconBg: string; title: string; subtitle?: string }) {
+// ── Binding item ──
+function BindingItem({ icon, name, status, actionLabel, onAction }: { icon: React.ReactNode; name: string; status: string; actionLabel?: string; onAction?: () => void }) {
   return (
-    <div className="flex items-center gap-3 mb-6">
-      <div className={`size-10 rounded-xl ${iconBg} flex items-center justify-center`}>{icon}</div>
-      <div>
-        <h2 className="text-lg font-bold">{title}</h2>
-        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+    <div className="border border-slate-100 rounded-xl p-3 flex items-center justify-between bg-white">
+      <div className="flex items-center gap-3">
+        {icon}
+        <div>
+          <div className="text-sm font-medium">{name}</div>
+          <div className="text-xs text-muted-foreground">{status}</div>
+        </div>
       </div>
+      {actionLabel === '绑定' && onAction ? (
+        <button onClick={onAction} className="text-xs px-3 py-1 text-primary border border-primary/20 rounded-full hover:bg-primary/5 transition">绑定</button>
+      ) : actionLabel === '解绑' && onAction ? (
+        <button onClick={onAction} className="text-xs px-3 py-1 text-red-500 border border-red-200 rounded-full hover:bg-red-50 transition">解绑</button>
+      ) : (
+        <span className="text-xs px-3 py-1 text-slate-400 bg-slate-50 rounded-full">未启用</span>
+      )}
     </div>
   );
 }
@@ -149,6 +177,10 @@ export default function PersonalSettingsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
 
+  // ── Tab state ──
+  const [leftTab, setLeftTab] = useState<'binding' | 'security'>('binding');
+  const [rightTab, setRightTab] = useState<'notify' | 'token' | 'danger'>('notify');
+
   // ── Fetch all data on mount ──
   const fetchUser = useCallback(async () => {
     try {
@@ -166,7 +198,6 @@ export default function PersonalSettingsPage() {
     const init = async () => {
       setLoading(true);
       await fetchUser();
-      // parallel fetches
       const [twoFARes, passkeyRes, oauthRes] = await Promise.allSettled([
         API.get('/api/user/2fa/status'),
         API.get('/api/user/passkey'),
@@ -181,7 +212,6 @@ export default function PersonalSettingsPage() {
       if (oauthRes.status === 'fulfilled' && oauthRes.value.data.success) {
         setOauthBindings(oauthRes.value.data.data || []);
       }
-      // check browser passkey support
       if (typeof window !== 'undefined' && window.PublicKeyCredential) {
         try {
           const ok = await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
@@ -337,6 +367,9 @@ export default function PersonalSettingsPage() {
     navigate('/login');
   };
 
+  // ── helper: get oauth binding for a provider slug ──
+  const getBinding = (slug: string) => oauthBindings.find(b => b.provider_slug === slug);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-32">
@@ -345,205 +378,279 @@ export default function PersonalSettingsPage() {
     );
   }
 
+  const cardStyle = "bg-white rounded-3xl [box-shadow:0_4px_20px_rgba(242,107,72,0.08)] [border:1px_solid_rgba(242,107,72,0.1)]";
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center"><Settings className="size-5 text-primary" /></div>
-          <div><h1 className="text-2xl font-bold">个人设置</h1><p className="text-sm text-muted-foreground">管理你的账户和偏好</p></div>
-        </div>
-        <Button variant="outline" onClick={logout} className="border-2 border-primary/20 text-primary hover:bg-primary/5 rounded-2xl font-bold gap-2">
-          <LogOut className="size-4" />退出登录
-        </Button>
-      </div>
-
-      {/* Profile Card */}
-      <SectionCard>
-        <div className="flex items-center gap-6 mb-8">
-          <div className="size-20 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white text-2xl font-bold shrink-0">
-            {(user?.display_name || user?.username || '?').charAt(0).toUpperCase()}
-          </div>
-          <div className="min-w-0">
-            <h2 className="text-xl font-bold truncate">{user?.display_name || user?.username}</h2>
-            <p className="text-sm text-muted-foreground mt-0.5">{user?.email || '未绑定邮箱'}</p>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-primary/10 text-primary mt-2">
-              <Shield className="size-3" />{roleName(user?.role ?? 0)}
-            </span>
-          </div>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">显示名称</label>
-            <Input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="显示名称" className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary" />
-          </div>
-          <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">邮箱</label>
-            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="邮箱地址" className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary" />
-          </div>
-        </div>
-        <Button onClick={saveProfile} disabled={profileSaving} className="mt-6 bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20 h-11 px-8">
-          {profileSaving && <Loader2 className="size-4 animate-spin mr-2" />}保存信息
-        </Button>
-      </SectionCard>
-
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Change Password */}
-        <SectionCard>
-          <SectionHeader icon={<Lock className="size-5 text-blue-500" />} iconBg="bg-blue-50" title="修改密码" />
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">当前密码</label>
-              <Input type="password" value={passwords.old} onChange={e => setPasswords(p => ({ ...p, old: e.target.value }))} placeholder="输入当前密码" className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary" />
+    <div className="space-y-6">
+      {/* ═══ Top Header Card ═══ */}
+      <header className={`${cardStyle} overflow-hidden`}>
+        {/* Wave Banner */}
+        <div className="relative h-32 md:h-40 bg-gradient-to-br from-[#f89b7b] to-primary overflow-hidden p-6 flex items-end">
+          {/* Wave SVG overlay */}
+          <div className="absolute inset-0 opacity-90" style={{
+            backgroundImage: `url("data:image/svg+xml;utf8,<svg viewBox='0 0 1000 200' xmlns='http://www.w3.org/2000/svg'><path d='M0 50 Q 250 150 500 50 T 1000 50 L 1000 200 L 0 200 Z' fill='rgba(255,255,255,0.15)'/><path d='M0 100 Q 250 0 500 100 T 1000 100 L 1000 200 L 0 200 Z' fill='rgba(255,255,255,0.1)'/></svg>")`,
+            backgroundSize: 'cover', backgroundPosition: 'center',
+          }} />
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-primary rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg border-2 border-white/20">
+              {(user?.display_name || user?.username || '?').substring(0, 2).toUpperCase()}
             </div>
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">新密码</label>
-              <Input type="password" value={passwords.new_} onChange={e => setPasswords(p => ({ ...p, new_: e.target.value }))} placeholder="输入新密码" className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary" />
-            </div>
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">确认密码</label>
-              <Input type="password" value={passwords.confirm} onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))} placeholder="再次输入新密码" className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary" />
-            </div>
-            <Button onClick={changePassword} disabled={pwSaving} className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20 h-11">
-              {pwSaving && <Loader2 className="size-4 animate-spin mr-2" />}保存密码
-            </Button>
-          </div>
-        </SectionCard>
-
-        {/* API Token */}
-        <SectionCard>
-          <SectionHeader icon={<Key className="size-5 text-amber-500" />} iconBg="bg-amber-50" title="系统访问令牌" subtitle="用于 API 调用的身份验证" />
-          {token && (
-            <div className="flex items-center gap-2 mb-4">
-              <Input readOnly value={token} className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm font-mono flex-1" />
-              <Button variant="outline" size="icon" onClick={copyToken} className="shrink-0 size-11 rounded-2xl border-2 border-primary/20 text-primary hover:bg-primary/5">
-                {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-              </Button>
-            </div>
-          )}
-          <Button onClick={generateToken} disabled={tokenLoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20 h-11">
-            {tokenLoading && <Loader2 className="size-4 animate-spin mr-2" />}
-            {token ? '重新生成令牌' : '生成令牌'}
-          </Button>
-        </SectionCard>
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* 2FA */}
-        <SectionCard>
-          <SectionHeader icon={<Shield className="size-5 text-purple-500" />} iconBg="bg-purple-50" title="两步验证" subtitle={twoFAEnabled ? '已启用' : '未启用'} />
-          {twoFAEnabled ? (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600">
-                  <Check className="size-3" />已启用
-                </span>
+            <div className="text-white">
+              <h1 className="text-2xl md:text-3xl font-bold mb-1">{user?.display_name || user?.username}</h1>
+              <div className="flex items-center gap-2 text-sm opacity-90">
+                <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs backdrop-blur-sm">{roleName(user?.role ?? 0)}</span>
+                <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs backdrop-blur-sm">ID: {user?.id}</span>
               </div>
-              <Button variant="outline" onClick={() => { setShowDisable2FA(true); setDisableCode(''); }} className="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-2xl font-bold h-11">
-                禁用两步验证
-              </Button>
             </div>
-          ) : setupData ? (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">请使用验证器应用扫描二维码，然后输入 6 位验证码完成设置。</p>
-              <div className="flex justify-center p-4 bg-white rounded-2xl border border-slate-100">
-                <img src={setupData.qr_code_data} alt="2FA QR Code" className="size-48" />
-              </div>
+          </div>
+        </div>
+        {/* Bottom Bar: Balance & Stats */}
+        <div className="p-4 md:px-6 md:py-4 flex flex-col md:flex-row justify-between items-center bg-white gap-4">
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <span className="text-3xl font-bold text-primary">{renderQuota(user?.quota ?? 0)}</span>
+            <Link to="/topup" className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-md border border-primary/20 hover:bg-primary/15 transition">充值</Link>
+          </div>
+          <div className="flex items-center gap-2 md:gap-6 text-sm text-muted-foreground bg-primary/5 p-2 md:p-0 rounded-lg w-full md:w-auto justify-around md:bg-transparent">
+            <div className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+              <span>已消耗: {renderQuota(user?.used_quota ?? 0)}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+              <span>请求次数: {user?.request_count ?? 0}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+              <span>分组: {user?.group || 'default'}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ═══ Main Grid ═══ */}
+      <main className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ── Left Column ── */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* Account Management Card */}
+          <section className={`${cardStyle} p-6`}>
+            <div className="flex items-start gap-3 mb-6">
+              <div className="p-2 bg-primary/10 rounded-lg text-primary"><User className="size-5" /></div>
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">密钥（手动输入）</label>
-                <Input readOnly value={setupData.secret} className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm font-mono" />
+                <h2 className="font-bold">账户管理</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">管理账号、安全设置和身份验证</p>
               </div>
+            </div>
+            {/* Tabs */}
+            <div className="flex gap-6 border-b border-slate-100 mb-5 text-sm">
+              <TabButton active={leftTab === 'binding'} onClick={() => setLeftTab('binding')}>
+                <Link2 className="size-4" /><span>账号绑定</span>
+              </TabButton>
+              <TabButton active={leftTab === 'security'} onClick={() => setLeftTab('security')}>
+                <Shield className="size-4" /><span>安全设置</span>
+              </TabButton>
+            </div>
+
+            {leftTab === 'binding' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Email binding with edit */}
+                <div className="border border-slate-100 rounded-xl p-3 bg-white sm:col-span-2">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Mail className="size-5 text-muted-foreground" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium">个人信息</div>
+                    </div>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-2 mt-2">
+                    <Input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="显示名称" className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                    <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="邮箱地址" className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                  </div>
+                  <Button onClick={saveProfile} disabled={profileSaving} className="mt-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 h-8 text-xs px-4">
+                    {profileSaving && <Loader2 className="size-3 animate-spin mr-1" />}保存信息
+                  </Button>
+                </div>
+                {/* OAuth bindings grid */}
+                {(['wechat', 'github', 'discord', 'oidc', 'telegram', 'linux_do'] as const).map(slug => {
+                  const labels: Record<string, string> = { wechat: '微信', github: 'GitHub', discord: 'Discord', oidc: 'OIDC', telegram: 'Telegram', linux_do: 'LinuxDO' };
+                  const binding = getBinding(slug);
+                  const legacyId = user?.[`${slug}_id` as keyof UserInfo] as string | undefined;
+                  const isBound = !!binding || !!legacyId;
+                  return (
+                    <BindingItem
+                      key={slug}
+                      icon={<Globe className="size-5 text-muted-foreground" />}
+                      name={labels[slug] || slug}
+                      status={isBound ? (binding?.provider_user_id || '已绑定') : '未绑定'}
+                      actionLabel={isBound && binding ? '解绑' : undefined}
+                      onAction={isBound && binding ? () => unbindOAuth(binding.provider_id, binding.provider_name) : undefined}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Password change */}
+                <div>
+                  <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Lock className="size-4 text-primary" />修改密码</h3>
+                  <div className="space-y-3">
+                    <Input type="password" value={passwords.old} onChange={e => setPasswords(p => ({ ...p, old: e.target.value }))} placeholder="当前密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
+                    <Input type="password" value={passwords.new_} onChange={e => setPasswords(p => ({ ...p, new_: e.target.value }))} placeholder="新密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
+                    <Input type="password" value={passwords.confirm} onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))} placeholder="确认新密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
+                    <Button onClick={changePassword} disabled={pwSaving} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 h-10">
+                      {pwSaving && <Loader2 className="size-4 animate-spin mr-2" />}保存密码
+                    </Button>
+                  </div>
+                </div>
+                {/* 2FA */}
+                <div>
+                  <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Shield className="size-4 text-primary" />两步验证 {twoFAEnabled && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">已启用</span>}</h3>
+                  {twoFAEnabled ? (
+                    <Button variant="outline" onClick={() => { setShowDisable2FA(true); setDisableCode(''); }} className="w-full border border-red-200 text-red-600 hover:bg-red-50 rounded-lg h-10">禁用两步验证</Button>
+                  ) : setupData ? (
+                    <div className="space-y-3">
+                      <p className="text-xs text-muted-foreground">请使用验证器应用扫描二维码，然后输入 6 位验证码。</p>
+                      <div className="flex justify-center p-3 bg-white rounded-xl border border-slate-100"><img src={setupData.qr_code_data} alt="2FA QR" className="size-40" /></div>
+                      <Input readOnly value={setupData.secret} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono" />
+                      <Input value={twoFACode} onChange={e => setTwoFACode(e.target.value)} placeholder="000000" maxLength={6} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-center tracking-[0.5em] font-mono" />
+                      <Button onClick={enable2FA} disabled={twoFALoading || twoFACode.length < 6} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-10">
+                        {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}确认启用
+                      </Button>
+                      {setupData.backup_codes?.length > 0 && (
+                        <div className="p-3 bg-amber-50 rounded-xl border border-amber-100">
+                          <p className="text-xs font-bold text-amber-700 mb-2">备用码（请妥善保存）</p>
+                          <div className="grid grid-cols-2 gap-1 text-xs font-mono text-amber-800">{setupData.backup_codes.map((c, i) => <span key={i}>{c}</span>)}</div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Button onClick={start2FASetup} disabled={twoFALoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-10">
+                      {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}设置两步验证
+                    </Button>
+                  )}
+                </div>
+                {/* Passkey */}
+                <div>
+                  <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Fingerprint className="size-4 text-primary" />Passkey 登录 {passkeyEnabled && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">已注册</span>}</h3>
+                  {!passkeySupported && !passkeyEnabled && <p className="text-xs text-amber-600 mb-2">当前设备不支持 Passkey</p>}
+                  {passkeyEnabled ? (
+                    <Button variant="outline" onClick={deletePasskey} disabled={passkeyLoading} className="w-full border border-red-200 text-red-600 hover:bg-red-50 rounded-lg h-10">
+                      {passkeyLoading && <Loader2 className="size-4 animate-spin mr-2" />}解绑 Passkey
+                    </Button>
+                  ) : (
+                    <Button onClick={registerPasskey} disabled={passkeyLoading || !passkeySupported} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-10">
+                      {passkeyLoading && <Loader2 className="size-4 animate-spin mr-2" />}注册 Passkey
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* Preference Settings Card */}
+          <section className={`${cardStyle} p-6`}>
+            <div className="flex items-start gap-3 mb-4">
+              <div className="p-2 bg-primary/10 rounded-lg text-primary"><Settings className="size-5" /></div>
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">验证码</label>
-                <Input value={twoFACode} onChange={e => setTwoFACode(e.target.value)} placeholder="000000" maxLength={6} className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-center tracking-[0.5em] font-mono" />
+                <h2 className="font-bold">偏好设置</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">界面语言和其他个人偏好</p>
               </div>
-              <Button onClick={enable2FA} disabled={twoFALoading || twoFACode.length < 6} className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20 h-11">
-                {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}确认启用
-              </Button>
-              {setupData.backup_codes?.length > 0 && (
-                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100">
-                  <p className="text-xs font-bold text-amber-700 mb-2">备用码（请妥善保存）</p>
-                  <div className="grid grid-cols-2 gap-1 text-xs font-mono text-amber-800">
-                    {setupData.backup_codes.map((c, i) => <span key={i}>{c}</span>)}
+            </div>
+            <div className="border border-slate-100 rounded-xl p-4 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-start gap-3">
+                <Languages className="size-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <div className="text-sm font-medium">语言偏好</div>
+                  <div className="text-xs text-muted-foreground mt-1 max-w-xs">选择界面语言，设置将同步到所有设备</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ── Right Column ── */}
+        <div className="lg:col-span-7">
+          <section className={`${cardStyle} p-6 h-full flex flex-col`}>
+            <div className="flex items-start gap-3 mb-6">
+              <div className="p-2 bg-primary/10 rounded-lg text-primary"><Bell className="size-5" /></div>
+              <div>
+                <h2 className="font-bold">通知与高级设置</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">通知、令牌和账户安全相关设置</p>
+              </div>
+            </div>
+            {/* Tabs */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-slate-100 mb-6 text-sm">
+              <TabButton active={rightTab === 'notify'} onClick={() => setRightTab('notify')}>
+                <Bell className="size-4" /><span>通知设置</span>
+              </TabButton>
+              <TabButton active={rightTab === 'token'} onClick={() => setRightTab('token')}>
+                <Key className="size-4" /><span>令牌管理</span>
+              </TabButton>
+              <TabButton active={rightTab === 'danger'} onClick={() => setRightTab('danger')}>
+                <Shield className="size-4" /><span>账户安全</span>
+              </TabButton>
+            </div>
+
+            <div className="flex-grow">
+              {rightTab === 'notify' && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">通知设置功能即将上线，敬请期待。</p>
+                  <div className="border border-slate-100 rounded-xl p-4 bg-slate-50/50">
+                    <p className="text-xs text-muted-foreground">当前通知将通过绑定的邮箱发送。如需更改通知方式，请稍后再来。</p>
+                  </div>
+                </div>
+              )}
+
+              {rightTab === 'token' && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">生成系统访问令牌，用于 API 调用的身份验证。</p>
+                  {token && (
+                    <div className="flex items-center gap-2">
+                      <Input readOnly value={token} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono flex-1" />
+                      <Button variant="outline" size="icon" onClick={copyToken} className="shrink-0 size-10 rounded-xl border border-primary/20 text-primary hover:bg-primary/5">
+                        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                      </Button>
+                    </div>
+                  )}
+                  <Button onClick={generateToken} disabled={tokenLoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 h-10">
+                    {tokenLoading && <Loader2 className="size-4 animate-spin mr-2" />}
+                    {token ? '重新生成令牌' : '生成令牌'}
+                  </Button>
+                </div>
+              )}
+
+              {rightTab === 'danger' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border border-red-100 rounded-xl bg-red-50/30">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-red-50 rounded-lg"><Trash2 className="size-5 text-red-500" /></div>
+                      <div>
+                        <h3 className="text-sm font-medium text-red-600">删除账户</h3>
+                        <p className="text-xs text-muted-foreground">此操作不可逆，所有数据将被永久删除</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" onClick={() => { setShowDeleteDialog(true); setDeleteConfirm(''); }} className="border border-red-200 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm">
+                      删除账户
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-4 border border-slate-100 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-slate-50 rounded-lg"><LogOut className="size-5 text-muted-foreground" /></div>
+                      <div>
+                        <h3 className="text-sm font-medium">退出登录</h3>
+                        <p className="text-xs text-muted-foreground">退出当前账户</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" onClick={logout} className="border border-slate-200 text-muted-foreground hover:bg-slate-50 rounded-lg font-medium text-sm">
+                      退出
+                    </Button>
                   </div>
                 </div>
               )}
             </div>
-          ) : (
-            <Button onClick={start2FASetup} disabled={twoFALoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20 h-11">
-              {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}设置两步验证
-            </Button>
-          )}
-        </SectionCard>
-
-        {/* Passkey */}
-        <SectionCard>
-          <SectionHeader icon={<Fingerprint className="size-5 text-emerald-500" />} iconBg="bg-emerald-50" title="Passkey 登录" subtitle={passkeyEnabled ? '已注册' : '未注册'} />
-          {!passkeySupported && !passkeyEnabled && (
-            <p className="text-sm text-amber-600 mb-4">当前设备不支持 Passkey</p>
-          )}
-          {passkeyEnabled ? (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600">
-                  <Check className="size-3" />已注册
-                </span>
-              </div>
-              <Button variant="outline" onClick={deletePasskey} disabled={passkeyLoading} className="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-2xl font-bold h-11">
-                {passkeyLoading && <Loader2 className="size-4 animate-spin mr-2" />}解绑 Passkey
-              </Button>
-            </div>
-          ) : (
-            <Button onClick={registerPasskey} disabled={passkeyLoading || !passkeySupported} className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20 h-11">
-              {passkeyLoading && <Loader2 className="size-4 animate-spin mr-2" />}注册 Passkey
-            </Button>
-          )}
-        </SectionCard>
-      </div>
-
-      {/* OAuth Bindings */}
-      {oauthBindings.length > 0 && (
-        <SectionCard>
-          <SectionHeader icon={<Link2 className="size-5 text-sky-500" />} iconBg="bg-sky-50" title="第三方账号绑定" />
-          <div className="space-y-3">
-            {oauthBindings.map(b => (
-              <div key={b.provider_id} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-sm font-bold text-slate-500 shrink-0">
-                    {b.provider_name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold truncate">{b.provider_name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{b.provider_user_id}</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" onClick={() => unbindOAuth(b.provider_id, b.provider_name)} className="shrink-0 border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-xl font-bold gap-1.5">
-                  <Unlink className="size-3.5" />解绑
-                </Button>
-              </div>
-            ))}
-          </div>
-        </SectionCard>
-      )}
-
-      {/* Delete Account */}
-      <SectionCard className="border-red-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-red-50 flex items-center justify-center"><Trash2 className="size-5 text-red-500" /></div>
-            <div>
-              <h2 className="text-lg font-bold text-red-600">删除账户</h2>
-              <p className="text-sm text-muted-foreground">此操作不可逆，所有数据将被永久删除</p>
-            </div>
-          </div>
-          <Button variant="outline" onClick={() => { setShowDeleteDialog(true); setDeleteConfirm(''); }} className="border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-2xl font-bold">
-            删除账户
-          </Button>
+          </section>
         </div>
-      </SectionCard>
+      </main>
 
-      {/* ── Dialogs ── */}
-
+      {/* ═══ Dialogs ═══ */}
       {/* Disable 2FA Dialog */}
       <Dialog open={showDisable2FA} onOpenChange={setShowDisable2FA}>
         <DialogContent className="sm:max-w-md rounded-3xl p-8">
@@ -551,10 +658,10 @@ export default function PersonalSettingsPage() {
             <DialogTitle>禁用两步验证</DialogTitle>
             <DialogDescription>请输入验证器应用中的验证码或备用码以禁用两步验证。</DialogDescription>
           </DialogHeader>
-          <Input value={disableCode} onChange={e => setDisableCode(e.target.value)} placeholder="验证码" maxLength={20} className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-center tracking-[0.3em] font-mono" />
+          <Input value={disableCode} onChange={e => setDisableCode(e.target.value)} placeholder="验证码" maxLength={20} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-center tracking-[0.3em] font-mono" />
           <DialogFooter className="gap-2">
-            <DialogClose render={<Button variant="outline" className="rounded-2xl" />}>取消</DialogClose>
-            <Button onClick={disable2FA} disabled={twoFALoading || disableCode.length < 6} className="bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold">
+            <DialogClose render={<Button variant="outline" className="rounded-xl" />}>取消</DialogClose>
+            <Button onClick={disable2FA} disabled={twoFALoading || disableCode.length < 6} className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium">
               {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}确认禁用
             </Button>
           </DialogFooter>
@@ -568,10 +675,10 @@ export default function PersonalSettingsPage() {
             <DialogTitle className="text-red-600">删除账户</DialogTitle>
             <DialogDescription>此操作不可逆。请输入你的用户名 <strong>{user?.username}</strong> 以确认删除。</DialogDescription>
           </DialogHeader>
-          <Input value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} placeholder={`输入 ${user?.username} 确认`} className="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm" />
+          <Input value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} placeholder={`输入 ${user?.username} 确认`} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
           <DialogFooter className="gap-2">
-            <DialogClose render={<Button variant="outline" className="rounded-2xl" />}>取消</DialogClose>
-            <Button onClick={deleteAccount} disabled={deleting || deleteConfirm !== user?.username} className="bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold">
+            <DialogClose render={<Button variant="outline" className="rounded-xl" />}>取消</DialogClose>
+            <Button onClick={deleteAccount} disabled={deleting || deleteConfirm !== user?.username} className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium">
               {deleting && <Loader2 className="size-4 animate-spin mr-2" />}永久删除
             </Button>
           </DialogFooter>
