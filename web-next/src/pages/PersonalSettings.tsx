@@ -222,7 +222,7 @@ export default function PersonalSettingsPage() {
 
   // ── Tab state ──
   const [leftTab, setLeftTab] = useState<'binding' | 'security'>('binding');
-  const [rightTab, setRightTab] = useState<'notification' | 'pricing' | 'privacy' | 'token' | 'account'>('notification');
+  const [rightTab, setRightTab] = useState<'notification' | 'pricing' | 'privacy' | 'sidebar'>('notification');
 
   // ── Fetch all data on mount ──
   const fetchUser = useCallback(async () => {
@@ -673,6 +673,47 @@ export default function PersonalSettingsPage() {
                     </Button>
                   )}
                 </div>
+
+                {/* API Token */}
+                <div>
+                  <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Key className="size-4 text-primary" />系统访问令牌</h3>
+                  <p className="text-xs text-muted-foreground mb-3">用于 API 调用的身份验证</p>
+                  {token && (
+                    <div className="flex items-center gap-2 mb-3">
+                      <Input readOnly value={token} className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono flex-1" />
+                      <Button variant="outline" size="icon" onClick={copyToken} className="shrink-0 size-9 rounded-lg border border-primary/20 text-primary hover:bg-primary/5">
+                        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                      </Button>
+                    </div>
+                  )}
+                  <Button onClick={generateToken} disabled={tokenLoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-9 text-sm">
+                    {tokenLoading && <Loader2 className="size-4 animate-spin mr-2" />}
+                    {token ? '重新生成令牌' : '生成令牌'}
+                  </Button>
+                </div>
+
+                {/* Delete Account & Logout */}
+                <div className="space-y-3 pt-2 border-t border-slate-100">
+                  <div className="flex items-center justify-between p-3 border border-red-100 rounded-xl bg-red-50/30">
+                    <div className="flex items-center gap-2">
+                      <Trash2 className="size-4 text-red-500" />
+                      <div>
+                        <div className="text-sm font-medium text-red-600">删除账户</div>
+                        <div className="text-xs text-muted-foreground">不可逆操作</div>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => { setShowDeleteDialog(true); setDeleteConfirm(''); }} className="border border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs">
+                      删除
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl">
+                    <div className="flex items-center gap-2">
+                      <LogOut className="size-4 text-muted-foreground" />
+                      <div className="text-sm font-medium">退出登录</div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={logout} className="border border-slate-200 rounded-lg text-xs">退出</Button>
+                  </div>
+                </div>
               </div>
             )}
           </section>
@@ -727,11 +768,8 @@ export default function PersonalSettingsPage() {
               <TabButton active={rightTab === 'privacy'} onClick={() => setRightTab('privacy')}>
                 <Shield className="size-4" /><span>隐私设置</span>
               </TabButton>
-              <TabButton active={rightTab === 'token'} onClick={() => setRightTab('token')}>
-                <Key className="size-4" /><span>令牌管理</span>
-              </TabButton>
-              <TabButton active={rightTab === 'account'} onClick={() => setRightTab('account')}>
-                <Trash2 className="size-4" /><span>账户安全</span>
+              <TabButton active={rightTab === 'sidebar'} onClick={() => setRightTab('sidebar')}>
+                <Settings className="size-4" /><span>边栏设置</span>
               </TabButton>
             </div>
 
@@ -879,55 +917,15 @@ export default function PersonalSettingsPage() {
                 </div>
               )}
 
-              {rightTab === 'token' && (
+              {rightTab === 'sidebar' && (
                 <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">生成系统访问令牌，用于 API 调用的身份验证。</p>
-                  {token && (
-                    <div className="flex items-center gap-2">
-                      <Input readOnly value={token} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono flex-1" />
-                      <Button variant="outline" size="icon" onClick={copyToken} className="shrink-0 size-10 rounded-xl border border-primary/20 text-primary hover:bg-primary/5">
-                        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                      </Button>
-                    </div>
-                  )}
-                  <Button onClick={generateToken} disabled={tokenLoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 h-10">
-                    {tokenLoading && <Loader2 className="size-4 animate-spin mr-2" />}
-                    {token ? '重新生成令牌' : '生成令牌'}
-                  </Button>
-                </div>
-              )}
-
-              {rightTab === 'account' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-red-100 rounded-xl bg-red-50/30">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-red-50 rounded-lg"><Trash2 className="size-5 text-red-500" /></div>
-                      <div>
-                        <h3 className="text-sm font-medium text-red-600">删除账户</h3>
-                        <p className="text-xs text-muted-foreground">此操作不可逆，所有数据将被永久删除</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" onClick={() => { setShowDeleteDialog(true); setDeleteConfirm(''); }} className="border border-red-200 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm">
-                      删除账户
-                    </Button>
-                  </div>
-                  <div className="flex items-center justify-between p-4 border border-slate-100 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-slate-50 rounded-lg"><LogOut className="size-5 text-muted-foreground" /></div>
-                      <div>
-                        <h3 className="text-sm font-medium">退出登录</h3>
-                        <p className="text-xs text-muted-foreground">退出当前账户</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" onClick={logout} className="border border-slate-200 text-muted-foreground hover:bg-slate-50 rounded-lg font-medium text-sm">
-                      退出
-                    </Button>
-                  </div>
+                  <p className="text-xs text-muted-foreground mb-4">您可以个性化设置侧边栏要显示的功能模块</p>
+                  <p className="text-sm text-muted-foreground">边栏设置功能即将上线，敬请期待。</p>
                 </div>
               )}
             </div>
 
-            {(['notification', 'pricing', 'privacy'] as const).includes(rightTab as 'notification' | 'pricing' | 'privacy') && (
+            {(['notification', 'pricing', 'privacy'] as const).includes(rightTab as 'notification') && (
               <div className="mt-8 flex justify-end">
                 <Button onClick={saveNotifySettings} disabled={notifySaving}
                   className="bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 px-6">
