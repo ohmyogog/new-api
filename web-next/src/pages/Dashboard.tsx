@@ -141,7 +141,8 @@ function Sparkline({ data, color = '#94a3b8' }: { data: number[]; color?: string
   );
 }
 
-// ── Announcement status dot colors ───────────────────
+// ── API info badge fallback colors (matches reference: orange, yellow, red) ──
+const API_BADGE_COLORS = ['#ff6b4a', '#d9be45', '#e78a87', '#b8655e', '#d99745'];
 const STATUS_DOT: Record<string, string> = {
   default: 'bg-slate-400',
   ongoing: 'bg-blue-500',
@@ -208,11 +209,13 @@ export default function Dashboard() {
   }, [status?.uptime_kuma_enabled]);
 
   // ── Derived: chart buckets ──
-  const { chartData, countChartData, modelNames, totalCost, totalCount, consumeTokens, timeBuckets, bucketQuotas, bucketCounts, bucketTokens, modelRanking } = useMemo(() => {
+  const { chartData, countChartData, modelNames, activeQuotaModels, activeCountModels, totalCost, totalCount, consumeTokens, timeBuckets, bucketQuotas, bucketCounts, bucketTokens, modelRanking } = useMemo(() => {
     if (!chartRaw.length) return {
       chartData: [] as Record<string, unknown>[],
       countChartData: [] as Record<string, unknown>[],
       modelNames: [] as string[],
+      activeQuotaModels: [] as string[],
+      activeCountModels: [] as string[],
       totalCost: 0, totalCount: 0, consumeTokens: 0,
       timeBuckets: [] as string[],
       bucketQuotas: [] as number[], bucketCounts: [] as number[], bucketTokens: [] as number[],
@@ -247,6 +250,15 @@ export default function Dashboard() {
     const quotaPerUnit = parseFloat(localStorage.getItem('quota_per_unit') || '500000');
     const sortedBucketKeys = Array.from(new Set([...quotaBuckets.keys(), ...countBuckets.keys()])).sort();
 
+    // Per-model totals for filtering zero-value models
+    const modelQuotaTotals = new Map<string, number>();
+    for (const item of chartRaw) {
+      modelQuotaTotals.set(item.model_name, (modelQuotaTotals.get(item.model_name) || 0) + item.quota);
+    }
+    // Only include models with non-zero quota or count
+    const activeQuotaModels = sortedNames.filter(m => (modelQuotaTotals.get(m) || 0) > 0);
+    const activeCountModels = sortedNames.filter(m => (modelCountTotals.get(m) || 0) > 0);
+
     const qData = sortedBucketKeys.map(time => {
       const vals = quotaBuckets.get(time) || {};
       const entry: Record<string, unknown> = { time };
@@ -272,6 +284,7 @@ export default function Dashboard() {
 
     return {
       chartData: qData, countChartData: cData, modelNames: sortedNames,
+      activeQuotaModels, activeCountModels,
       totalCost: tCost, totalCount: tCount, consumeTokens: tTokens,
       timeBuckets: sortedBucketKeys,
       bucketQuotas: bQuotas, bucketCounts: bCounts, bucketTokens: bTokens,
@@ -480,7 +493,7 @@ export default function Dashboard() {
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
                     <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="square" iconSize={10} />
-                    {modelNames.map(m => <Bar key={m} dataKey={m} stackId="a" fill={modelColorMap[m]} />)}
+                    {activeQuotaModels.map(m => <Bar key={m} dataKey={m} stackId="a" fill={modelColorMap[m]} />)}
                   </BarChart>
                 </ResponsiveContainer>
               ) : <div className="flex items-center justify-center h-[320px] text-sm text-muted-foreground">{loading ? '加载中...' : '暂无数据'}</div>
@@ -495,7 +508,7 @@ export default function Dashboard() {
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
                     <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="line" iconSize={10} />
-                    {modelNames.map(m => <Line key={m} type="monotone" dataKey={m} stroke={modelColorMap[m]} strokeWidth={2} dot={false} />)}
+                    {activeQuotaModels.map(m => <Line key={m} type="monotone" dataKey={m} stroke={modelColorMap[m]} strokeWidth={2} dot={false} />)}
                   </LineChart>
                 </ResponsiveContainer>
               ) : <div className="flex items-center justify-center h-[320px] text-sm text-muted-foreground">{loading ? '加载中...' : '暂无数据'}</div>
@@ -510,7 +523,7 @@ export default function Dashboard() {
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
                     <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="square" iconSize={10} />
-                    {modelNames.map(m => <Bar key={m} dataKey={m} stackId="a" fill={modelColorMap[m]} />)}
+                    {activeCountModels.map(m => <Bar key={m} dataKey={m} stackId="a" fill={modelColorMap[m]} />)}
                   </BarChart>
                 </ResponsiveContainer>
               ) : <div className="flex items-center justify-center h-[320px] text-sm text-muted-foreground">{loading ? '加载中...' : '暂无数据'}</div>
@@ -519,7 +532,7 @@ export default function Dashboard() {
           {chartTab === 'count-rank' && (
               modelRanking.length > 0 ? (
                 <ResponsiveContainer width="100%" height={320}>
-                  <BarChart data={modelRanking} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
+                  <BarChart data={modelRanking.filter(e => e.count > 0)} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
                     <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
                     <YAxis type="category" dataKey="model" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} width={80} />
@@ -543,11 +556,11 @@ export default function Dashboard() {
               <span className="font-semibold text-foreground">API 接入</span>
             </div>
             <div className="space-y-3 flex-1">
-              {apiInfoEntries.map(entry => (
+              {apiInfoEntries.map((entry, idx) => (
                 <div key={entry.id} className="bg-[#fdfaf6] p-3 rounded-xl border border-[#f9f4f0] relative group">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-white" style={{ backgroundColor: entry.color || '#ff6b4a' }}>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-white" style={{ backgroundColor: entry.color || API_BADGE_COLORS[idx % API_BADGE_COLORS.length] }}>
                         {entry.route.slice(0, 2)}
                       </span>
                       <span className="font-medium text-sm">{entry.route}</span>
