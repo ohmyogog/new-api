@@ -177,6 +177,16 @@ export default function PersonalSettingsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
 
+  // ── Email binding ──
+  const [showEmailBind, setShowEmailBind] = useState(false);
+  const [bindEmailAddr, setBindEmailAddr] = useState('');
+  const [emailCode, setEmailCode] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailCountdown, setEmailCountdown] = useState(0);
+
+  // ── Language ──
+  const [language, setLanguage] = useState(() => localStorage.getItem('i18nextLng') || 'zh');
+
   // ── Tab state ──
   const [leftTab, setLeftTab] = useState<'binding' | 'security'>('binding');
   const [rightTab, setRightTab] = useState<'notify' | 'token' | 'danger'>('notify');
@@ -193,6 +203,43 @@ export default function PersonalSettingsPage() {
       }
     } catch { toast.error('获取用户信息失败'); }
   }, []);
+
+  // ── Email countdown ──
+  useEffect(() => {
+    if (emailCountdown <= 0) return;
+    const timer = setTimeout(() => setEmailCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [emailCountdown]);
+
+  // ── Language handler ──
+  const handleLanguageChange = (lang: string) => {
+    setLanguage(lang);
+    localStorage.setItem('i18nextLng', lang);
+    try { (window as any).i18next?.changeLanguage?.(lang); } catch {}
+  };
+
+  // ── Email binding handlers ──
+  const sendEmailCode = async () => {
+    if (!bindEmailAddr) { toast.error('请输入邮箱'); return; }
+    setEmailSending(true);
+    try {
+      const res = await API.get(`/api/verification?email=${bindEmailAddr}`);
+      if (res.data.success) { toast.success('验证码已发送，请检查邮箱'); setEmailCountdown(60); }
+      else toast.error(res.data.message || '发送失败');
+    } catch { toast.error('发送验证码失败'); }
+    finally { setEmailSending(false); }
+  };
+
+  const bindEmailAction = async () => {
+    if (!emailCode) { toast.error('请输入验证码'); return; }
+    setEmailSending(true);
+    try {
+      const res = await API.get(`/api/oauth/email/bind?email=${bindEmailAddr}&code=${emailCode}`);
+      if (res.data.success) { toast.success('邮箱绑定成功'); setShowEmailBind(false); await fetchUser(); }
+      else toast.error(res.data.message || '绑定失败');
+    } catch { toast.error('绑定失败'); }
+    finally { setEmailSending(false); }
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -468,6 +515,14 @@ export default function PersonalSettingsPage() {
                     {profileSaving && <Loader2 className="size-3 animate-spin mr-1" />}保存信息
                   </Button>
                 </div>
+                {/* Email binding */}
+                <BindingItem
+                  icon={<Mail className="size-5 text-muted-foreground" />}
+                  name="邮箱"
+                  status={user?.email ? user.email : '未绑定'}
+                  actionLabel={user?.email ? undefined : '绑定'}
+                  onAction={user?.email ? undefined : () => { setBindEmailAddr(''); setEmailCode(''); setShowEmailBind(true); }}
+                />
                 {/* OAuth bindings grid */}
                 {(['wechat', 'github', 'discord', 'oidc', 'telegram', 'linux_do'] as const).map(slug => {
                   const labels: Record<string, string> = { wechat: '微信', github: 'GitHub', discord: 'Discord', oidc: 'OIDC', telegram: 'Telegram', linux_do: 'LinuxDO' };
@@ -562,6 +617,14 @@ export default function PersonalSettingsPage() {
                   <div className="text-xs text-muted-foreground mt-1 max-w-xs">选择界面语言，设置将同步到所有设备</div>
                 </div>
               </div>
+              <select
+                value={language}
+                onChange={e => handleLanguageChange(e.target.value)}
+                className="text-sm bg-primary/5 border-none text-primary rounded-md py-1.5 pl-3 pr-8 focus:ring-0 cursor-pointer"
+              >
+                <option value="zh">简体中文</option>
+                <option value="en">English</option>
+              </select>
             </div>
           </section>
         </div>
@@ -592,9 +655,15 @@ export default function PersonalSettingsPage() {
             <div className="flex-grow">
               {rightTab === 'notify' && (
                 <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">通知设置功能即将上线，敬请期待。</p>
+                  <p className="text-sm text-muted-foreground">通知功能即将上线，敬请期待。</p>
                   <div className="border border-slate-100 rounded-xl p-4 bg-slate-50/50">
-                    <p className="text-xs text-muted-foreground">当前通知将通过绑定的邮箱发送。如需更改通知方式，请稍后再来。</p>
+                    <div className="flex items-center gap-3">
+                      <Mail className="size-5 text-muted-foreground" />
+                      <div>
+                        <div className="text-sm font-medium">通知邮箱</div>
+                        <div className="text-xs text-muted-foreground">{user?.email || '未绑定邮箱，请先在账号绑定中绑定邮箱'}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -680,6 +749,31 @@ export default function PersonalSettingsPage() {
             <DialogClose render={<Button variant="outline" className="rounded-xl" />}>取消</DialogClose>
             <Button onClick={deleteAccount} disabled={deleting || deleteConfirm !== user?.username} className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium">
               {deleting && <Loader2 className="size-4 animate-spin mr-2" />}永久删除
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Binding Dialog */}
+      <Dialog open={showEmailBind} onOpenChange={setShowEmailBind}>
+        <DialogContent className="sm:max-w-md rounded-3xl p-8">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Mail className="size-5 text-primary" />绑定邮箱地址</DialogTitle>
+            <DialogDescription>输入邮箱地址并验证后完成绑定</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input value={bindEmailAddr} onChange={e => setBindEmailAddr(e.target.value)} placeholder="输入邮箱地址" type="email" className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+              <Button onClick={sendEmailCode} disabled={emailSending || emailCountdown > 0} className="bg-primary hover:bg-primary/90 text-white rounded-lg text-xs px-4 shrink-0">
+                {emailCountdown > 0 ? `重新发送 (${emailCountdown})` : '获取验证码'}
+              </Button>
+            </div>
+            <Input value={emailCode} onChange={e => setEmailCode(e.target.value)} placeholder="输入验证码" className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+          </div>
+          <DialogFooter className="gap-2">
+            <DialogClose><Button variant="outline" className="rounded-lg">取消</Button></DialogClose>
+            <Button onClick={bindEmailAction} disabled={emailSending || !emailCode} className="bg-primary hover:bg-primary/90 text-white rounded-lg font-medium">
+              {emailSending && <Loader2 className="size-4 animate-spin mr-2" />}确认绑定
             </Button>
           </DialogFooter>
         </DialogContent>
