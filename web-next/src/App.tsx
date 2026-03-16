@@ -19,6 +19,14 @@ import SettingsPage from '@/pages/admin/Settings';
 import MidjourneyPage from '@/pages/Midjourney';
 import TaskPage from '@/pages/Task';
 import PricingPage from '@/pages/Pricing';
+import OAuthCallback from '@/pages/OAuthCallback';
+import PasswordResetPage from '@/pages/PasswordReset';
+import PasswordResetConfirmPage from '@/pages/PasswordResetConfirm';
+import AboutPage from '@/pages/About';
+import UserAgreementPage from '@/pages/UserAgreement';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
+import ForbiddenPage from '@/pages/Forbidden';
+import NotFoundPage from '@/pages/NotFound';
 
 // DEV: 取消注释下面这行可自动注入开发用户（跳过登录）
 // if (import.meta.env.DEV && !localStorage.getItem('user')) {
@@ -32,15 +40,15 @@ function App() {
       <Route path="/" element={<Navigate to="/console" replace />} />
       <Route path="/login" element={<AuthRedirect><LoginPage /></AuthRedirect>} />
       <Route path="/register" element={<AuthRedirect><RegisterPage /></AuthRedirect>} />
-      <Route path="/reset" element={<Placeholder />} />
-      <Route path="/user/reset" element={<Placeholder />} />
+      <Route path="/reset" element={<PasswordResetPage />} />
+      <Route path="/user/reset" element={<PasswordResetConfirmPage />} />
       <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/about" element={<Placeholder />} />
-      <Route path="/user-agreement" element={<Placeholder />} />
-      <Route path="/privacy-policy" element={<Placeholder />} />
-      <Route path="/oauth/:provider" element={<Placeholder />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/user-agreement" element={<UserAgreementPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/oauth/:provider" element={<OAuthCallback />} />
       <Route path="/setup" element={<Placeholder />} />
-      <Route path="/forbidden" element={<Placeholder />} />
+      <Route path="/forbidden" element={<ForbiddenPage />} />
 
       {/* Console routes (with sidebar layout) */}
       <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
@@ -66,7 +74,7 @@ function App() {
         <Route path="/console/subscription" element={<SubscriptionPage />} />
       </Route>
 
-      <Route path="*" element={<Placeholder />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

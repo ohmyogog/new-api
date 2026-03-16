@@ -4,7 +4,7 @@ import { Zap, Github, KeyRound, Mail, Eye, EyeOff, Loader2, MessageCircle, Exter
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { API, updateAPI } from '@/api/client';
+import { API } from '@/api/client';
 import toast from 'react-hot-toast';
 
 interface StatusData {
@@ -108,7 +108,6 @@ export default function LoginPage() {
       if (success) {
         if (data?.require_2fa) { setShow2FA(true); setLoading(false); return; }
         localStorage.setItem('user', JSON.stringify(data));
-        updateAPI();
         navigate('/console');
       } else {
         toast.error(message);
@@ -126,7 +125,6 @@ export default function LoginPage() {
       const { success, message, data } = res.data;
       if (success) {
         localStorage.setItem('user', JSON.stringify(data));
-        updateAPI();
         navigate('/console');
       } else { toast.error(message); }
     } catch { toast.error('验证失败，请重试'); }

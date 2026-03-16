@@ -4,7 +4,7 @@ import { Zap, Github, Mail, Eye, EyeOff, Loader2, MessageCircle, ExternalLink } 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { API, updateAPI } from '@/api/client';
+import { API } from '@/api/client';
 import toast from 'react-hot-toast';
 
 interface StatusData {

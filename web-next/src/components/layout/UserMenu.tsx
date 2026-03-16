@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
-import { API, updateAPI } from '@/api/client';
+import { API } from '@/api/client';
 
 export function UserMenu() {
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ export function UserMenu() {
       await API.get('/api/user/logout', { skipErrorHandler: true } as never);
     } catch { /* ignore */ }
     localStorage.removeItem('user');
-    updateAPI();
     navigate('/login');
   };
 
@@ -34,21 +33,19 @@ export function UserMenu() {
   return (
     <div className="p-5">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-3 p-3 rounded-2xl bg-muted border border-border shadow-sm w-full hover:bg-accent transition-all">
-            <Avatar className="size-10 rounded-xl">
-              <AvatarFallback className="rounded-xl bg-secondary text-secondary-foreground font-bold">
-                {user.username?.[0]?.toUpperCase() || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 overflow-hidden text-left">
-              <p className="text-sm font-bold text-foreground truncate">{user.username || 'User'}</p>
-              <p className="text-xs text-muted-foreground truncate">
-                {user.role >= 10 ? '管理员' : '用户'}
-              </p>
-            </div>
-            <ChevronsUpDown className="size-4 text-muted-foreground" />
-          </button>
+        <DropdownMenuTrigger className="flex items-center gap-3 p-3 rounded-2xl bg-muted border border-border shadow-sm w-full hover:bg-accent transition-all cursor-pointer">
+          <Avatar className="size-10 rounded-xl">
+            <AvatarFallback className="rounded-xl bg-primary/10 text-primary font-bold">
+              {user.username?.[0]?.toUpperCase() || 'U'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 overflow-hidden text-left">
+            <p className="text-sm font-bold text-foreground truncate">{user.username || 'User'}</p>
+            <p className="text-xs text-muted-foreground truncate">
+              {user.role >= 10 ? '管理员' : '用户'}
+            </p>
+          </div>
+          <ChevronsUpDown className="size-4 text-muted-foreground" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem onClick={() => navigate('/console/personal')}>
