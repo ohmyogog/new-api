@@ -182,11 +182,6 @@ export default function PersonalSettingsPage() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // ── profile edit ──
-  const [displayName, setDisplayName] = useState('');
-  const [email, setEmail] = useState('');
-  const [profileSaving, setProfileSaving] = useState(false);
-
   // ── password ──
   const [passwords, setPasswords] = useState({ old: '', new_: '', confirm: '' });
   const [pwSaving, setPwSaving] = useState(false);
@@ -274,8 +269,6 @@ export default function PersonalSettingsPage() {
       if (res.data.success) {
         const u = res.data.data;
         setUser(u);
-        setDisplayName(u.display_name || '');
-        setEmail(u.email || '');
         // Parse notification settings
         if (u.setting) {
           try {
@@ -374,21 +367,6 @@ export default function PersonalSettingsPage() {
     };
     init();
   }, [fetchUser]);
-
-  // ── Profile save ──
-  const saveProfile = async () => {
-    setProfileSaving(true);
-    try {
-      const body: Record<string, string> = {};
-      if (displayName !== (user?.display_name || '')) body.display_name = displayName;
-      if (email !== (user?.email || '')) body.email = email;
-      if (Object.keys(body).length === 0) { toast('没有需要保存的更改'); setProfileSaving(false); return; }
-      const res = await API.put('/api/user/self', body);
-      if (res.data.success) { toast.success('个人信息已更新'); await fetchUser(); }
-      else toast.error(res.data.message || '更新失败');
-    } catch { toast.error('更新失败'); }
-    finally { setProfileSaving(false); }
-  };
 
   // ── Password change ──
   const changePassword = async () => {
@@ -637,22 +615,6 @@ export default function PersonalSettingsPage() {
 
             {leftTab === 'binding' ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Email binding with edit */}
-                <div className="border border-slate-100 rounded-xl p-3 bg-white sm:col-span-2">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Mail className="size-5 text-muted-foreground" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium">个人信息</div>
-                    </div>
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-2 mt-2">
-                    <Input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="显示名称" className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                    <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="邮箱地址" className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                  </div>
-                  <Button onClick={saveProfile} disabled={profileSaving} className="mt-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 h-8 text-xs px-4">
-                    {profileSaving && <Loader2 className="size-3 animate-spin mr-1" />}保存信息
-                  </Button>
-                </div>
                 {/* Email binding */}
                 <BindingItem
                   icon={<Mail className="size-5 text-muted-foreground" />}
