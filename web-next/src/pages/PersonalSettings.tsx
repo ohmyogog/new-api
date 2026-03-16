@@ -35,7 +35,46 @@ interface UserInfo {
   telegram_id: string;
   linux_do_id: string;
   setting?: string;
+  sidebar_modules?: string;
 }
+
+interface SidebarModules {
+  [section: string]: { enabled: boolean; [module: string]: boolean };
+}
+
+const DEFAULT_SIDEBAR: SidebarModules = {
+  chat: { enabled: true, playground: true, chat: true },
+  console: { enabled: true, detail: true, token: true, log: true, midjourney: true, task: true },
+  personal: { enabled: true, topup: true, personal: true },
+  admin: { enabled: true, channel: true, models: true, deployment: true, subscription: true, redemption: true, user: true, setting: true },
+};
+
+const SIDEBAR_SECTIONS = [
+  { key: 'chat', title: '聊天区域', desc: '操练场和聊天功能', modules: [
+    { key: 'playground', title: '操练场', desc: 'AI模型测试环境' },
+    { key: 'chat', title: '聊天', desc: '聊天会话管理' },
+  ]},
+  { key: 'console', title: '控制台区域', desc: '数据管理和日志查看', modules: [
+    { key: 'detail', title: '数据看板', desc: '系统数据统计' },
+    { key: 'token', title: '令牌管理', desc: 'API令牌管理' },
+    { key: 'log', title: '使用日志', desc: 'API使用记录' },
+    { key: 'midjourney', title: '绘图日志', desc: '绘图任务记录' },
+    { key: 'task', title: '任务日志', desc: '系统任务记录' },
+  ]},
+  { key: 'personal', title: '个人中心区域', desc: '用户个人功能', modules: [
+    { key: 'topup', title: '钱包管理', desc: '余额充值管理' },
+    { key: 'personal', title: '个人设置', desc: '个人信息设置' },
+  ]},
+  { key: 'admin', title: '管理员区域', desc: '系统管理功能', adminOnly: true, modules: [
+    { key: 'channel', title: '渠道管理', desc: 'API渠道配置' },
+    { key: 'models', title: '模型管理', desc: 'AI模型配置' },
+    { key: 'deployment', title: '模型部署', desc: '模型部署管理' },
+    { key: 'subscription', title: '订阅管理', desc: '订阅套餐管理' },
+    { key: 'redemption', title: '兑换码管理', desc: '兑换码生成管理' },
+    { key: 'user', title: '用户管理', desc: '用户账户管理' },
+    { key: 'setting', title: '系统设置', desc: '系统参数配置' },
+  ]},
+];
 
 interface OAuthBinding {
   provider_id: number;
@@ -220,6 +259,10 @@ export default function PersonalSettingsPage() {
   });
   const [notifySaving, setNotifySaving] = useState(false);
 
+  // ── Sidebar modules ──
+  const [sidebarModules, setSidebarModules] = useState<SidebarModules>(structuredClone(DEFAULT_SIDEBAR));
+  const [sidebarSaving, setSidebarSaving] = useState(false);
+
   // ── Tab state ──
   const [leftTab, setLeftTab] = useState<'binding' | 'security'>('binding');
   const [rightTab, setRightTab] = useState<'notification' | 'pricing' | 'privacy' | 'sidebar'>('notification');
@@ -251,6 +294,13 @@ export default function PersonalSettingsPage() {
               acceptUnsetModelRatioModel: s.accept_unset_model_ratio_model || false,
               recordIpLog: s.record_ip_log || false,
             });
+          } catch { /* ignore */ }
+        }
+        // Load sidebar modules
+        if (u.sidebar_modules) {
+          try {
+            const sm = typeof u.sidebar_modules === 'string' ? JSON.parse(u.sidebar_modules) : u.sidebar_modules;
+            setSidebarModules(sm);
           } catch { /* ignore */ }
         }
       }
@@ -489,6 +539,17 @@ export default function PersonalSettingsPage() {
       else toast.error(res.data.message || '保存失败');
     } catch { toast.error('保存设置失败'); }
     finally { setNotifySaving(false); }
+  };
+
+  // ── Sidebar save ──
+  const saveSidebarSettings = async () => {
+    setSidebarSaving(true);
+    try {
+      const res = await API.put('/api/user/self', { sidebar_modules: JSON.stringify(sidebarModules) });
+      if (res.data.success) toast.success('侧边栏设置保存成功');
+      else toast.error(res.data.message || '保存失败');
+    } catch { toast.error('保存失败'); }
+    finally { setSidebarSaving(false); }
   };
 
   // ── helper: get oauth binding for a provider slug ──
@@ -918,9 +979,49 @@ export default function PersonalSettingsPage() {
               )}
 
               {rightTab === 'sidebar' && (
-                <div className="space-y-4">
-                  <p className="text-xs text-muted-foreground mb-4">您可以个性化设置侧边栏要显示的功能模块</p>
-                  <p className="text-sm text-muted-foreground">边栏设置功能即将上线，敬请期待。</p>
+                <div className="space-y-6">
+                  <p className="text-xs text-muted-foreground">您可以个性化设置侧边栏要显示的功能模块</p>
+                  {SIDEBAR_SECTIONS
+                    .filter(s => !s.adminOnly || (user?.role ?? 0) >= 10)
+                    .map(section => (
+                    <div key={section.key}>
+                      {/* Section header with toggle */}
+                      <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl mb-3">
+                        <div>
+                          <div className="text-sm font-medium">{section.title}</div>
+                          <div className="text-xs text-muted-foreground">{section.desc}</div>
+                        </div>
+                        <button
+                          onClick={() => setSidebarModules(prev => ({ ...prev, [section.key]: { ...prev[section.key], enabled: !prev[section.key]?.enabled } }))}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${sidebarModules[section.key]?.enabled !== false ? 'bg-primary' : 'bg-slate-200'}`}
+                        >
+                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${sidebarModules[section.key]?.enabled !== false ? 'translate-x-6' : 'translate-x-1'}`} />
+                        </button>
+                      </div>
+                      {/* Module grid */}
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                        {section.modules.map(mod => {
+                          const sectionEnabled = sidebarModules[section.key]?.enabled !== false;
+                          const modEnabled = sidebarModules[section.key]?.[mod.key] !== false;
+                          return (
+                            <div key={mod.key} className={`border border-slate-100 rounded-xl p-3 flex items-center justify-between ${!sectionEnabled ? 'opacity-40' : ''}`}>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-sm font-medium truncate">{mod.title}</div>
+                                <div className="text-xs text-muted-foreground truncate">{mod.desc}</div>
+                              </div>
+                              <button
+                                disabled={!sectionEnabled}
+                                onClick={() => setSidebarModules(prev => ({ ...prev, [section.key]: { ...prev[section.key], [mod.key]: !modEnabled } }))}
+                                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ml-2 shrink-0 ${modEnabled && sectionEnabled ? 'bg-primary' : 'bg-slate-200'} ${!sectionEnabled ? 'cursor-not-allowed' : ''}`}
+                              >
+                                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${modEnabled && sectionEnabled ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -930,6 +1031,18 @@ export default function PersonalSettingsPage() {
                 <Button onClick={saveNotifySettings} disabled={notifySaving}
                   className="bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 px-6">
                   {notifySaving && <Loader2 className="size-4 animate-spin mr-2" />}保存设置
+                </Button>
+              </div>
+            )}
+
+            {rightTab === 'sidebar' && (
+              <div className="mt-8 flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setSidebarModules(structuredClone(DEFAULT_SIDEBAR))} className="rounded-lg">
+                  重置为默认
+                </Button>
+                <Button onClick={saveSidebarSettings} disabled={sidebarSaving}
+                  className="bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 px-6">
+                  {sidebarSaving && <Loader2 className="size-4 animate-spin mr-2" />}保存设置
                 </Button>
               </div>
             )}
