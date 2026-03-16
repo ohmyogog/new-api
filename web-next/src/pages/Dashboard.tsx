@@ -141,6 +141,30 @@ function Sparkline({ data, color = '#94a3b8' }: { data: number[]; color?: string
   );
 }
 
+// ── Custom Tooltip: sorted by value descending ──
+function SortedTooltip({ active, payload, label, colorMap }: {
+  active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string;
+  colorMap: Record<string, string>;
+}) {
+  if (!active || !payload?.length) return null;
+  const sorted = [...payload].filter(p => p.value > 0).sort((a, b) => b.value - a.value);
+  if (!sorted.length) return null;
+  return (
+    <div className="bg-white border border-slate-100 rounded-xl shadow-lg p-3 text-xs max-h-64 overflow-y-auto" style={{ minWidth: 160 }}>
+      <p className="font-semibold text-slate-600 mb-2">{label}</p>
+      {sorted.map(item => (
+        <div key={item.name} className="flex items-center justify-between gap-4 py-0.5">
+          <span className="flex items-center gap-1.5 truncate">
+            <span className="size-2 rounded-sm flex-shrink-0" style={{ backgroundColor: colorMap[item.name] || item.color }} />
+            <span className="truncate max-w-[140px]">{item.name}</span>
+          </span>
+          <span className="font-mono text-slate-500 flex-shrink-0">{typeof item.value === 'number' ? item.value.toFixed(4) : item.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ── API info badge fallback colors (matches reference: orange, yellow, red) ──
 const API_BADGE_COLORS = ['#ff6b4a', '#d9be45', '#e78a87', '#b8655e', '#d99745'];
 const STATUS_DOT: Record<string, string> = {
@@ -254,24 +278,42 @@ export default function Dashboard() {
     for (const item of chartRaw) {
       modelQuotaTotals.set(item.model_name, (modelQuotaTotals.get(item.model_name) || 0) + item.quota);
     }
-    // Only include models whose converted quota/count is visually meaningful
-    const activeQuotaModels = sortedNames.filter(m => {
-      const raw = modelQuotaTotals.get(m) || 0;
-      return parseFloat((raw / quotaPerUnit).toFixed(4)) > 0;
-    });
-    const activeCountModels = sortedNames.filter(m => (modelCountTotals.get(m) || 0) > 0);
+
+    // Sort by total quota/count desc, take top 10, aggregate rest as "其他"
+    const TOP_N = 10;
+    const OTHER_KEY = '其他';
+
+    const quotaSorted = [...sortedNames]
+      .filter(m => parseFloat(((modelQuotaTotals.get(m) || 0) / quotaPerUnit).toFixed(4)) > 0)
+      .sort((a, b) => (modelQuotaTotals.get(b) || 0) - (modelQuotaTotals.get(a) || 0));
+    const topQuotaModels = quotaSorted.slice(0, TOP_N);
+    const otherQuotaModels = quotaSorted.slice(TOP_N);
+    const activeQuotaModels = otherQuotaModels.length > 0 ? [...topQuotaModels, OTHER_KEY] : topQuotaModels;
+
+    const countSorted = [...sortedNames]
+      .filter(m => (modelCountTotals.get(m) || 0) > 0)
+      .sort((a, b) => (modelCountTotals.get(b) || 0) - (modelCountTotals.get(a) || 0));
+    const topCountModels = countSorted.slice(0, TOP_N);
+    const otherCountModels = countSorted.slice(TOP_N);
+    const activeCountModels = otherCountModels.length > 0 ? [...topCountModels, OTHER_KEY] : topCountModels;
 
     const qData = sortedBucketKeys.map(time => {
       const vals = quotaBuckets.get(time) || {};
       const entry: Record<string, unknown> = { time };
-      for (const m of sortedNames) entry[m] = vals[m] ? parseFloat((vals[m] / quotaPerUnit).toFixed(4)) : 0;
+      for (const m of topQuotaModels) entry[m] = vals[m] ? parseFloat((vals[m] / quotaPerUnit).toFixed(4)) : 0;
+      if (otherQuotaModels.length > 0) {
+        entry[OTHER_KEY] = otherQuotaModels.reduce((sum, m) => sum + (vals[m] ? parseFloat((vals[m] / quotaPerUnit).toFixed(4)) : 0), 0);
+      }
       return entry;
     });
 
     const cData = sortedBucketKeys.map(time => {
       const vals = countBuckets.get(time) || {};
       const entry: Record<string, unknown> = { time };
-      for (const m of sortedNames) entry[m] = vals[m] || 0;
+      for (const m of topCountModels) entry[m] = vals[m] || 0;
+      if (otherCountModels.length > 0) {
+        entry[OTHER_KEY] = otherCountModels.reduce((sum, m) => sum + (vals[m] || 0), 0);
+      }
       return entry;
     });
 
@@ -297,6 +339,7 @@ export default function Dashboard() {
   const modelColorMap = useMemo(() => {
     const map: Record<string, string> = {};
     modelNames.forEach((m, i) => { map[m] = modelColor(m, i); });
+    map['其他'] = '#94a3b8'; // slate gray for "Others"
     return map;
   }, [modelNames]);
 
@@ -493,7 +536,7 @@ export default function Dashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                     <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} interval="preserveStartEnd" />
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                    <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
+                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} />} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="square" iconSize={10} />
                     {activeQuotaModels.map(m => <Bar key={m} dataKey={m} stackId="a" fill={modelColorMap[m]} />)}
                   </BarChart>
@@ -508,7 +551,7 @@ export default function Dashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                     <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} interval="preserveStartEnd" />
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                    <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} />
+                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} />} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="line" iconSize={10} />
                     {activeQuotaModels.map(m => <Line key={m} type="monotone" dataKey={m} stroke={modelColorMap[m]} strokeWidth={2} dot={false} />)}
                   </LineChart>
@@ -523,7 +566,7 @@ export default function Dashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                     <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} interval="preserveStartEnd" />
                     <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                    <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
+                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} />} cursor={{ fill: 'rgba(238,90,62,0.04)' }} />
                     <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} iconType="square" iconSize={10} />
                     {activeCountModels.map(m => <Bar key={m} dataKey={m} stackId="a" fill={modelColorMap[m]} />)}
                   </BarChart>
@@ -534,11 +577,11 @@ export default function Dashboard() {
           {chartTab === 'count-rank' && (
               modelRanking.length > 0 ? (
                 <ResponsiveContainer width="100%" height={320}>
-                  <BarChart data={modelRanking.filter(e => e.count > 0)} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
+                  <BarChart data={modelRanking.filter(e => e.count > 0).slice(0, 10)} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
                     <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
                     <YAxis type="category" dataKey="model" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} width={80} />
-                    <Tooltip contentStyle={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: '1rem', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.06)', fontSize: 12 }} />
+                    <Tooltip content={<SortedTooltip colorMap={modelColorMap} />} />
                     <Bar dataKey="count" radius={[0, 6, 6, 0]}>
                       {modelRanking.map((entry, i) => <Cell key={entry.model} fill={PALETTE[i % PALETTE.length]} />)}
                     </Bar>
