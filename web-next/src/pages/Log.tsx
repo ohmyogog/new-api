@@ -130,7 +130,7 @@ export default function LogPage() {
   const totalPages = Math.max(1, Math.ceil(total / perPage));
 
   // Debounce filter inputs (500ms)
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => {
     debounceRef.current = setTimeout(() => {
       setDebouncedSearch(search);

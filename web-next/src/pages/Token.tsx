@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Key, Plus, Search, Copy, Check, Pencil, Trash2, Eye, EyeOff,
-  ChevronLeft, ChevronRight, ChevronDown, Loader2, AlertTriangle, ExternalLink,
-  Shield, Globe, Zap,
+  Key, Plus, Search, Copy, Check, Trash2, Eye, EyeOff,
+  ChevronLeft, ChevronRight, ChevronDown, Loader2, AlertTriangle,
+  Globe, Zap,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -133,7 +133,7 @@ export default function TokenPage() {
   // ── Fetch token full key (with dedup) ──
   const fetchTokenKey = async (tokenId: number): Promise<string> => {
     if (resolvedKeys[tokenId]) return resolvedKeys[tokenId];
-    if (keyRequests.current[tokenId]) return keyRequests.current[tokenId];
+    if (tokenId in keyRequests.current) return await keyRequests.current[tokenId];
     const req = (async () => {
       setLoadingKeys(prev => ({ ...prev, [tokenId]: true }));
       try {
@@ -350,7 +350,7 @@ export default function TokenPage() {
             <tbody className="divide-y divide-slate-50">
               {tokens.map(t => <TokenRow key={t.id} t={t} selected={selectedIds.has(t.id)} onSelect={() => toggleSelect(t.id)}
                 visibleKeys={visibleKeys} resolvedKeys={resolvedKeys} loadingKeys={loadingKeys}
-                copiedId={copiedId} chatsArray={chatsArray}
+                copiedId={copiedId}
                 onToggleKey={() => toggleKeyVisibility(t)} onCopyKey={() => copyTokenKey(t)}
                 onToggle={() => handleToggle(t)} onEdit={() => openEdit(t)}
                 onDelete={() => setDeleteTarget({ type: 'single', id: t.id })}
@@ -382,7 +382,7 @@ export default function TokenPage() {
             {deleteTarget?.type === 'batch' ? `确定要删除选中的 ${selectedIds.size} 个令牌吗？` : '删除后无法恢复，确定要删除这个令牌吗？'}
           </p>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleDelete} disabled={deleting} className="bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold">
               {deleting && <Loader2 className="size-4 mr-1.5 animate-spin" />}删除
             </Button>
@@ -394,12 +394,12 @@ export default function TokenPage() {
 }
 
 // ── Token Row ──
-function TokenRow({ t, selected, onSelect, visibleKeys, resolvedKeys, loadingKeys, copiedId, chatsArray,
+function TokenRow({ t, selected, onSelect, visibleKeys, resolvedKeys, loadingKeys, copiedId,
   onToggleKey, onCopyKey, onToggle, onEdit, onDelete, onChat,
 }: {
   t: Token; selected: boolean; onSelect: () => void;
   visibleKeys: Record<number, boolean>; resolvedKeys: Record<number, string>; loadingKeys: Record<number, boolean>;
-  copiedId: number | null; chatsArray: unknown[];
+  copiedId: number | null;
   onToggleKey: () => void; onCopyKey: () => void; onToggle: () => void; onEdit: () => void; onDelete: () => void; onChat: () => void;
 }) {
   const revealed = visibleKeys[t.id];
@@ -602,7 +602,7 @@ function TokenFormDialog({ open, onOpenChange, editId, form, setForm, submitting
           )}
         </div>
         <DialogFooter>
-          <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+          <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
           <Button onClick={onSubmit} disabled={submitting} className="bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20">
             {submitting && <Loader2 className="size-4 mr-1.5 animate-spin" />}
             {editId ? '保存' : '创建'}

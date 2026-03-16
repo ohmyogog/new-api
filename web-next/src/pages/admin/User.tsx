@@ -415,7 +415,7 @@ export default function UserPage() {
                     <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{fmtTime(u.created_time)}</td>
                     <td className="px-6 py-4">
                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger>
                           <Button variant="ghost" size="icon" className="size-8">
                             <MoreHorizontal className="size-4" />
                           </Button>
@@ -590,7 +590,7 @@ export default function UserPage() {
             )}
           </div>
           <DialogFooter>
-            <DialogClose asChild>
+            <DialogClose>
               <Button variant="outline" className="rounded-2xl">
                 取消
               </Button>
@@ -615,7 +615,7 @@ export default function UserPage() {
             <DialogDescription>{confirmAction.label}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <DialogClose asChild>
+            <DialogClose>
               <Button variant="outline" className="rounded-2xl">
                 取消
               </Button>

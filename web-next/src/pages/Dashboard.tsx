@@ -3,7 +3,7 @@ import {
   Wallet, Zap, RefreshCw,
   ChevronDown, ChevronRight, BarChart3, Megaphone,
   HelpCircle, Gauge, Copy,
-  Coins, Globe, Shield, Link,
+  Coins, Shield, Link,
 } from 'lucide-react';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
@@ -172,7 +172,6 @@ export default function Dashboard() {
   const [uptimeGroups, setUptimeGroups] = useState<UptimeGroup[]>([]);
   const [uptimeTab, setUptimeTab] = useState(0);
 
-  const isAdmin = (user?.role ?? 0) >= 10;
   const displayName = user?.display_name || user?.username || '...';
 
   // ── Fetch data ──

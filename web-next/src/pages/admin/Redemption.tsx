@@ -253,7 +253,7 @@ export default function RedemptionPage() {
             )}
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold">
               {saving ? '处理中...' : editItem ? '保存' : '生成'}
             </Button>
@@ -267,7 +267,7 @@ export default function RedemptionPage() {
           <DialogHeader><DialogTitle>确认删除</DialogTitle></DialogHeader>
           <p className="text-sm text-muted-foreground py-4">确定要删除兑换码 <span className="font-mono font-medium text-foreground">{deleteTarget?.key}</span> 吗？此操作不可撤销。</p>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold">删除</Button>
           </DialogFooter>
         </DialogContent>

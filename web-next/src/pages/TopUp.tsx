@@ -54,7 +54,7 @@ export default function TopUpPage() {
   const [code, setCode] = useState('');
   const [redeeming, setRedeeming] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
-  const [topupInfo, setTopupInfo] = useState<TopupInfo | null>(null);
+  const [, setTopupInfo] = useState<TopupInfo | null>(null);
   const [history, setHistory] = useState<TopupRecord[]>([]);
   const [historyTotal, setHistoryTotal] = useState(0);
   const [historyPage, setHistoryPage] = useState(1);

@@ -157,7 +157,7 @@ export default function ChannelPage() {
   const [batchDeleteOpen, setBatchDeleteOpen] = useState(false);
 
   // Debounce ref for search
-  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // ── API calls ──
   const fetchChannels = useCallback(async (p: number, keyword?: string) => {
@@ -607,7 +607,7 @@ export default function ChannelPage() {
             </div>
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20">
               {saving && <Loader2 className="size-4 mr-1.5 animate-spin" />}
               {editId ? '保存' : '添加'}
@@ -626,7 +626,7 @@ export default function ChannelPage() {
             确定要删除渠道 <span className="font-medium text-foreground">{deleteTarget?.name}</span> (ID: {deleteTarget?.id}) 吗？此操作不可撤销。
           </p>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleDelete} disabled={deleting} className="bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold">
               {deleting && <Loader2 className="size-4 mr-1.5 animate-spin" />}删除
             </Button>
@@ -644,7 +644,7 @@ export default function ChannelPage() {
             确定要删除选中的 <span className="font-medium text-foreground">{selected.size}</span> 个渠道吗？此操作不可撤销。
           </p>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleBatchDelete} disabled={batchDeleting} className="bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold">
               {batchDeleting && <Loader2 className="size-4 mr-1.5 animate-spin" />}确认删除
             </Button>

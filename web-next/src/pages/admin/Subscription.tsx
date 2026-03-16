@@ -191,7 +191,7 @@ export default function SubscriptionPage() {
             </div>
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold">
               {saving ? <Loader2 className="size-4 animate-spin mr-1.5" /> : null}保存
             </Button>

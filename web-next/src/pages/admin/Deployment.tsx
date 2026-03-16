@@ -179,7 +179,7 @@ export default function DeploymentPage() {
         <DialogContent className="rounded-3xl"><DialogHeader><DialogTitle>确认删除</DialogTitle></DialogHeader>
           <p className="py-4 text-sm text-slate-600">确定要删除部署 <span className="font-bold">{deleteTarget?.deployment_name}</span> 吗？此操作不可撤销。</p>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
+            <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
             <Button onClick={handleDelete} disabled={deleting} className="bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold">
               {deleting ? <Loader2 className="size-4 animate-spin mr-1.5" /> : null}删除
             </Button>

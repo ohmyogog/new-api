@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Zap, KeyRound, Loader2, Eye, EyeOff, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,6 @@ import { API } from '@/api/client';
 import toast from 'react-hot-toast';
 
 export default function PasswordResetConfirmPage() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const email = searchParams.get('email') ?? '';

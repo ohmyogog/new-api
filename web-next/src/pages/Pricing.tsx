@@ -39,7 +39,6 @@ interface Vendor {
 }
 
 type ViewMode = 'grid' | 'table' | 'list';
-type ModelType = 'chat' | 'embedding' | 'image' | 'audio' | 'moderation';
 
 // ── Vendor colors ──
 const vendorColors: Record<string, { bg: string; text: string; dot: string }> = {
@@ -88,7 +87,6 @@ export default function PricingPage() {
   const [selectedQuota, setSelectedQuota] = useState<string>('');
   const [showFilters, setShowFilters] = useState(true);
   const [models, setModels] = useState<ApiModel[]>([]);
-  const [vendorsMap, setVendorsMap] = useState<Record<number, Vendor>>({});
   const [loading, setLoading] = useState(true);
 
   const toggle = <T,>(arr: T[], val: T) => arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val];
@@ -101,7 +99,7 @@ export default function PricingPage() {
       if (success) {
         const vMap: Record<number, Vendor> = {};
         if (Array.isArray(vendors)) vendors.forEach((v: Vendor) => { vMap[v.id] = v; });
-        setVendorsMap(vMap);
+        // vMap used for enrichment below
 
         const enriched = (data || []).map((m: ApiModel) => {
           if (m.vendor_id && vMap[m.vendor_id]) {
