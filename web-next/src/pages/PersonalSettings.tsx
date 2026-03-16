@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import {
   Settings, Lock, Shield, Key, Copy, Check,
   Fingerprint, Trash2, Loader2, Link2, LogOut,
-  Mail, Globe, Bell, User, Languages,
+  Mail, Globe, Bell, User, Languages, DollarSign,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -34,6 +34,7 @@ interface UserInfo {
   wechat_id: string;
   telegram_id: string;
   linux_do_id: string;
+  setting?: string;
 }
 
 interface OAuthBinding {
@@ -187,9 +188,41 @@ export default function PersonalSettingsPage() {
   // ── Language ──
   const [language, setLanguage] = useState(() => localStorage.getItem('i18nextLng') || 'zh');
 
+  // ── Notification settings ──
+  interface NotifySettings {
+    warningType: string;
+    warningThreshold: number;
+    webhookUrl: string;
+    webhookSecret: string;
+    notificationEmail: string;
+    barkUrl: string;
+    gotifyUrl: string;
+    gotifyToken: string;
+    gotifyPriority: number;
+    upstreamModelUpdateNotifyEnabled: boolean;
+    acceptUnsetModelRatioModel: boolean;
+    recordIpLog: boolean;
+  }
+
+  const [notifySettings, setNotifySettings] = useState<NotifySettings>({
+    warningType: 'email',
+    warningThreshold: 500000,
+    webhookUrl: '',
+    webhookSecret: '',
+    notificationEmail: '',
+    barkUrl: '',
+    gotifyUrl: '',
+    gotifyToken: '',
+    gotifyPriority: 5,
+    upstreamModelUpdateNotifyEnabled: false,
+    acceptUnsetModelRatioModel: false,
+    recordIpLog: false,
+  });
+  const [notifySaving, setNotifySaving] = useState(false);
+
   // ── Tab state ──
   const [leftTab, setLeftTab] = useState<'binding' | 'security'>('binding');
-  const [rightTab, setRightTab] = useState<'notify' | 'token' | 'danger'>('notify');
+  const [rightTab, setRightTab] = useState<'notification' | 'pricing' | 'privacy' | 'token' | 'account'>('notification');
 
   // ── Fetch all data on mount ──
   const fetchUser = useCallback(async () => {
@@ -200,6 +233,26 @@ export default function PersonalSettingsPage() {
         setUser(u);
         setDisplayName(u.display_name || '');
         setEmail(u.email || '');
+        // Parse notification settings
+        if (u.setting) {
+          try {
+            const s = typeof u.setting === 'string' ? JSON.parse(u.setting) : u.setting;
+            setNotifySettings({
+              warningType: s.notify_type || 'email',
+              warningThreshold: s.quota_warning_threshold || 500000,
+              webhookUrl: s.webhook_url || '',
+              webhookSecret: s.webhook_secret || '',
+              notificationEmail: s.notification_email || '',
+              barkUrl: s.bark_url || '',
+              gotifyUrl: s.gotify_url || '',
+              gotifyToken: s.gotify_token || '',
+              gotifyPriority: s.gotify_priority ?? 5,
+              upstreamModelUpdateNotifyEnabled: s.upstream_model_update_notify_enabled === true,
+              acceptUnsetModelRatioModel: s.accept_unset_model_ratio_model || false,
+              recordIpLog: s.record_ip_log || false,
+            });
+          } catch { /* ignore */ }
+        }
       }
     } catch { toast.error('获取用户信息失败'); }
   }, []);
@@ -412,6 +465,30 @@ export default function PersonalSettingsPage() {
     try { await API.get('/api/user/logout'); } catch { /* ignore */ }
     localStorage.removeItem('user');
     navigate('/login');
+  };
+
+  // ── Save notification / pricing / privacy settings ──
+  const saveNotifySettings = async () => {
+    setNotifySaving(true);
+    try {
+      const res = await API.put('/api/user/setting', {
+        notify_type: notifySettings.warningType,
+        quota_warning_threshold: parseFloat(String(notifySettings.warningThreshold)),
+        webhook_url: notifySettings.webhookUrl,
+        webhook_secret: notifySettings.webhookSecret,
+        notification_email: notifySettings.notificationEmail,
+        bark_url: notifySettings.barkUrl,
+        gotify_url: notifySettings.gotifyUrl,
+        gotify_token: notifySettings.gotifyToken,
+        gotify_priority: parseInt(String(notifySettings.gotifyPriority)) || 5,
+        upstream_model_update_notify_enabled: notifySettings.upstreamModelUpdateNotifyEnabled,
+        accept_unset_model_ratio_model: notifySettings.acceptUnsetModelRatioModel,
+        record_ip_log: notifySettings.recordIpLog,
+      });
+      if (res.data.success) { toast.success('设置保存成功'); await fetchUser(); }
+      else toast.error(res.data.message || '保存失败');
+    } catch { toast.error('保存设置失败'); }
+    finally { setNotifySaving(false); }
   };
 
   // ── helper: get oauth binding for a provider slug ──
@@ -641,29 +718,163 @@ export default function PersonalSettingsPage() {
             </div>
             {/* Tabs */}
             <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-slate-100 mb-6 text-sm">
-              <TabButton active={rightTab === 'notify'} onClick={() => setRightTab('notify')}>
-                <Bell className="size-4" /><span>通知设置</span>
+              <TabButton active={rightTab === 'notification'} onClick={() => setRightTab('notification')}>
+                <Bell className="size-4" /><span>通知配置</span>
+              </TabButton>
+              <TabButton active={rightTab === 'pricing'} onClick={() => setRightTab('pricing')}>
+                <DollarSign className="size-4" /><span>价格设置</span>
+              </TabButton>
+              <TabButton active={rightTab === 'privacy'} onClick={() => setRightTab('privacy')}>
+                <Shield className="size-4" /><span>隐私设置</span>
               </TabButton>
               <TabButton active={rightTab === 'token'} onClick={() => setRightTab('token')}>
                 <Key className="size-4" /><span>令牌管理</span>
               </TabButton>
-              <TabButton active={rightTab === 'danger'} onClick={() => setRightTab('danger')}>
-                <Shield className="size-4" /><span>账户安全</span>
+              <TabButton active={rightTab === 'account'} onClick={() => setRightTab('account')}>
+                <Trash2 className="size-4" /><span>账户安全</span>
               </TabButton>
             </div>
 
             <div className="flex-grow">
-              {rightTab === 'notify' && (
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">通知功能即将上线，敬请期待。</p>
-                  <div className="border border-slate-100 rounded-xl p-4 bg-slate-50/50">
-                    <div className="flex items-center gap-3">
-                      <Mail className="size-5 text-muted-foreground" />
-                      <div>
-                        <div className="text-sm font-medium">通知邮箱</div>
-                        <div className="text-xs text-muted-foreground">{user?.email || '未绑定邮箱，请先在账号绑定中绑定邮箱'}</div>
-                      </div>
+              {rightTab === 'notification' && (
+                <div className="space-y-6">
+                  {/* 通知方式 */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">通知方式 <span className="text-red-500">*</span></label>
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      {([['email', '邮件通知'], ['webhook', 'Webhook通知'], ['bark', 'Bark通知'], ['gotify', 'Gotify通知']] as const).map(([val, label]) => (
+                        <label key={val} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="warningType" value={val} checked={notifySettings.warningType === val}
+                            onChange={() => setNotifySettings(p => ({ ...p, warningType: val }))}
+                            className="text-primary focus:ring-primary" />
+                          <span>{label}</span>
+                        </label>
+                      ))}
                     </div>
+                  </div>
+                  {/* 额度预警阈值 */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      额度预警阈值 等价金额：{renderQuota(notifySettings.warningThreshold)} <span className="text-red-500">*</span>
+                    </label>
+                    <Input type="number" value={String(notifySettings.warningThreshold)}
+                      onChange={e => setNotifySettings(p => ({ ...p, warningThreshold: Number(e.target.value) || 0 }))}
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm max-w-xs" />
+                    <p className="text-xs text-muted-foreground mt-2">当钱包或订阅剩余额度低于此数值时，系统将通过选择的方式发送通知</p>
+                  </div>
+                  {/* Conditional fields */}
+                  {notifySettings.warningType === 'email' && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2">通知邮箱</label>
+                      <Input value={notifySettings.notificationEmail}
+                        onChange={e => setNotifySettings(p => ({ ...p, notificationEmail: e.target.value }))}
+                        placeholder="留空则使用账号绑定的邮箱"
+                        className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                      <p className="text-xs text-muted-foreground mt-2">设置用于接收额度预警的邮箱地址，不填则使用账号绑定的邮箱</p>
+                    </div>
+                  )}
+                  {notifySettings.warningType === 'webhook' && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Webhook地址</label>
+                        <Input value={notifySettings.webhookUrl}
+                          onChange={e => setNotifySettings(p => ({ ...p, webhookUrl: e.target.value }))}
+                          placeholder="https://example.com/webhook"
+                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                        <p className="text-xs text-muted-foreground mt-2">只支持HTTPS，系统将以POST方式发送通知</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">接口凭证</label>
+                        <Input value={notifySettings.webhookSecret}
+                          onChange={e => setNotifySettings(p => ({ ...p, webhookSecret: e.target.value }))}
+                          placeholder="请输入密钥"
+                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                        <p className="text-xs text-muted-foreground mt-2">密钥将以Bearer方式添加到请求头中</p>
+                      </div>
+                    </>
+                  )}
+                  {notifySettings.warningType === 'bark' && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Bark推送URL</label>
+                      <Input value={notifySettings.barkUrl}
+                        onChange={e => setNotifySettings(p => ({ ...p, barkUrl: e.target.value }))}
+                        placeholder="https://api.day.app/yourkey/{{title}}/{{content}}"
+                        className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                      <p className="text-xs text-muted-foreground mt-2">支持HTTP和HTTPS，模板变量: {'{{title}}'} (通知标题), {'{{content}}'} (通知内容)</p>
+                    </div>
+                  )}
+                  {notifySettings.warningType === 'gotify' && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Gotify服务器地址</label>
+                        <Input value={notifySettings.gotifyUrl}
+                          onChange={e => setNotifySettings(p => ({ ...p, gotifyUrl: e.target.value }))}
+                          placeholder="https://gotify.example.com"
+                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Gotify应用令牌</label>
+                        <Input value={notifySettings.gotifyToken}
+                          onChange={e => setNotifySettings(p => ({ ...p, gotifyToken: e.target.value }))}
+                          placeholder="请输入Gotify应用令牌"
+                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">消息优先级</label>
+                        <select value={notifySettings.gotifyPriority}
+                          onChange={e => setNotifySettings(p => ({ ...p, gotifyPriority: Number(e.target.value) }))}
+                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                          <option value={0}>0 - 最低</option>
+                          <option value={2}>2 - 低</option>
+                          <option value={5}>5 - 正常（默认）</option>
+                          <option value={8}>8 - 高</option>
+                          <option value={10}>10 - 最高</option>
+                        </select>
+                      </div>
+                    </>
+                  )}
+                  {/* Admin-only: upstream model update notify */}
+                  {(user?.role ?? 0) >= 10 && (
+                    <div className="flex items-center justify-between border border-slate-100 rounded-xl p-4">
+                      <div>
+                        <div className="text-sm font-medium">接收上游模型更新通知</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">仅管理员可用。开启后，当系统检测到上游模型变更时发送通知</div>
+                      </div>
+                      <button onClick={() => setNotifySettings(p => ({ ...p, upstreamModelUpdateNotifyEnabled: !p.upstreamModelUpdateNotifyEnabled }))}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifySettings.upstreamModelUpdateNotifyEnabled ? 'bg-primary' : 'bg-slate-200'}`}>
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notifySettings.upstreamModelUpdateNotifyEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {rightTab === 'pricing' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border border-slate-100 rounded-xl p-4">
+                    <div>
+                      <div className="text-sm font-medium">接受未设置价格模型</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">当模型没有设置价格时仍接受调用，仅当您信任该网站时使用</div>
+                    </div>
+                    <button onClick={() => setNotifySettings(p => ({ ...p, acceptUnsetModelRatioModel: !p.acceptUnsetModelRatioModel }))}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifySettings.acceptUnsetModelRatioModel ? 'bg-primary' : 'bg-slate-200'}`}>
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notifySettings.acceptUnsetModelRatioModel ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {rightTab === 'privacy' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border border-slate-100 rounded-xl p-4">
+                    <div>
+                      <div className="text-sm font-medium">记录请求与错误日志IP</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">开启后，仅"消费"和"错误"日志将记录您的客户端IP地址</div>
+                    </div>
+                    <button onClick={() => setNotifySettings(p => ({ ...p, recordIpLog: !p.recordIpLog }))}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifySettings.recordIpLog ? 'bg-primary' : 'bg-slate-200'}`}>
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notifySettings.recordIpLog ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
                   </div>
                 </div>
               )}
@@ -686,7 +897,7 @@ export default function PersonalSettingsPage() {
                 </div>
               )}
 
-              {rightTab === 'danger' && (
+              {rightTab === 'account' && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 border border-red-100 rounded-xl bg-red-50/30">
                     <div className="flex items-center gap-3">
@@ -715,6 +926,15 @@ export default function PersonalSettingsPage() {
                 </div>
               )}
             </div>
+
+            {(['notification', 'pricing', 'privacy'] as const).includes(rightTab as 'notification' | 'pricing' | 'privacy') && (
+              <div className="mt-8 flex justify-end">
+                <Button onClick={saveNotifySettings} disabled={notifySaving}
+                  className="bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 px-6">
+                  {notifySaving && <Loader2 className="size-4 animate-spin mr-2" />}保存设置
+                </Button>
+              </div>
+            )}
           </section>
         </div>
       </main>
