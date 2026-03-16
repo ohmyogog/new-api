@@ -254,8 +254,11 @@ export default function Dashboard() {
     for (const item of chartRaw) {
       modelQuotaTotals.set(item.model_name, (modelQuotaTotals.get(item.model_name) || 0) + item.quota);
     }
-    // Only include models with non-zero quota or count
-    const activeQuotaModels = sortedNames.filter(m => (modelQuotaTotals.get(m) || 0) > 0);
+    // Only include models whose converted quota/count is visually meaningful
+    const activeQuotaModels = sortedNames.filter(m => {
+      const raw = modelQuotaTotals.get(m) || 0;
+      return parseFloat((raw / quotaPerUnit).toFixed(4)) > 0;
+    });
     const activeCountModels = sortedNames.filter(m => (modelCountTotals.get(m) || 0) > 0);
 
     const qData = sortedBucketKeys.map(time => {
@@ -559,7 +562,7 @@ export default function Dashboard() {
                 <div key={entry.id} className="bg-[#fdfaf6] p-3 rounded-xl border border-[#f9f4f0] relative group">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-white" style={{ backgroundColor: entry.color || API_BADGE_COLORS[idx % API_BADGE_COLORS.length] }}>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-white" style={{ backgroundColor: API_BADGE_COLORS[idx % API_BADGE_COLORS.length] }}>
                         {entry.route.slice(0, 2)}
                       </span>
                       <span className="font-medium text-sm">{entry.route}</span>
