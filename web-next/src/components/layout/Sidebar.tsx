@@ -76,15 +76,15 @@ export function Sidebar() {
   const isAdmin = user && typeof user.role === 'number' && user.role >= 10;
 
   return (
-    <aside className="w-72 border-r border-border flex flex-col fixed h-full bg-sidebar backdrop-blur-xl z-20">
-      <div className="p-8 flex items-center gap-3">
+    <aside className="w-72 border-r border-border flex flex-col fixed h-full bg-sidebar backdrop-blur-xl z-20 overflow-hidden">
+      <div className="p-8 flex items-center gap-3 flex-shrink-0">
         <div className="size-9 bg-primary rounded-xl flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
           <Zap className="size-5" />
         </div>
         <h1 className="text-xl font-bold tracking-tight text-foreground">Ogog AI</h1>
       </div>
 
-      <ScrollArea className="flex-1 px-5 py-2">
+      <ScrollArea className="flex-1 min-h-0 px-5 py-2">
         <nav className="space-y-6">
           {navGroups.map((group) => {
             const visibleItems = group.items.filter(
@@ -123,8 +123,10 @@ export function Sidebar() {
         </nav>
       </ScrollArea>
 
-      <Separator />
-      <UserMenu />
+      <div className="flex-shrink-0">
+        <Separator />
+        <UserMenu />
+      </div>
     </aside>
   );
 }
