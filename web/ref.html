@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ogog AI | Approachable Component Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee5a3e", // Slightly desaturated orange-red accent
+                        "background-warm": "#fcf9f5", // Warmer, inviting off-white
+                        "surface": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.625rem",
+                        "lg": "0.875rem",
+                        "xl": "1.25rem",
+                        "2xl": "1.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: theme('colors.background-warm');
+            }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(238, 90, 62, 0.1);
+            border-radius: 10px;
+        }
+        .soft-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -2px rgba(0, 0, 0, 0.02);
+        }
+    </style>
+</head>
+<body class="bg-background-warm text-slate-800 min-h-screen selection:bg-primary/20 selection:text-primary">
+<div class="flex min-h-screen">
+<aside class="w-72 border-r border-orange-100/50 flex flex-col fixed h-full bg-white/60 backdrop-blur-xl z-20">
+<div class="p-8 flex items-center gap-3">
+<div class="size-9 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined font-bold text-xl">bolt</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900">Ogog AI</h1>
+</div>
+<nav class="flex-1 px-5 py-2 space-y-8 overflow-y-auto custom-scrollbar">
+<div>
+<p class="px-3 mb-4 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">Core Assets</p>
+<ul class="space-y-1.5">
+<li>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-primary/10 text-primary font-semibold" href="#">
+<span class="material-symbols-outlined text-[22px]">category</span>
+                            Components
+                        </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100/80 transition-all group" href="#">
+<span class="material-symbols-outlined text-[22px] group-hover:text-primary transition-colors">auto_awesome</span>
+                            Design Tokens
+                        </a>
+</li>
+</ul>
+</div>
+<div>
+<p class="px-3 mb-4 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">System Modules</p>
+<ul class="space-y-1.5">
+<li>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100/80 transition-all group" href="#">
+<span class="material-symbols-outlined text-[22px] group-hover:text-primary transition-colors">dns</span>
+                            LLM Models
+                        </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100/80 transition-all group" href="#">
+<span class="material-symbols-outlined text-[22px] group-hover:text-primary transition-colors">api</span>
+                            API Interface
+                        </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100/80 transition-all group" href="#">
+<span class="material-symbols-outlined text-[22px] group-hover:text-primary transition-colors">monitoring</span>
+                            Analytics
+                        </a>
+</li>
+</ul>
+</div>
+</nav>
+<div class="p-5 border-t border-slate-100">
+<div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+<div class="size-10 rounded-xl bg-slate-200 flex-shrink-0 bg-cover bg-center border border-white" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbUu4wdx90g8nCsobRQpqasvN5xiy-u9_TcYcHRTCfRd8BhV7VKeAicXMaoyzbn7KkMLySjbzk62qMMZbraAj7yTSlLg1z_DOceGnZAias3TzIybsCSgdO2wcgBrm1BB19rUbMLf1ahynK6UyDY5RuEj88D2iuEUR9tpsqp9tH7u-TL54taU1hv4HrPBczoR-buF1sWvbe0Li83OR7vJ7IWaQ5QynK6Xn_RuKL1CE9SHkRkbVMmdm0JMu3XtAjcublCqaJNSXJBe0')"></div>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold text-slate-900 truncate">Alex Rivera</p>
+<p class="text-xs text-slate-500 truncate">System Architect</p>
+</div>
+<span class="material-symbols-outlined text-slate-400 text-[18px]">unfold_more</span>
+</div>
+</div>
+</aside>
+<main class="flex-1 ml-72">
+<header class="h-20 border-b border-orange-100/50 flex items-center justify-between px-10 sticky top-0 bg-background-warm/80 backdrop-blur-xl z-10">
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-2 text-sm text-slate-500">
+<a class="hover:text-primary transition-colors font-medium" href="#">Console</a>
+<span class="material-symbols-outlined text-[16px] text-slate-300">chevron_right</span>
+<span class="text-slate-900 font-semibold">Component Library</span>
+</nav>
+</div>
+<div class="flex items-center gap-5">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">search</span>
+<input class="h-10 w-72 bg-white border border-slate-200 rounded-xl pl-11 pr-4 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all shadow-sm" placeholder="Search resources..." type="text"/>
+</div>
+<button class="size-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-primary/5 transition-all soft-shadow">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+</button>
+<button class="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20">
+                    Publish Docs
+                </button>
+</div>
+</header>
+<div class="max-w-5xl mx-auto px-10 py-16">
+<div class="mb-14">
+<h2 class="text-5xl font-extrabold tracking-tight text-slate-900 mb-4">UI Components</h2>
+<p class="text-slate-500 text-xl max-w-2xl leading-relaxed">A gentle, approachably modern design system crafted for high-performance LLM ecosystems.</p>
+</div>
+<div class="flex border-b border-slate-100 mb-14 gap-10">
+<button class="pb-5 border-b-2 border-primary text-primary font-bold text-sm">Overview</button>
+<button class="pb-5 border-b-2 border-transparent text-slate-400 font-semibold text-sm hover:text-slate-600 transition-colors">Foundation</button>
+<button class="pb-5 border-b-2 border-transparent text-slate-400 font-semibold text-sm hover:text-slate-600 transition-colors">Interactions</button>
+<button class="pb-5 border-b-2 border-transparent text-slate-400 font-semibold text-sm hover:text-slate-600 transition-colors">Layouts</button>
+</div>
+<section class="mb-20">
+<h3 class="text-2xl font-bold mb-8 flex items-center gap-3 text-slate-900">
+<div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[24px]">smart_button</span>
+</div>
+                    Buttons
+                </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-10 rounded-3xl border border-slate-100 soft-shadow">
+<div class="space-y-8">
+<div class="flex flex-wrap gap-5 items-center">
+<button class="bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-primary/15">Primary Action</button>
+<button class="border-2 border-primary/20 text-primary hover:bg-primary/5 px-8 py-3 rounded-2xl font-bold transition-all">Secondary</button>
+</div>
+<div class="flex flex-wrap gap-5 items-center">
+<button class="text-slate-500 hover:text-primary hover:bg-primary/5 px-8 py-3.5 rounded-2xl font-bold transition-all">Ghost Button</button>
+<button class="bg-primary/10 text-primary px-8 py-3.5 rounded-2xl font-bold flex items-center gap-3 cursor-wait">
+<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>
+                                Loading...
+                            </button>
+</div>
+</div>
+<div class="flex items-center justify-center border-l border-slate-100 pl-10">
+<p class="text-sm text-slate-400 italic leading-relaxed text-center">
+                            "Buttons are the inviting entry points of the experience. Generous rounding and warm accents create a softer interaction model."
+                        </p>
+</div>
+</div>
+</section>
+<section class="mb-20">
+<h3 class="text-2xl font-bold mb-8 flex items-center gap-3 text-slate-900">
+<div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[24px]">edit_note</span>
+</div>
+                    Form Elements
+                </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-10 rounded-3xl border border-slate-100 soft-shadow">
+<div class="space-y-8">
+<div class="space-y-2.5">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Model Endpoint</label>
+<input class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-slate-700" type="text" value="https://api.ogog.ai/v1/titan-7b"/>
+</div>
+<div class="space-y-2.5">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Deployment Region</label>
+<div class="relative">
+<select class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-slate-700">
+<option>US-East (Virginia)</option>
+<option>EU-West (Dublin)</option>
+<option>Asia-South (Mumbai)</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">unfold_more</span>
+</div>
+</div>
+</div>
+<div class="space-y-10">
+<div class="space-y-5">
+<div class="flex justify-between items-center">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Temperature Control</label>
+<span class="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">0.75</span>
+</div>
+<input class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex justify-between text-[10px] text-slate-300 font-extrabold tracking-widest uppercase">
+<span>Precise</span>
+<span>Creative</span>
+</div>
+</div>
+<div class="p-5 bg-primary/5 rounded-2xl border border-primary/10">
+<div class="flex items-center gap-4">
+<div class="size-6 rounded-lg border-2 border-primary bg-primary flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</div>
+<p class="text-sm font-bold text-slate-700">Enable Token Streaming</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="mb-20">
+<h3 class="text-2xl font-bold mb-8 flex items-center gap-3 text-slate-900">
+<div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[24px]">table_chart</span>
+</div>
+                    Model Management
+                </h3>
+<div class="overflow-hidden bg-white border border-slate-100 rounded-3xl soft-shadow">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50/50 border-b border-slate-100">
+<tr>
+<th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Model Name</th>
+<th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Status</th>
+<th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Latency Trend</th>
+<th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-blue-500/10 text-blue-600 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">psychology</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Titan-Turbo-V2</p>
+<p class="text-[11px] font-medium text-slate-400 uppercase tracking-tight">7B Parameters • FP16</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">
+<span class="size-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200"></span>
+                                        Active
+                                    </span>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-end gap-1 h-7">
+<div class="w-1.5 bg-primary/20 h-3 rounded-full"></div>
+<div class="w-1.5 bg-primary/20 h-4 rounded-full"></div>
+<div class="w-1.5 bg-primary/20 h-2 rounded-full"></div>
+<div class="w-1.5 bg-primary/40 h-5 rounded-full"></div>
+<div class="w-1.5 bg-primary h-7 rounded-full"></div>
+<div class="w-1.5 bg-primary/30 h-3 rounded-full"></div>
+<div class="w-1.5 bg-primary/10 h-2 rounded-full"></div>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-purple-500/10 text-purple-600 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">token</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Omni-Vision-Pro</p>
+<p class="text-[11px] font-medium text-slate-400 uppercase tracking-tight">Multi-Modal • 32k Context</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs font-bold">
+<span class="size-2 rounded-full bg-slate-300"></span>
+                                        Idle
+                                    </span>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-end gap-1 h-7 opacity-30">
+<div class="w-1.5 bg-slate-300 h-2 rounded-full"></div>
+<div class="w-1.5 bg-slate-300 h-2 rounded-full"></div>
+<div class="w-1.5 bg-slate-300 h-2 rounded-full"></div>
+<div class="w-1.5 bg-slate-300 h-2 rounded-full"></div>
+<div class="w-1.5 bg-slate-300 h-2 rounded-full"></div>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="mb-10">
+<h3 class="text-2xl font-bold mb-8 flex items-center gap-3 text-slate-900">
+<div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[24px]">feedback</span>
+</div>
+                    Feedback &amp; Overlay
+                </h3>
+<div class="relative min-h-[450px] w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] overflow-hidden flex items-center justify-center">
+<div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 z-10 mx-6">
+<div class="p-8 border-b border-slate-50 flex justify-between items-center">
+<h4 class="font-extrabold text-xl text-slate-900">Confirm Deployment</h4>
+<button class="size-8 rounded-full flex items-center justify-center text-slate-300 hover:text-slate-600 hover:bg-slate-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="p-10 text-center">
+<div class="size-20 bg-primary/10 text-primary rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
+<span class="material-symbols-outlined text-[40px]">rocket_launch</span>
+</div>
+<h5 class="text-xl font-extrabold mb-3 text-slate-900">Pushing to Production</h5>
+<p class="text-slate-500 text-sm leading-relaxed">You are about to deploy Titan-Turbo-V2 to the Global edge network. This will incur costs relative to your usage tier.</p>
+</div>
+<div class="p-8 bg-slate-50/80 rounded-b-3xl flex gap-4">
+<button class="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold py-3.5 rounded-2xl transition-all shadow-sm">Cancel</button>
+<button class="flex-1 bg-primary text-white hover:bg-primary/90 font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-primary/20">Deploy Now</button>
+</div>
+</div>
+<div class="absolute top-6 left-6 flex gap-2">
+<div class="px-4 py-2 bg-emerald-500/10 border border-emerald-500/10 text-emerald-600 text-xs font-bold rounded-xl flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            System Optimized
+                        </div>
+</div>
+<div class="absolute bottom-6 right-6">
+<div class="px-4 py-2 bg-white border border-slate-100 text-slate-400 text-xs font-bold rounded-xl flex items-center gap-2 soft-shadow">
+<span class="material-symbols-outlined text-[18px]">info</span>
+                            Visual Reference
+                        </div>
+</div>
+</div>
+</section>
+</div>
+<footer class="mt-10 border-t border-slate-100 py-16 px-10 bg-white/30">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-4 opacity-40">
+<div class="size-8 bg-primary rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[16px] font-bold">bolt</span>
+</div>
+<p class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-900">Ogog Design System v2.4.0 • Approachable Light</p>
+</div>
+<div class="flex gap-10 text-sm text-slate-400 font-bold">
+<a class="hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="hover:text-primary transition-colors" href="#">Change Log</a>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</main>
+</div>
+
+</body></html>

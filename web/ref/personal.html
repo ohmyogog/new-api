@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile &amp; Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style data-purpose="custom-styles">
+    body {
+      background-color: #fcf5f1; /* Light peach background */
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    .text-orange-theme { color: #f26b48; }
+    .bg-orange-theme { background-color: #f26b48; }
+    .bg-orange-theme-light { background-color: #ffe8e0; }
+    .text-orange-theme-dark { color: #c0492c; }
+    
+    .card-shadow {
+      box-shadow: 0 4px 20px rgba(242, 107, 72, 0.08);
+      border: 1px solid rgba(242, 107, 72, 0.1);
+    }
+
+    .wave-bg {
+      background: linear-gradient(135deg, #f89b7b 0%, #f26b48 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .wave-bg::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url('data:image/svg+xml;utf8,<svg viewbox="0 0 1000 200" xmlns="http://www.w3.org/2000/svg"><path d="M0 50 Q 250 150 500 50 T 1000 50 L 1000 200 L 0 200 Z" fill="rgba(255,255,255,0.15)"></path><path d="M0 100 Q 250 0 500 100 T 1000 100 L 1000 200 L 0 200 Z" fill="rgba(255,255,255,0.1)"></path></svg>');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.9;
+    }
+
+    .nav-tab-active {
+      color: #f26b48;
+      border-bottom: 2px solid #f26b48;
+      font-weight: 500;
+    }
+    
+    .nav-tab-inactive {
+      color: #71717a;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .nav-tab-inactive:hover {
+      color: #52525b;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 text-gray-800 min-h-screen">
+<div class="max-w-6xl mx-auto space-y-6">
+<!-- BEGIN: TopHeaderCard -->
+<header class="bg-white rounded-3xl overflow-hidden card-shadow">
+<!-- Wave Banner & User Info -->
+<div class="wave-bg h-32 md:h-40 p-6 flex items-end">
+<div class="flex items-center space-x-4 relative z-10">
+<div class="w-16 h-16 md:w-20 md:h-20 bg-orange-theme rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg border-2 border-white/20">
+            CH
+          </div>
+<div class="text-white">
+<h1 class="text-2xl md:text-3xl font-bold mb-1">chao</h1>
+<div class="flex items-center space-x-2 text-sm opacity-90">
+<span class="bg-white/20 px-2 py-0.5 rounded-full text-xs backdrop-blur-sm">Administrator</span>
+<span class="bg-white/20 px-2 py-0.5 rounded-full text-xs backdrop-blur-sm">ID: 4</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Bar: Balance & Stats -->
+<div class="p-4 md:px-6 md:py-4 flex flex-col md:flex-row justify-between items-center bg-white gap-4">
+<!-- Balance -->
+<div class="flex items-center space-x-3 w-full md:w-auto">
+<span class="text-3xl font-bold text-orange-theme">$18.18</span>
+<span class="bg-orange-theme-light text-orange-theme-dark text-xs px-2 py-1 rounded-md border border-orange-200">Current Balance</span>
+</div>
+<!-- Stats -->
+<div class="flex items-center space-x-2 md:space-x-6 text-sm text-gray-600 bg-orange-50/50 p-2 md:p-0 rounded-lg w-full md:w-auto justify-around md:bg-transparent">
+<div class="flex items-center space-x-1.5">
+<svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Spent: $1.82</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Requests: 52</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Group: default</span>
+</div>
+</div>
+</div>
+</header>
+<!-- END: TopHeaderCard -->
+<!-- BEGIN: MainContentGrid -->
+<main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Column -->
+<div class="lg:col-span-5 space-y-6">
+<!-- Account Management Card -->
+<section class="bg-white rounded-3xl p-6 card-shadow">
+<div class="flex items-start space-x-3 mb-6">
+<div class="p-2 bg-orange-50 rounded-lg text-orange-theme">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<h2 class="font-bold text-gray-800">Account Management</h2>
+<p class="text-xs text-gray-500 mt-0.5">Manage accounts, security settings and identity verification</p>
+</div>
+</div>
+<!-- Tabs -->
+<div class="flex space-x-6 border-b border-gray-100 mb-5 text-sm">
+<div class="pb-2 nav-tab-active flex items-center space-x-1.5 cursor-pointer">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Account Binding</span>
+</div>
+<div class="pb-2 nav-tab-inactive flex items-center space-x-1.5 cursor-pointer">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Security Settings</span>
+</div>
+</div>
+<!-- Grid Items -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<!-- Email -->
+<div class="border border-gray-100 rounded-xl p-3 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-3">
+<svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<div>
+<div class="text-sm font-medium">Email</div>
+<div class="text-xs text-gray-500">Unbound</div>
+</div>
+</div>
+<button class="text-xs px-3 py-1 text-orange-theme border border-orange-200 rounded-full bg-transparent hover:bg-orange-50 transition">Bind</button>
+</div>
+<!-- WeChat -->
+<div class="border border-gray-100 rounded-xl p-3 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-3">
+<svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<div>
+<div class="text-sm font-medium">WeChat</div>
+<div class="text-xs text-gray-500">Disabled</div>
+</div>
+</div>
+<span class="text-xs px-3 py-1 text-gray-400 bg-gray-50 rounded-full">Disabled</span>
+</div>
+<!-- GitHub -->
+<div class="border border-gray-100 rounded-xl p-3 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-3">
+<svg class="w-5 h-5 text-gray-600" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fill-rule="evenodd"></path></svg>
+<div>
+<div class="text-sm font-medium">GitHub</div>
+<div class="text-xs text-gray-500">Unbound</div>
+</div>
+</div>
+<span class="text-xs px-3 py-1 text-gray-400 bg-gray-50 rounded-full">Disabled</span>
+</div>
+<!-- Discord -->
+<div class="border border-gray-100 rounded-xl p-3 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-3">
+<svg class="w-5 h-5 text-gray-600" fill="currentColor" viewbox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"></path></svg>
+<div>
+<div class="text-sm font-medium">Discord</div>
+<div class="text-xs text-gray-500">Unbound</div>
+</div>
+</div>
+<span class="text-xs px-3 py-1 text-gray-400 bg-gray-50 rounded-full">Disabled</span>
+</div>
+<!-- OIDC -->
+<div class="border border-gray-100 rounded-xl p-3 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-3">
+<svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<div>
+<div class="text-sm font-medium">OIDC</div>
+<div class="text-xs text-gray-500">Unbound</div>
+</div>
+</div>
+<span class="text-xs px-3 py-1 text-gray-400 bg-gray-50 rounded-full">Disabled</span>
+</div>
+<!-- Telegram -->
+<div class="border border-gray-100 rounded-xl p-3 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-3">
+<svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<div>
+<div class="text-sm font-medium">Telegram</div>
+<div class="text-xs text-gray-500">Unbound</div>
+</div>
+</div>
+<span class="text-xs px-3 py-1 text-gray-400 bg-gray-50 rounded-full">Disabled</span>
+</div>
+<!-- LinuxDO -->
+<div class="border border-gray-100 rounded-xl p-3 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-3">
+<svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<div>
+<div class="text-sm font-medium">LinuxDO</div>
+<div class="text-xs text-gray-500">Unbound</div>
+</div>
+</div>
+<span class="text-xs px-3 py-1 text-gray-400 bg-gray-50 rounded-full">Disabled</span>
+</div>
+</div>
+</section>
+<!-- Preference Settings Card -->
+<section class="bg-white rounded-3xl p-6 card-shadow">
+<div class="flex items-start space-x-3 mb-4">
+<div class="p-2 bg-orange-50 rounded-lg text-orange-theme">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<h2 class="font-bold text-gray-800">Preference Settings</h2>
+<p class="text-xs text-gray-500 mt-0.5">Interface language and other personal preferences</p>
+</div>
+</div>
+<div class="border border-gray-100 rounded-xl p-4 flex items-center justify-between bg-gray-50/50">
+<div class="flex items-start space-x-3">
+<svg class="w-5 h-5 text-gray-500 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<div>
+<div class="text-sm font-medium">Language Preference</div>
+<div class="text-xs text-gray-500 mt-1 max-w-xs">Select your interface language, the setting will sync to all your devices</div>
+</div>
+</div>
+<select class="text-sm bg-orange-50 border-none text-orange-800 rounded-md py-1.5 pl-3 pr-8 focus:ring-0 cursor-pointer">
+<option>简体中文</option>
+<option>English</option>
+</select>
+</div>
+</section><p class="text-xs text-gray-500 mt-4 px-1">Note: Language preference will sync to all devices you log into, and affects API return message language.</p>
+</div>
+<!-- Right Column -->
+<div class="lg:col-span-7">
+<!-- Notification Settings Card -->
+<section class="bg-white rounded-3xl p-6 h-full card-shadow flex flex-col">
+<div class="flex items-start space-x-3 mb-6">
+<div class="p-2 bg-orange-50 rounded-lg text-orange-theme">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<h2 class="font-bold text-gray-800">Notification Settings</h2>
+<p class="text-xs text-gray-500 mt-0.5">Notification, price and privacy related settings</p>
+</div>
+</div>
+<!-- Tabs -->
+<div class="flex flex-wrap gap-x-6 gap-y-2 border-b border-gray-100 mb-6 text-sm">
+<div class="pb-2 nav-tab-active flex items-center space-x-1.5 cursor-pointer">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Notification Config</span>
+</div>
+<div class="pb-2 nav-tab-inactive flex items-center space-x-1.5 cursor-pointer">
+<span class="text-red-400 font-bold mr-0.5">$</span>
+<span>Price Config</span>
+</div>
+<div class="pb-2 nav-tab-inactive flex items-center space-x-1.5 cursor-pointer">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Privacy Config</span>
+</div>
+<div class="pb-2 nav-tab-inactive flex items-center space-x-1.5 cursor-pointer">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Advanced Config</span>
+</div>
+</div>
+<!-- Form -->
+<div class="space-y-6 flex-grow">
+<!-- Notification Method -->
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Notification Method <span class="text-red-500">*</span></label>
+<div class="flex flex-wrap gap-4 text-sm text-gray-600">
+<label class="flex items-center space-x-2 cursor-pointer">
+<input checked="" class="form-radio text-orange-theme focus:ring-orange-theme" name="notify_method" type="radio"/>
+<span>Email Notification</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer">
+<input class="form-radio text-orange-theme focus:ring-orange-theme" name="notify_method" type="radio"/>
+<span>Webhook Notification</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer">
+<input class="form-radio text-orange-theme focus:ring-orange-theme" name="notify_method" type="radio"/>
+<span>Bark Notification</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer">
+<input class="form-radio text-orange-theme focus:ring-orange-theme" name="notify_method" type="radio"/>
+<span>Gotify Notification</span>
+</label>
+</div>
+</div>
+<!-- Threshold -->
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Low Balance Warning Threshold: <span class="text-orange-theme font-bold">$1.00</span> <span class="text-red-500">*</span></label>
+<div class="relative max-w-md">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<input class="pl-9 pr-10 py-2 w-full border-orange-200 bg-orange-50/50 rounded-lg text-gray-800 focus:ring-orange-theme focus:border-orange-theme text-sm" type="number" value="500000"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+</div>
+<p class="text-xs text-gray-500 mt-2">When quota is subscribed to a level lower than this value, system will send notification via selected method.</p>
+</div>
+<!-- Notification Email -->
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Notification Email</label>
+<div class="bg-orange-50/50 text-orange-800 rounded-lg p-3 flex items-center space-x-2 text-sm border border-orange-200">
+<svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Use email bound to user account</span>
+</div>
+<p class="text-xs text-gray-500 mt-2">Set email address used to receive warning notifications, defaults to email bound to account.</p>
+</div>
+</div>
+<!-- Save Button -->
+<div class="mt-8 flex justify-end">
+<button class="bg-orange-theme hover:bg-[#e05b38] text-white px-6 py-2 rounded-lg text-sm font-medium shadow-md shadow-orange-200 transition">Save Settings</button>
+</div>
+</section>
+</div>
+</main>
+<!-- END: MainContentGrid -->
+</div>
+</body></html>

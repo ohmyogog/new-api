@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "base-bg": "#FFF8F5",
+              "pure-white": "#FFFFFF",
+              "primary-coral": "#FF5733",
+              "heading-charcoal": "#2A2422",
+              "body-gray": "#756C69",
+              "success-mint": "#10B981"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "mono": ["JetBrains Mono"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            boxShadow: {
+              'coral-soft': '0 8px 30px rgba(255, 87, 51, 0.04)',
+            }
+          },
+        },
+      }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .coral-accent-btn {
+            background-color: #FF5733;
+            color: #FFFFFF;
+        }
+        .coral-accent-btn:hover {
+            background-color: #E64A2E;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #F0EAE8 25%, #F7F1EF 50%, #F0EAE8 75%);
+            background-size: 200% 100%;
+        }
+        input[type='range']::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #FF5733;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 4px rgba(255, 87, 51, 0.2);
+        }
+        .custom-focus:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #FF5733;
+        }
+    </style>
+</head>
+<body class="bg-base-bg font-body text-body-gray">
+<header class="sticky top-0 z-50 bg-pure-white/90 backdrop-blur-xl border-b border-primary-coral/10 px-6 py-3 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 bg-primary-coral rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-weight="fill">hub</span>
+</div>
+<span class="font-headline font-semibold text-lg tracking-tight text-heading-charcoal">Aura Gateway</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<input class="bg-base-bg border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-primary-coral/30" placeholder="Search resources..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2 text-body-gray/60 text-lg">search</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-body-gray hover:text-primary-coral cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-body-gray hover:text-primary-coral cursor-pointer">help</span>
+<span class="material-symbols-outlined text-body-gray hover:text-primary-coral cursor-pointer">settings</span>
+<div class="w-8 h-8 rounded-full bg-base-bg overflow-hidden ml-2 border border-primary-coral/10">
+<img alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH7QhnodNP5hICF6-_A9foKSrNLMHS4MQwieMbJZTpQgWAgfe4SMUVf7HwC7Ds6af7Tb1DQ7ltOw6BqZwJwAPj81J3zwKkQfe6gZmNdRDpbsnf9TGhKMUbRGdnGjYpHfx43a3k6rJkcP_BZtRdW46BihRLn4lYwvjV273wv2PYhWXOvFWVWYfzZu3W7RHrLmBKbuTHVsIxQqNYuFJoZwhmsylTBSxcMzruwhmHK9sIwNHPcSrC6JOBqgVBC65tmDtDl6MixcsHwGCa"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen">
+<aside class="w-64 bg-base-bg p-6 flex flex-col border-r border-primary-coral/5">
+<div class="mb-10">
+<p class="text-[10px] font-bold uppercase tracking-[0.15em] text-body-gray/50 mb-6">Main Menu</p>
+<nav class="space-y-1.5">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-pure-white text-primary-coral font-semibold shadow-coral-soft" href="#">
+<span class="material-symbols-outlined text-lg" data-weight="fill">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-body-gray hover:bg-pure-white hover:text-heading-charcoal transition-all" href="#">
+<span class="material-symbols-outlined text-lg">code</span>
+                    API Explorer
+                </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-body-gray hover:bg-pure-white hover:text-heading-charcoal transition-all" href="#">
+<span class="material-symbols-outlined text-lg">bar_chart</span>
+                    Usage Stats
+                </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-body-gray hover:bg-pure-white hover:text-heading-charcoal transition-all" href="#">
+<span class="material-symbols-outlined text-lg">payments</span>
+                    Billing
+                </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-body-gray hover:bg-pure-white hover:text-heading-charcoal transition-all" href="#">
+<span class="material-symbols-outlined text-lg">description</span>
+                    Documentation
+                </a>
+</nav>
+</div>
+<div class="mt-auto">
+<nav class="space-y-1.5">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-body-gray hover:bg-pure-white hover:text-heading-charcoal transition-all" href="#">
+<span class="material-symbols-outlined text-lg">contact_support</span>
+                    Support
+                </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-body-gray hover:bg-pure-white hover:text-heading-charcoal transition-all" href="#">
+<span class="material-symbols-outlined text-lg">logout</span>
+                    Sign Out
+                </a>
+</nav>
+</div>
+</aside>
+<main class="flex-1 p-10 space-y-12 max-w-7xl mx-auto">
+<section class="space-y-8" id="section-8">
+<div>
+<h2 class="text-3xl font-headline font-bold tracking-tight text-heading-charcoal">Data Management</h2>
+<p class="text-body-gray mt-2">Refined controls for large-scale data sets.</p>
+</div>
+<div class="bg-pure-white rounded-3xl p-16 shadow-coral-soft flex flex-col items-center text-center border border-primary-coral/5">
+<div class="w-40 h-40 mb-8 flex items-center justify-center bg-base-bg rounded-full border border-primary-coral/10">
+<span class="material-symbols-outlined text-6xl text-primary-coral/20">search_off</span>
+</div>
+<h3 class="text-2xl font-headline font-semibold text-heading-charcoal">No Logs Found</h3>
+<p class="text-body-gray mt-3 max-w-sm">We couldn't find any entries matching your current filter criteria. Try adjusting your search or date range.</p>
+<button class="mt-8 coral-accent-btn px-10 py-3.5 rounded-full font-semibold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">filter_list_off</span>
+                    Clear Filters
+                </button>
+</div>
+<div class="bg-pure-white px-6 py-4 rounded-2xl flex items-center justify-between shadow-coral-soft border border-primary-coral/5">
+<div class="flex items-center gap-4">
+<span class="text-sm text-body-gray">Showing <span class="font-bold text-heading-charcoal">1 to 10</span> of 8,986 entries</span>
+<div class="h-4 w-[1px] bg-body-gray/20"></div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-body-gray font-medium">Show</span>
+<select class="bg-base-bg border-none rounded-lg text-xs font-semibold py-1 pr-8 focus:ring-1 focus:ring-primary-coral">
+<option>10 per page</option>
+<option>25 per page</option>
+<option>50 per page</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-base-bg text-body-gray hover:text-primary-coral transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-coral text-white font-bold">1</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-base-bg text-heading-charcoal hover:bg-primary-coral/10 transition-colors">2</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-base-bg text-heading-charcoal hover:bg-primary-coral/10 transition-colors">3</button>
+<span class="px-2 text-body-gray/40">...</span>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-base-bg text-heading-charcoal hover:bg-primary-coral/10 transition-colors">899</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-base-bg text-body-gray hover:text-primary-coral transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="section-9">
+<div class="bg-pure-white p-8 rounded-3xl shadow-coral-soft border border-primary-coral/5">
+<h4 class="text-xs font-bold text-body-gray/60 uppercase tracking-widest mb-8">Model Parameters</h4>
+<div class="space-y-10">
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="font-headline font-semibold text-heading-charcoal">Attention Weight</label>
+<span class="bg-primary-coral/10 text-primary-coral px-3 py-1 rounded-lg text-sm font-bold">74%</span>
+</div>
+<div class="relative h-6 flex items-center">
+<div class="absolute w-full h-1.5 bg-base-bg rounded-full overflow-hidden">
+<div class="h-full bg-primary-coral w-[74%]"></div>
+</div>
+<input class="absolute w-full appearance-none bg-transparent cursor-pointer z-10 focus:outline-none" max="100" min="1" type="range" value="74"/>
+</div>
+<div class="flex justify-between text-[10px] text-body-gray/40 font-bold uppercase tracking-wider">
+<span>Sparse</span>
+<span>Dense</span>
+</div>
+</div>
+<div class="space-y-3">
+<label class="font-headline font-semibold text-heading-charcoal">Knowledge Base Upload</label>
+<div class="border-2 border-dashed border-primary-coral/20 bg-base-bg hover:bg-primary-coral/[0.02] hover:border-primary-coral transition-all rounded-2xl p-10 flex flex-col items-center text-center cursor-pointer group">
+<div class="w-14 h-14 rounded-2xl bg-pure-white flex items-center justify-center text-primary-coral shadow-sm mb-4 group-hover:scale-105 transition-transform border border-primary-coral/5">
+<span class="material-symbols-outlined text-3xl">cloud_upload</span>
+</div>
+<p class="text-heading-charcoal font-medium">Click or drag file to this area to upload</p>
+<p class="text-body-gray text-xs mt-2">Support for PDF, JSONL, or MD (Max 25MB)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-[#1A1615] rounded-3xl overflow-hidden flex flex-col h-full shadow-2xl">
+<div class="bg-white/5 px-6 py-4 flex items-center justify-between border-b border-white/5">
+<div class="flex items-center gap-2">
+<div class="flex gap-1.5 mr-4">
+<div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-orange-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+</div>
+<span class="text-white/40 font-mono text-[10px] uppercase tracking-widest">response_body.json</span>
+</div>
+<button class="bg-white/5 hover:bg-white/10 text-white/70 text-xs font-medium px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+                        Copy Code
+                    </button>
+</div>
+<div class="p-8 font-mono text-sm leading-relaxed overflow-x-auto">
+<pre class="text-white/80"><code>{
+  <span class="text-primary-coral">"id"</span>: <span class="text-success-mint">"aura_9283-xjk"</span>,
+  <span class="text-primary-coral">"object"</span>: <span class="text-success-mint">"chat.completion"</span>,
+  <span class="text-primary-coral">"created"</span>: <span class="text-white">1693421002</span>,
+  <span class="text-primary-coral">"model"</span>: <span class="text-success-mint">"aura-v2-ultra"</span>,
+  <span class="text-primary-coral">"choices"</span>: [
+    {
+      <span class="text-primary-coral">"index"</span>: <span class="text-white">0</span>,
+      <span class="text-primary-coral">"message"</span>: {
+        <span class="text-primary-coral">"role"</span>: <span class="text-success-mint">"assistant"</span>,
+        <span class="text-primary-coral">"content"</span>: <span class="text-success-mint">"Analysis complete..."</span>
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8" id="section-10">
+<div class="bg-pure-white p-8 rounded-3xl shadow-coral-soft border border-primary-coral/5 space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full shimmer animate-pulse border border-primary-coral/5"></div>
+<div class="space-y-2 flex-1">
+<div class="h-4 w-1/3 shimmer animate-pulse rounded"></div>
+<div class="h-3 w-1/2 shimmer animate-pulse rounded opacity-40"></div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="h-32 w-full shimmer animate-pulse rounded-2xl"></div>
+<div class="flex gap-2">
+<div class="h-9 w-20 shimmer animate-pulse rounded-full"></div>
+<div class="h-9 w-24 shimmer animate-pulse rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="bg-pure-white p-8 rounded-3xl shadow-coral-soft border border-primary-coral/5 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="text-[10px] font-bold text-body-gray/50 uppercase tracking-widest">Service Quota</h4>
+<p class="text-2xl font-headline font-bold text-heading-charcoal mt-1">Monthly Usage</p>
+</div>
+<div class="bg-success-mint/10 p-2.5 rounded-xl">
+<span class="material-symbols-outlined text-success-mint">account_balance_wallet</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-sm font-medium text-body-gray">Remaining Quota</span>
+<span class="text-xl font-headline font-bold text-heading-charcoal">$8.27 <span class="text-sm font-normal text-body-gray/60">/ $10.00</span></span>
+</div>
+<div class="w-full h-4 bg-base-bg rounded-full overflow-hidden p-0.5 border border-primary-coral/5">
+<div class="h-full bg-success-mint rounded-full shadow-sm" style="width: 82.7%"></div>
+</div>
+<div class="flex items-center gap-2 text-success-mint bg-success-mint/[0.08] px-3.5 py-2.5 rounded-xl inline-flex text-xs font-semibold">
+<span class="material-symbols-outlined text-sm font-bold">check_circle</span>
+                        Operational: 17.3% of budget remaining
+                    </div>
+</div>
+</div>
+</section>
+<section id="section-11">
+<div class="bg-pure-white p-10 rounded-[2.5rem] shadow-coral-soft border border-primary-coral/5">
+<div class="flex items-center justify-between mb-12">
+<div>
+<h3 class="text-2xl font-headline font-bold text-heading-charcoal tracking-tight">Token Consumption Trend</h3>
+<p class="text-body-gray">Total interaction throughput over the last 30 days</p>
+</div>
+<div class="flex bg-base-bg p-1 rounded-2xl border border-primary-coral/5">
+<button class="px-5 py-2 rounded-xl text-sm font-semibold text-body-gray hover:text-heading-charcoal transition-colors">Daily</button>
+<button class="px-5 py-2 rounded-xl text-sm font-semibold bg-pure-white text-primary-coral shadow-sm">Weekly</button>
+</div>
+</div>
+<div class="relative h-64 w-full">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-6 bg-heading-charcoal text-white px-5 py-3.5 rounded-2xl shadow-xl flex flex-col items-center pointer-events-none z-10 border border-white/10">
+<span class="text-[10px] font-bold uppercase opacity-50 tracking-widest mb-1">June 24</span>
+<span class="text-xl font-bold">142.8k <span class="text-xs font-normal opacity-60">tokens</span></span>
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2.5 h-2.5 bg-heading-charcoal"></div>
+</div>
+<svg class="w-full h-full overflow-visible" viewBox="0 0 1000 250">
+<defs>
+<linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#FF5733" stop-opacity="0.15"></stop>
+<stop offset="100%" stop-color="#FF5733" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<line class="text-primary-coral/5" stroke="currentColor" stroke-width="1" x1="0" x2="1000" y1="50" y2="50"></line>
+<line class="text-primary-coral/5" stroke="currentColor" stroke-width="1" x1="0" x2="1000" y1="150" y2="150"></line>
+<path d="M0,250 C100,200 150,220 250,150 C350,80 400,100 500,50 C600,0 700,120 800,80 C900,40 1000,100 1000,100 V250 H0 Z" fill="url(#chartGradient)"></path>
+<path d="M0,250 C100,200 150,220 250,150 C350,80 400,100 500,50 C600,0 700,120 800,80 C900,40 1000,100 1000,100" fill="none" stroke="#FF5733" stroke-linecap="round" stroke-width="4"></path>
+<circle cx="500" cy="50" fill="#FF5733" r="7" stroke="#FFFFFF" stroke-width="3"></circle>
+</svg>
+</div>
+<div class="mt-12 pt-10 border-t border-primary-coral/5 grid grid-cols-4 gap-4 text-center">
+<div>
+<p class="text-[10px] font-bold text-body-gray/40 uppercase tracking-widest">Avg Velocity</p>
+<p class="text-xl font-bold mt-1 text-heading-charcoal">842 req/m</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-body-gray/40 uppercase tracking-widest">Peak Period</p>
+<p class="text-xl font-bold mt-1 text-heading-charcoal">14:00 EST</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-body-gray/40 uppercase tracking-widest">Total Cost</p>
+<p class="text-xl font-bold mt-1 text-success-mint">$142.20</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-body-gray/40 uppercase tracking-widest">Error Rate</p>
+<p class="text-xl font-bold mt-1 text-primary-coral">0.04%</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+
+</body></html>

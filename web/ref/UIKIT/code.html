@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>new-api UI Kit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "background": "#FFF8F5",
+                "primary": "#FF5733",
+                "heading": "#2A2422",
+                "body": "#756C69",
+                "success": "#10B981",
+                "surface": "#FFFFFF",
+              },
+              fontFamily: {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"],
+                "mono": ["JetBrains Mono"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background text-body font-body;
+                background-image: radial-gradient(#FF573315 0.5px, transparent 0.5px);
+                background-size: 24px 24px;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                @apply text-heading;
+            }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .coral-shadow {
+            box-shadow: 0 10px 25px -5px rgba(255, 87, 51, 0.12), 0 8px 10px -6px rgba(255, 87, 51, 0.08);
+        }
+        .asymmetric-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 2rem;
+        }
+        .active-tab-underline {
+            position: relative;
+        }
+        .active-tab-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #FF5733;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8 lg:p-16">
+<section class="mb-24">
+<h2 class="text-3xl font-bold tracking-tight mb-8">Design Tokens</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-12">
+<div class="space-y-2">
+<div class="h-20 w-full bg-background rounded-xl border border-primary/10 shadow-sm"></div>
+<p class="text-xs font-bold text-heading">Background (#FFF8F5)</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-primary rounded-xl shadow-lg shadow-primary/20"></div>
+<p class="text-xs font-bold text-heading">Primary Coral</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-heading rounded-xl"></div>
+<p class="text-xs font-bold text-heading">Headings</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-success rounded-xl"></div>
+<p class="text-xs font-bold text-heading">Success Mint</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-[#E8F5E9] rounded-xl border border-success/10"></div>
+<p class="text-xs font-bold text-heading">Pastel Green</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-[#FFF3E0] rounded-xl border border-primary/10"></div>
+<p class="text-xs font-bold text-heading">Pastel Peach</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="space-y-4">
+<p class="text-5xl font-bold tracking-tighter text-heading">Inter Display</p>
+<p class="text-lg text-body">The soul of the interface. Warm, legible, and editorial.</p>
+</div>
+<div class="p-6 bg-heading rounded-xl text-white shadow-xl">
+<p class="font-mono text-sm leading-relaxed">
+                    const api_key = "sk-new-api-jt678..."<br/>
+                    // JetBrains Mono for the engine
+                </p>
+</div>
+</div>
+</section>
+<section class="mb-24 space-y-8">
+<h2 class="text-3xl font-bold tracking-tight mb-8">Navigation Components</h2>
+<div class="bg-surface rounded-2xl p-4 flex items-center justify-between coral-shadow">
+<div class="flex items-center gap-8">
+<span class="font-bold text-xl px-4 text-heading">new-api</span>
+<div class="flex items-center gap-2 text-sm text-body">
+<span>Console</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-heading font-semibold">Dashboard</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<input class="bg-background border-none rounded-full px-10 py-2 text-sm w-64 focus:ring-2 focus:ring-primary transition-all" placeholder="Search models..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2 text-body">search</span>
+</div>
+<span class="material-symbols-outlined p-2 hover:bg-background rounded-full cursor-pointer text-body">notifications</span>
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-primary/10">
+<img class="w-full h-full object-cover" data-alt="User profile portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6IIKj_ZXtiZiSH9nAP0yFJhdVKvHdg7oKwazZfhRNiEGs1D1s8N7-p0r8mJsb-7OYRQuFdknz1vE9cPzUYUX-LgrQjNOT7EdYlVJi8uYQ2tq0ndbBG7YYz0K3wY8zHUh8joEBgxrBe-AgywvQgp7VrPg2G7oz5_R0bk4S83q5-c55CFxNKb9ff1PYdVmEeGiKjGIVzNxL1Tl8z6d4Dxs7ysZE5o7-2CtVt7NiQqwecmn1Y2WcLAobozDDX1CSxt8rFnAKcHusShhF"/>
+</div>
+</div>
+</div>
+<div class="flex gap-8 h-[400px]">
+<div class="w-64 bg-surface rounded-2xl p-6 flex flex-col gap-2 coral-shadow">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]" data-icon="hub">hub</span>
+</div>
+<div>
+<p class="text-sm font-bold leading-none text-heading">new-api</p>
+<p class="text-[10px] text-body">AI Model Gateway</p>
+</div>
+</div>
+<div class="bg-primary text-white flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</div>
+<div class="hover:bg-background flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-[20px] text-body group-hover:text-primary" data-icon="vpn_key">vpn_key</span>
+<span class="text-sm font-medium text-body group-hover:text-heading">API Keys</span>
+</div>
+<div class="hover:bg-background flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-[20px] text-body group-hover:text-primary" data-icon="hub">hub</span>
+<span class="text-sm font-medium text-body group-hover:text-heading">Models</span>
+</div>
+<div class="hover:bg-background flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-[20px] text-body group-hover:text-primary" data-icon="layers">layers</span>
+<span class="text-sm font-medium text-body group-hover:text-heading">Channels</span>
+</div>
+</div>
+<div class="flex-1 bg-surface rounded-2xl border-2 border-dashed border-primary/10 flex items-center justify-center text-body italic">
+                Dashboard Canvas Area
+            </div>
+</div>
+</section>
+<section class="mb-24">
+<h2 class="text-3xl font-bold tracking-tight mb-12">Forms &amp; Interactive Controls</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+<div class="space-y-8">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-body/80">Master API Key</label>
+<div class="relative">
+<input class="w-full font-mono bg-surface border border-primary/10 rounded-xl py-4 pl-4 pr-24 text-sm text-heading coral-shadow focus:ring-2 focus:ring-primary focus:border-transparent outline-none" readonly="" type="password" value="sk-xxxxxxxxxxxxxxxxxxxx"/>
+<div class="absolute right-2 top-2 flex gap-1">
+<button class="p-2 hover:bg-background rounded-lg transition-colors text-body"><span class="material-symbols-outlined text-xl">visibility</span></button>
+<button class="p-2 hover:bg-background rounded-lg transition-colors text-body"><span class="material-symbols-outlined text-xl">content_copy</span></button>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-body/80">Spending Limit</label>
+<div class="flex items-center bg-surface rounded-xl p-1 border border-primary/10 coral-shadow focus-within:ring-2 focus-within:ring-primary transition-all">
+<span class="px-4 text-primary font-bold">$</span>
+<input class="flex-1 border-none focus:ring-0 text-sm py-3 bg-transparent text-heading" placeholder="50.00" type="number"/>
+<span class="px-4 text-xs font-bold text-body">/ MONTH</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-body/80">Filter Usage</label>
+<div class="flex p-1 bg-background rounded-xl w-fit border border-primary/5">
+<button class="px-6 py-2 rounded-lg text-sm font-bold bg-surface text-primary coral-shadow">All</button>
+<button class="px-6 py-2 rounded-lg text-sm font-medium text-body hover:text-heading">Consumed</button>
+<button class="px-6 py-2 rounded-lg text-sm font-medium text-body hover:text-heading">Recharged</button>
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-body/80">Selected Models</label>
+<div class="min-h-[56px] bg-surface border border-primary/10 rounded-xl p-2 flex flex-wrap gap-2 coral-shadow">
+<span class="inline-flex items-center gap-2 px-3 py-1 bg-[#E8F5E9] text-success rounded-full text-xs font-bold border border-success/20">
+                            GPT-5.3
+                            <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
+</span>
+<span class="inline-flex items-center gap-2 px-3 py-1 bg-[#FFF3E0] text-primary rounded-full text-xs font-bold border border-primary/20">
+                            Opus 4.6
+                            <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
+</span>
+<input class="border-none focus:ring-0 text-xs py-1 bg-transparent flex-1 min-w-[100px] text-heading" placeholder="Add model..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-12">
+<div class="flex items-center gap-3">
+<button class="w-12 h-6 bg-primary rounded-full relative transition-colors shadow-inner">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</button>
+<span class="text-sm font-semibold text-heading">Auto-Scale</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-12 h-6 bg-body/20 rounded-full relative transition-colors shadow-inner">
+<div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</button>
+<span class="text-sm font-medium text-body">Debug Mode</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-success/5 border border-success/20 text-success p-4 rounded-xl flex items-center gap-3 coral-shadow">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<p class="text-sm font-semibold">API Key successfully rotated.</p>
+</div>
+<div class="bg-primary/5 border border-primary/20 text-primary p-4 rounded-xl flex items-center gap-3 coral-shadow">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">error</span>
+<p class="text-sm font-semibold">Insufficient credits to perform this action.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="mb-24">
+<h2 class="text-3xl font-bold tracking-tight mb-12">Operational Dashboard</h2>
+<div class="asymmetric-grid mb-12">
+<div class="bg-primary p-8 rounded-[2rem] text-white flex flex-col justify-between relative overflow-hidden h-64 shadow-2xl shadow-primary/40">
+<div class="absolute inset-0 opacity-60" style="background: radial-gradient(circle at 20% 20%, #ff785a 0%, transparent 50%), radial-gradient(circle at 80% 80%, #b22200 0%, transparent 50%);"></div>
+<div class="relative z-10">
+<p class="text-sm font-medium opacity-90">Total Requests (24h)</p>
+<p class="text-5xl font-bold tracking-tighter mt-2">1.2M</p>
+</div>
+<div class="relative z-10 flex items-center gap-2 text-sm font-bold bg-white/20 w-fit px-4 py-2 rounded-full backdrop-blur-md">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                    +12.5%
+                </div>
+</div>
+<div class="bg-surface p-8 rounded-[2rem] coral-shadow flex flex-col justify-between h-64 border border-primary/5">
+<div>
+<p class="text-xs font-bold text-body uppercase tracking-widest">Avg Latency</p>
+<p class="text-4xl font-bold mt-2 text-heading">142ms</p>
+</div>
+<div class="flex gap-1.5 items-end h-16">
+<div class="flex-1 bg-primary/10 rounded-t-lg h-1/2"></div>
+<div class="flex-1 bg-primary/10 rounded-t-lg h-3/4"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-1/2"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-full"></div>
+<div class="flex-1 bg-primary/10 rounded-t-lg h-2/3"></div>
+</div>
+</div>
+<div class="bg-surface p-8 rounded-[2rem] coral-shadow flex flex-col justify-between h-64 border border-primary/5">
+<div>
+<p class="text-xs font-bold text-body uppercase tracking-widest">Active Nodes</p>
+<p class="text-4xl font-bold mt-2 text-heading">14/14</p>
+</div>
+<div class="flex items-center gap-2 text-success text-sm font-bold bg-success/5 px-4 py-2 rounded-full w-fit">
+<div class="w-2 h-2 rounded-full bg-success"></div>
+                    System Healthy
+                </div>
+</div>
+</div>
+<div class="bg-surface p-4 rounded-2xl mb-8 flex flex-wrap gap-4 items-center coral-shadow border border-primary/5">
+<div class="flex items-center gap-2 bg-background px-4 py-2 rounded-xl border border-primary/10 text-sm text-heading font-medium">
+<span class="material-symbols-outlined text-lg text-primary">calendar_today</span>
+<span>Oct 20 - Oct 27</span>
+</div>
+<div class="flex items-center gap-2 bg-background px-4 py-2 rounded-xl border border-primary/10 text-sm text-heading font-medium">
+<span class="material-symbols-outlined text-lg text-primary">filter_list</span>
+<span>Production Group</span>
+</div>
+<div class="relative flex-1 min-w-[200px]">
+<input class="w-full bg-background border-none rounded-xl py-2 pl-10 text-sm text-heading focus:ring-2 focus:ring-primary" placeholder="Search logs..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2 text-body">search</span>
+</div>
+<button class="bg-primary text-white px-6 py-2 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined">add</span>
+                Create New
+            </button>
+</div>
+<div class="bg-surface rounded-[2rem] coral-shadow overflow-hidden border border-primary/5">
+<table class="w-full text-left border-collapse">
+<thead class="bg-background">
+<tr>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-body">Time</th>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-body">Request ID</th>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-body">Model</th>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-body">Status</th>
+<th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-body">Latency</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/5">
+<tr class="hover:bg-background/50 transition-colors">
+<td class="px-8 py-6 text-sm text-heading">14:20:44</td>
+<td class="px-8 py-6 font-mono text-xs text-body">req_4f92...a21</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-[#E8F5E9] text-success rounded-full text-xs font-bold border border-success/10">GPT-4o</span>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-2 text-sm font-semibold text-success">
+<div class="w-2 h-2 rounded-full bg-success"></div>
+                                200 OK
+                            </div>
+</td>
+<td class="px-8 py-6 text-sm font-bold text-heading">124ms</td>
+</tr>
+<tr class="hover:bg-background/50 transition-colors">
+<td class="px-8 py-6 text-sm text-heading">14:19:12</td>
+<td class="px-8 py-6 font-mono text-xs text-body">req_92d1...b02</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-[#FFF3E0] text-primary rounded-full text-xs font-bold border border-primary/10">Claude 3.5</span>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-2 text-sm text-primary font-bold">
+<div class="w-2 h-2 rounded-full bg-primary/60"></div>
+                                429 Rate Limit
+                            </div>
+</td>
+<td class="px-8 py-6 text-sm font-bold text-heading">82ms</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="mb-24">
+<h2 class="text-3xl font-bold tracking-tight mb-8">Model Plaza</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-surface p-6 rounded-2xl coral-shadow border border-primary/5 group hover:-translate-y-1 transition-transform cursor-pointer">
+<div class="w-12 h-12 bg-background rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary">psychology</span>
+</div>
+<h3 class="font-bold text-lg mb-1 text-heading">Advanced Reasoning</h3>
+<p class="text-xs text-body mb-6">Best for complex logic and math.</p>
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold bg-background px-3 py-1.5 rounded-lg text-body border border-primary/10">$0.01 / 1k</span>
+<button class="text-primary font-bold text-sm hover:underline decoration-2 underline-offset-4">Deploy</button>
+</div>
+</div>
+<div class="bg-surface p-6 rounded-2xl coral-shadow border border-primary/5 group hover:-translate-y-1 transition-transform cursor-pointer">
+<div class="w-12 h-12 bg-background rounded-xl flex items-center justify-center mb-6 group-hover:bg-success/10 transition-colors">
+<span class="material-symbols-outlined text-success">bolt</span>
+</div>
+<h3 class="font-bold text-lg mb-1 text-heading">Fast Response</h3>
+<p class="text-xs text-body mb-6">Sub-100ms response time latency.</p>
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold bg-background px-3 py-1.5 rounded-lg text-body border border-primary/10">$0.002 / 1k</span>
+<button class="text-primary font-bold text-sm hover:underline decoration-2 underline-offset-4">Deploy</button>
+</div>
+</div>
+</div>
+</section>
+<section class="mb-24">
+<h2 class="text-3xl font-bold tracking-tight mb-8">Modal Experience</h2>
+<div class="bg-heading/5 p-16 rounded-[3rem] relative flex items-center justify-center min-h-[500px] overflow-hidden">
+<div class="absolute inset-0 bg-heading/20 backdrop-blur-md z-0"></div>
+<div class="bg-surface w-full max-w-lg rounded-3xl coral-shadow overflow-hidden relative z-10 border border-primary/5">
+<div class="p-8 border-b border-primary/5 flex justify-between items-center">
+<div>
+<h3 class="text-xl font-bold text-heading">Create New Channel</h3>
+<p class="text-sm text-body">Configure your model routing.</p>
+</div>
+<button class="p-2 hover:bg-background rounded-full text-body transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-8 space-y-6">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-body/80 tracking-widest">Channel Name</label>
+<input class="w-full bg-background border border-primary/10 rounded-xl py-3 px-4 text-sm text-heading focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. Production-API-Edge" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-body/80 tracking-widest">Default Model</label>
+<div class="relative">
+<select class="w-full bg-background border border-primary/10 rounded-xl py-3 px-4 text-sm text-heading appearance-none focus:ring-2 focus:ring-primary outline-none">
+<option>GPT-4o (Standard)</option>
+<option>Claude 3.5 Sonnet</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 pointer-events-none text-body">expand_more</span>
+</div>
+</div>
+</div>
+<div class="p-8 bg-background/50 flex justify-end gap-3">
+<button class="px-6 py-2 text-sm font-bold text-body hover:text-heading transition-colors">Cancel</button>
+<button class="px-8 py-2 text-sm font-bold bg-primary text-white rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">Create Channel</button>
+</div>
+</div>
+</div>
+</section>
+
+</body></html>

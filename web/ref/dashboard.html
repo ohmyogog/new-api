@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ogog AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'peach-50': '#fdfaf6',
+            'peach-100': '#f9f4f0',
+            'peach-200': '#f5e8df',
+            'peach-800': '#a05c4a',
+            'orange-brand': '#ff6b4a',
+            'text-main': '#4a4440',
+            'text-muted': '#8a827d',
+            'chart-red': '#e78a87',
+            'chart-pink': '#e595aa',
+            'chart-orange': '#d99745',
+            'chart-yellow': '#d9be45',
+            'chart-darkred': '#b8655e',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-utilities">
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-peach-100 text-text-main font-sans antialiased flex h-screen overflow-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-peach-50 h-full flex flex-col flex-shrink-0 border-r border-peach-200 overflow-y-auto scrollbar-hide">
+<!-- Logo -->
+<div class="p-6 flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-orange-brand flex items-center justify-center text-white font-bold shadow-md">
+<i class="fa-solid fa-cube"></i>
+</div>
+<span class="text-xl font-bold">Ogog AI</span>
+</div>
+<!-- Navigation -->
+<nav class="flex-1 px-4 space-y-1">
+<div class="text-xs font-semibold text-text-muted mb-2 mt-4 px-2 uppercase tracking-wider">聊天</div>
+<a class="flex items-center px-4 py-2.5 text-text-main hover:bg-peach-200 rounded-xl transition-colors group" href="#">
+<i class="fa-regular fa-comments w-5 text-text-muted group-hover:text-orange-brand transition-colors"></i>
+<span class="ml-3 font-medium">聊天场</span>
+</a>
+<div class="text-xs font-semibold text-text-muted mb-2 mt-6 px-2 uppercase tracking-wider">控制台</div>
+<a class="flex items-center px-4 py-2.5 bg-orange-brand text-white rounded-xl shadow-sm" href="#">
+<i class="fa-solid fa-chart-pie w-5"></i>
+<span class="ml-3 font-medium">数据看板</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-text-main hover:bg-peach-200 rounded-xl transition-colors group" href="#">
+<i class="fa-solid fa-key w-5 text-text-muted group-hover:text-orange-brand transition-colors"></i>
+<span class="ml-3 font-medium">令牌管理</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-text-main hover:bg-peach-200 rounded-xl transition-colors group" href="#">
+<i class="fa-solid fa-list-ul w-5 text-text-muted group-hover:text-orange-brand transition-colors"></i>
+<span class="ml-3 font-medium">使用日志</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-text-main hover:bg-peach-200 rounded-xl transition-colors group" href="#">
+<i class="fa-regular fa-image w-5 text-text-muted group-hover:text-orange-brand transition-colors"></i>
+<span class="ml-3 font-medium">充值日志</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-text-main hover:bg-peach-200 rounded-xl transition-colors group" href="#">
+<i class="fa-solid fa-tasks w-5 text-text-muted group-hover:text-orange-brand transition-colors"></i>
+<span class="ml-3 font-medium">任务日志</span>
+</a>
+</nav>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-hidden">
+<!-- BEGIN: Topbar -->
+<header class="h-16 flex items-center justify-between px-8 bg-peach-100 flex-shrink-0">
+<div class="text-lg font-medium text-text-muted">控制台</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted text-sm"></i>
+<input class="pl-9 pr-4 py-1.5 bg-white border-none rounded-full text-sm focus:ring-2 focus:ring-orange-brand w-64 card-shadow" placeholder="搜索..." type="text"/>
+</div>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-text-muted hover:text-orange-brand transition-colors card-shadow">
+<i class="fa-regular fa-bell"></i>
+</button>
+</div>
+</header>
+<!-- END: Topbar -->
+<!-- BEGIN: Scrollable Dashboard Area -->
+<div class="flex-1 overflow-y-auto p-8 scrollbar-hide">
+<!-- Greeting -->
+<div class="flex justify-between items-end mb-6">
+<div>
+<h1 class="text-2xl font-bold text-text-main mb-1">晚上好，管理</h1>
+<p class="text-text-muted text-sm">这是您的 API 使用概况</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-text-muted hover:text-orange-brand transition-colors card-shadow">
+<i class="fa-solid fa-rotate-right"></i>
+</button>
+</div>
+<!-- BEGIN: Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<!-- Card 1: Account Data -->
+<div class="bg-white rounded-2xl p-5 card-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2 text-orange-brand">
+<div class="w-6 h-6 rounded bg-peach-100 flex items-center justify-center"><i class="fa-solid fa-wallet text-xs"></i></div>
+<span class="font-semibold text-sm">账户数据</span>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<div class="text-text-muted text-xs mb-1">当前余额</div>
+<div class="text-2xl font-bold mb-2">$18.18 <span class="text-xs bg-orange-brand text-white px-2 py-0.5 rounded-full ml-2 align-middle font-normal">充值</span></div>
+<div class="text-text-muted text-xs mb-1">总充值额</div>
+<div class="text-xl font-bold">$1.82</div>
+</div>
+<div class="w-24 h-12">
+<!-- Placeholder for sparkline chart -->
+<svg class="w-full h-full stroke-orange-brand fill-none stroke-[2]" viewbox="0 0 100 30">
+<path d="M0,25 Q10,25 20,20 T40,22 T60,15 T70,5 L75,25 L80,10 T100,20"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Card 2: Usage Stats -->
+<div class="bg-white rounded-2xl p-5 card-shadow flex flex-col justify-between">
+<div class="flex items-center space-x-2 text-chart-red mb-4">
+<div class="w-6 h-6 rounded bg-red-50 flex items-center justify-center"><i class="fa-solid fa-bolt text-xs"></i></div>
+<span class="font-semibold text-sm">使用统计</span>
+</div>
+<div class="flex justify-between items-end h-full">
+<div class="flex flex-col justify-between h-full">
+<div>
+<div class="text-text-muted text-xs mb-1">请求次数</div>
+<div class="text-2xl font-bold mb-2">52</div>
+</div>
+<div>
+<div class="text-text-muted text-xs mb-1">输出字数</div>
+<div class="text-xl font-bold">4.5K</div>
+</div>
+</div>
+<div class="w-24 flex flex-col justify-between h-full space-y-2">
+<svg class="w-full h-10 stroke-chart-red fill-none stroke-[2]" viewbox="0 0 100 30">
+<path d="M0,20 Q20,25 40,20 T60,10 T80,5 T100,15"></path>
+</svg>
+<svg class="w-full h-10 stroke-chart-red fill-none stroke-[2]" viewbox="0 0 100 30">
+<path d="M0,25 Q10,25 30,28 T60,15 T80,20 T100,25"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Card 3: Token Consumption -->
+<div class="bg-white rounded-2xl p-5 card-shadow flex flex-col justify-between">
+<div class="flex items-center space-x-2 text-chart-yellow mb-4">
+<div class="w-6 h-6 rounded bg-yellow-50 flex items-center justify-center"><i class="fa-solid fa-link text-xs"></i></div>
+<span class="font-semibold text-sm">资源消耗</span>
+</div>
+<div class="flex justify-between items-end h-full">
+<div class="flex flex-col justify-between h-full">
+<div>
+<div class="text-text-muted text-xs mb-1">额度限制</div>
+<div class="text-2xl font-bold mb-2">$467.63</div>
+</div>
+<div>
+<div class="text-text-muted text-xs mb-1">可用 Tokens</div>
+<div class="text-xl font-bold">0</div>
+</div>
+</div>
+<div class="w-24 flex flex-col justify-between h-full space-y-2">
+<svg class="w-full h-10 stroke-chart-yellow fill-none stroke-[2]" viewbox="0 0 100 30">
+<path d="M0,20 Q20,20 40,15 T60,20 T80,10 T100,5"></path>
+</svg>
+<svg class="w-full h-10 stroke-chart-yellow fill-none stroke-[2]" viewbox="0 0 100 30">
+<path d="M0,25 Q10,25 30,28 T60,25 T80,20 T100,25"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Card 4: Performance Metrics -->
+<div class="bg-white rounded-2xl p-5 card-shadow flex flex-col justify-between">
+<div class="flex items-center space-x-2 text-chart-darkred mb-4">
+<div class="w-6 h-6 rounded bg-red-50 flex items-center justify-center"><i class="fa-solid fa-gauge-high text-xs"></i></div>
+<span class="font-semibold text-sm">性能指标</span>
+</div>
+<div class="flex justify-between items-end h-full">
+<div class="flex flex-col justify-between h-full">
+<div>
+<div class="text-text-muted text-xs mb-1">平均 RPM</div>
+<div class="text-2xl font-bold mb-2">3.1</div>
+</div>
+<div>
+<div class="text-text-muted text-xs mb-1">平均 TPM</div>
+<div class="text-xl font-bold">0</div>
+</div>
+</div>
+<div class="w-24 flex flex-col justify-between h-full space-y-2">
+<svg class="w-full h-10 stroke-chart-darkred fill-none stroke-[2]" viewbox="0 0 100 30">
+<path d="M0,25 Q10,25 20,20 T40,25 T60,15 L70,5 L80,20 T100,25"></path>
+</svg>
+<svg class="w-full h-10 stroke-chart-darkred fill-none stroke-[2]" viewbox="0 0 100 30">
+<path d="M0,25 Q20,25 40,28 T60,20 T80,25 T100,25"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Summary Cards -->
+<!-- BEGIN: Middle Section (Chart & API Links) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+<!-- Main Chart Area -->
+<div class="lg:col-span-2 bg-white rounded-2xl p-6 card-shadow">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-2 text-text-main">
+<div class="w-6 h-6 rounded bg-peach-100 flex items-center justify-center text-chart-darkred"><i class="fa-solid fa-chart-bar text-xs"></i></div>
+<span class="font-semibold">模型数据分析</span>
+</div>
+<div class="flex space-x-3 text-sm text-text-muted">
+<button class="font-medium text-text-main border-b-2 border-orange-brand pb-1">消费分布</button>
+<button class="hover:text-text-main pb-1">消耗统计</button>
+<button class="hover:text-text-main pb-1">调用数量分析</button>
+<button class="hover:text-text-main pb-1">错误次数统计</button>
+</div>
+</div>
+</div>
+<div>
+<div class="text-sm font-semibold mb-1">模型消费分布</div>
+<div class="text-xs text-text-muted mb-4">总计: $467.63</div>
+<!-- Simplified CSS Bar Chart Placeholder -->
+<div class="relative h-48 w-full border-b border-gray-100 flex items-end justify-between px-2">
+<!-- Grid lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+<div class="border-b border-gray-100 border-dashed w-full h-0"></div>
+<div class="border-b border-gray-100 border-dashed w-full h-0"></div>
+<div class="border-b border-gray-100 border-dashed w-full h-0"></div>
+<div class="border-b border-gray-100 border-dashed w-full h-0"></div>
+<div class="border-b border-gray-100 border-dashed w-full h-0"></div>
+<div class="border-b border-gray-100 border-dashed w-full h-0"></div>
+</div>
+<!-- Y-axis labels -->
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-[10px] text-text-muted -ml-6 py-1">
+<span>120</span><span>100</span><span>80</span><span>60</span><span>40</span><span>20</span><span>0</span>
+</div>
+<!-- Bars (Mock Data) -->
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-orange h-4 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-red h-2 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-pink h-3 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-yellow h-8 w-full"><div class="bg-chart-orange h-3 w-full"></div></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-yellow h-5 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-orange h-20 w-full"><div class="bg-chart-red h-4 w-full"></div><div class="bg-chart-yellow h-8 w-full"></div></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-pink h-12 w-full"><div class="bg-chart-orange h-6 w-full"></div></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-red h-6 w-full"><div class="bg-chart-yellow h-3 w-full"></div></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-pink h-4 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-yellow h-8 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-orange h-3 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-yellow h-6 w-full"></div></div>
+<div class="w-8 flex flex-col justify-end h-full z-10"><div class="bg-chart-red h-1 w-full"></div></div>
+</div>
+<!-- X-axis labels -->
+<div class="flex justify-between text-[10px] text-text-muted mt-2">
+<span>03-15 15:00</span>
+<span>03-15 16:00</span>
+<span>03-15 14:00</span>
+<span>03-15 22:00</span>
+<span></span>
+</div>
+<!-- Legend -->
+<div class="flex justify-center items-center space-x-4 mt-4 text-[10px] text-text-muted">
+<div class="flex items-center"><span class="w-2 h-2 bg-chart-red inline-block mr-1"></span> claude haiku 4-5 20251101</div>
+<div class="flex items-center"><span class="w-2 h-2 bg-chart-pink inline-block mr-1"></span> claude opus 4-6 202511914</div>
+<div class="flex items-center"><span class="w-2 h-2 bg-chart-orange inline-block mr-1"></span> claude opus 4-6</div>
+<div class="flex items-center"><span class="w-2 h-2 bg-chart-yellow inline-block mr-1"></span> claude opus 4-6 thinking</div>
+<div class="flex items-center"><span class="w-2 h-2 bg-chart-darkred inline-block mr-1"></span> claude sonnet 6-6</div>
+</div>
+</div>
+</div>
+<!-- API Links Section -->
+<div class="bg-white rounded-2xl p-6 card-shadow flex flex-col">
+<div class="flex items-center space-x-2 text-text-main mb-6">
+<div class="w-6 h-6 rounded bg-peach-100 flex items-center justify-center text-orange-brand"><i class="fa-solid fa-link text-xs"></i></div>
+<span class="font-semibold">API 接入</span>
+</div>
+<div class="space-y-3 flex-1">
+<!-- Link Block 1 -->
+<div class="bg-peach-50 p-3 rounded-xl border border-peach-100 relative group">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center space-x-2">
+<span class="bg-orange-brand text-white text-[10px] px-1.5 py-0.5 rounded font-bold">主站</span>
+<span class="font-medium text-sm">主站直连</span>
+</div>
+<div class="text-[10px] text-orange-brand opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">复制 <i class="fa-regular fa-copy"></i></div>
+</div>
+<div class="text-xs font-mono text-text-muted truncate">https://api.ogog.ai</div>
+<div class="text-[10px] text-text-muted mt-1">(适用于开发环境，建议将 api.ogog.ai 替换为实际地址)</div>
+</div>
+<!-- Link Block 2 -->
+<div class="bg-peach-50 p-3 rounded-xl border border-peach-100 relative group">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center space-x-2">
+<span class="bg-chart-yellow text-white text-[10px] px-1.5 py-0.5 rounded font-bold">海外</span>
+<span class="font-medium text-sm">海外直连</span>
+</div>
+<div class="text-[10px] text-orange-brand opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">复制 <i class="fa-regular fa-copy"></i></div>
+</div>
+<div class="text-xs font-mono text-text-muted truncate">https://api.opq.ai</div>
+<div class="text-[10px] text-text-muted mt-1">(海外直连，无限制，速度快)</div>
+</div>
+<!-- Link Block 3 -->
+<div class="bg-peach-50 p-3 rounded-xl border border-peach-100 relative group">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center space-x-2">
+<span class="bg-chart-red text-white text-[10px] px-1.5 py-0.5 rounded font-bold">代理</span>
+<span class="font-medium text-sm">代理地址</span>
+</div>
+<div class="text-[10px] text-orange-brand opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">复制 <i class="fa-regular fa-copy"></i></div>
+</div>
+<div class="text-xs font-mono text-text-muted truncate">https://api.pro</div>
+<div class="text-[10px] text-text-muted mt-1">(国内代理地址，不推荐)</div>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Middle Section -->
+<!-- BEGIN: Bottom Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Announcements -->
+<div class="bg-white rounded-2xl p-6 card-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2 text-text-main">
+<div class="w-6 h-6 rounded bg-peach-100 flex items-center justify-center text-orange-brand"><i class="fa-solid fa-bullhorn text-xs"></i></div>
+<span class="font-semibold">系统公告</span>
+</div>
+<div class="flex space-x-2 text-[10px] text-text-muted">
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1"></span> 默认</span>
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-1"></span> 运行中</span>
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400 mr-1"></span> 成功</span>
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mr-1"></span> 失败</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="relative pl-4 border-l-2 border-orange-brand">
+<div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-orange-brand"></div>
+<div class="text-sm font-medium">本站已恢复正常使用！</div>
+<div class="text-[10px] text-text-muted">4天前 2024-05-11 22:45</div>
+</div>
+<div class="relative pl-4 border-l-2 border-gray-200">
+<div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-gray-300"></div>
+<div class="text-sm font-medium">老Claude-Krio降价 (感谢信赖的优质客户)</div>
+<div class="text-xs text-text-muted mt-0.5">新增Claude-Krio 的辅助模型 cc供快捷调用 价格更实惠</div>
+<div class="text-[10px] text-text-muted mt-0.5">4天前 2024-05-11 22:41</div>
+</div>
+<div class="relative pl-4 border-l-2 border-gray-200">
+<div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-gray-300"></div>
+<div class="text-sm font-medium">用户QQ群: 1090672209</div>
+<div class="text-[10px] text-text-muted">12天前 2024-05-05 16:58</div>
+</div>
+</div>
+</div>
+<!-- FAQ -->
+<div class="bg-white rounded-2xl p-6 card-shadow">
+<div class="flex items-center space-x-2 text-text-main mb-4">
+<div class="w-6 h-6 rounded bg-peach-100 flex items-center justify-center text-chart-darkred"><i class="fa-regular fa-circle-question text-xs text-orange-brand"></i></div>
+<span class="font-semibold">常见问题</span>
+</div>
+<div class="divide-y divide-gray-100 text-sm">
+<a class="py-2.5 flex justify-between items-center group hover:text-orange-brand transition-colors" href="#">
+<span>充值提示支付成功但余额未到账？</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-text-muted group-hover:text-orange-brand"></i>
+</a>
+<a class="py-2.5 flex justify-between items-center group hover:text-orange-brand transition-colors" href="#">
+<span>支持哪些模型以及价格？</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-text-muted group-hover:text-orange-brand"></i>
+</a>
+<a class="py-2.5 flex justify-between items-center group hover:text-orange-brand transition-colors" href="#">
+<span>API调用提示API密钥无效或过期？</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-text-muted group-hover:text-orange-brand"></i>
+</a>
+<a class="py-2.5 flex justify-between items-center group hover:text-orange-brand transition-colors" href="#">
+<span>数据安全如何保障？</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-text-muted group-hover:text-orange-brand"></i>
+</a>
+<a class="py-2.5 flex justify-between items-center group hover:text-orange-brand transition-colors" href="#">
+<span>服务可用性说明？</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-text-muted group-hover:text-orange-brand"></i>
+</a>
+<a class="py-2.5 flex justify-between items-center group hover:text-orange-brand transition-colors" href="#">
+<span>遇到问题如何获得帮助？</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-text-muted group-hover:text-orange-brand"></i>
+</a>
+</div>
+</div>
+<!-- Service Availability -->
+<div class="bg-white rounded-2xl p-6 card-shadow flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center space-x-2 text-text-main">
+<div class="w-6 h-6 rounded bg-peach-100 flex items-center justify-center text-orange-brand"><i class="fa-solid fa-shield-halved text-xs"></i></div>
+<span class="font-semibold">服务可用性</span>
+</div>
+<button class="w-6 h-6 rounded-full bg-peach-50 flex items-center justify-center text-text-muted hover:text-orange-brand transition-colors">
+<i class="fa-solid fa-rotate-right text-[10px]"></i>
+</button>
+</div>
+<div class="space-y-4 flex-1">
+<div>
+<div class="flex justify-between items-center text-xs mb-1">
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-2"></span>claude-haiku-4-5-20251001</span>
+<span class="text-text-muted">100.0%</span>
+</div>
+<div class="w-full bg-gray-100 rounded-full h-1.5">
+<div class="bg-green-500 h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center text-xs mb-1">
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-2"></span>claude-sonnet-6-6-20255014</span>
+<span class="text-text-muted">100.0%</span>
+</div>
+<div class="w-full bg-gray-100 rounded-full h-1.5">
+<div class="bg-green-500 h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<div class="flex space-x-3 text-[10px] text-text-muted mt-4">
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1"></span> 停机</span>
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1"></span> 正常</span>
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400 mr-1"></span> 降级</span>
+<span class="flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1"></span> 维护中</span>
+</div>
+</div>
+</div>
+<!-- END: Bottom Section -->
+</div>
+<!-- END: Scrollable Dashboard Area -->
+</main>
+<!-- END: Main Content -->
+</body></html>
