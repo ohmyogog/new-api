@@ -6,6 +6,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { API } from '@/api/client';
+import { withBasePath } from '@/lib/routes';
 import toast from 'react-hot-toast';
 
 function getUser() {
@@ -162,7 +163,7 @@ export default function TopUpPage() {
 
   const copyAffLink = () => {
     const affCode = affInfo?.aff_code ?? '';
-    const link = `${window.location.origin}/register?aff=${affCode}`;
+    const link = new URL(withBasePath(`/register?aff=${affCode}`), window.location.origin).toString();
     navigator.clipboard.writeText(link).then(() => toast.success('邀请链接已复制'));
   };
 

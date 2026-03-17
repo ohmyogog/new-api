@@ -3,6 +3,7 @@ package router
 import (
 	"embed"
 	"net/http"
+	"path"
 	"strings"
 
 	"github.com/QuantumNous/new-api/common"
@@ -13,18 +14,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetWebRouter(router *gin.Engine, buildFS embed.FS, indexPage []byte) {
+func SetWebRouter(router *gin.Engine, buildFS embed.FS, indexPage []byte, nextIndexPage []byte) {
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.Use(middleware.GlobalWebRateLimit())
 	router.Use(middleware.Cache())
+	router.Use(static.Serve("/new", common.EmbedFolderWithPrefix(buildFS, "web-next/dist", "/new")))
 	router.Use(static.Serve("/", common.EmbedFolder(buildFS, "web/dist")))
 	router.NoRoute(func(c *gin.Context) {
 		c.Set(middleware.RouteTagKey, "web")
-		if strings.HasPrefix(c.Request.RequestURI, "/v1") || strings.HasPrefix(c.Request.RequestURI, "/api") || strings.HasPrefix(c.Request.RequestURI, "/assets") {
+		requestPath := c.Request.URL.Path
+		if strings.HasPrefix(requestPath, "/v1") || strings.HasPrefix(requestPath, "/api") || strings.HasPrefix(requestPath, "/assets") {
 			controller.RelayNotFound(c)
 			return
 		}
+		if strings.HasPrefix(requestPath, "/new/assets") || (strings.HasPrefix(requestPath, "/new/") && path.Ext(requestPath) != "") {
+			c.Status(http.StatusNotFound)
+			return
+		}
 		c.Header("Cache-Control", "no-cache")
+		if requestPath == "/new" || strings.HasPrefix(requestPath, "/new/") {
+			c.Data(http.StatusOK, "text/html; charset=utf-8", nextIndexPage)
+			return
+		}
 		c.Data(http.StatusOK, "text/html; charset=utf-8", indexPage)
 	})
 }

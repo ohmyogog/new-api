@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { API } from '@/api/client';
+import { getOAuthCallbackUrl, getOAuthState, type CustomOAuthProvider } from '@/lib/oauth';
+import { withBasePath } from '@/lib/routes';
 import toast from 'react-hot-toast';
 
 interface StatusData {
@@ -25,7 +27,7 @@ interface StatusData {
   email_verification?: boolean;
   user_agreement_enabled?: boolean;
   privacy_policy_enabled?: boolean;
-  custom_oauth_providers?: Array<{ slug: string; name: string; icon?: string }>;
+  custom_oauth_providers?: CustomOAuthProvider[];
 }
 
 export default function RegisterPage() {
@@ -78,14 +80,65 @@ export default function RegisterPage() {
     window.location.href = url;
   }, []);
 
-  const handleGitHub = () => oauthRedirect(`https://github.com/login/oauth/authorize?client_id=${status.github_client_id}&scope=user:email`);
-  const handleDiscord = () => oauthRedirect(`https://discord.com/api/oauth2/authorize?client_id=${status.discord_client_id}&redirect_uri=${encodeURIComponent(window.location.origin + '/oauth/discord')}&response_type=code&scope=identify+email`);
-  const handleOIDC = () => {
-    if (!status.oidc_authorization_endpoint || !status.oidc_client_id) return;
-    oauthRedirect(`${status.oidc_authorization_endpoint}?client_id=${status.oidc_client_id}&redirect_uri=${encodeURIComponent(window.location.origin + '/oauth/oidc')}&response_type=code&scope=openid+profile+email`);
+  const handleGitHub = async () => {
+    try {
+      const state = await getOAuthState('/oauth/github');
+      oauthRedirect(
+        `https://github.com/login/oauth/authorize?client_id=${status.github_client_id}&state=${state}&scope=user:email&redirect_uri=${encodeURIComponent(getOAuthCallbackUrl('/oauth/github'))}`,
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'GitHub 注册初始化失败');
+    }
   };
-  const handleLinuxDO = () => oauthRedirect(`https://connect.linux.do/oauth2/authorize?client_id=${status.linuxdo_client_id}&response_type=code&redirect_uri=${encodeURIComponent(window.location.origin + '/oauth/linuxdo')}`);
-  const handleCustomOAuth = (p: { slug: string }) => oauthRedirect(`${window.location.origin}/api/oauth/${p.slug}/redirect`);
+  const handleDiscord = async () => {
+    try {
+      const state = await getOAuthState('/oauth/discord');
+      oauthRedirect(
+        `https://discord.com/api/oauth2/authorize?client_id=${status.discord_client_id}&redirect_uri=${encodeURIComponent(getOAuthCallbackUrl('/oauth/discord'))}&response_type=code&scope=identify+email&state=${state}`,
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Discord 注册初始化失败');
+    }
+  };
+  const handleOIDC = async () => {
+    if (!status.oidc_authorization_endpoint || !status.oidc_client_id) return;
+    try {
+      const state = await getOAuthState('/oauth/oidc');
+      oauthRedirect(
+        `${status.oidc_authorization_endpoint}?client_id=${status.oidc_client_id}&redirect_uri=${encodeURIComponent(getOAuthCallbackUrl('/oauth/oidc'))}&response_type=code&scope=openid+profile+email&state=${state}`,
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'OIDC 注册初始化失败');
+    }
+  };
+  const handleLinuxDO = async () => {
+    try {
+      const state = await getOAuthState('/oauth/linuxdo');
+      oauthRedirect(
+        `https://connect.linux.do/oauth2/authorize?client_id=${status.linuxdo_client_id}&response_type=code&redirect_uri=${encodeURIComponent(getOAuthCallbackUrl('/oauth/linuxdo'))}&state=${state}`,
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'LinuxDO 注册初始化失败');
+    }
+  };
+  const handleCustomOAuth = async (p: CustomOAuthProvider) => {
+    if (!p.authorization_endpoint || !p.client_id) {
+      toast.error('OAuth 配置不完整');
+      return;
+    }
+    try {
+      const state = await getOAuthState(`/oauth/${p.slug}`);
+      const authUrl = new URL(p.authorization_endpoint);
+      authUrl.searchParams.set('client_id', p.client_id);
+      authUrl.searchParams.set('redirect_uri', getOAuthCallbackUrl(`/oauth/${p.slug}`));
+      authUrl.searchParams.set('response_type', 'code');
+      authUrl.searchParams.set('scope', p.scopes || 'openid profile email');
+      authUrl.searchParams.set('state', state);
+      oauthRedirect(authUrl.toString());
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : `${p.name} 注册初始化失败`);
+    }
+  };
 
   const sendVerificationCode = async () => {
     if (!email) { toast.error('请输入邮箱地址'); return; }
@@ -247,9 +300,9 @@ function AgreementCheckbox({ checked, onChange, hasUA, hasPP }: {
         className="mt-0.5 size-4 rounded border-slate-300 text-primary focus:ring-primary/20 accent-primary" />
       <span className="text-xs text-slate-500 leading-relaxed">
         我已阅读并同意
-        {hasUA && <a href="/user-agreement" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-0.5">用户协议</a>}
+        {hasUA && <a href={withBasePath('/user-agreement')} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-0.5">用户协议</a>}
         {hasUA && hasPP && '和'}
-        {hasPP && <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-0.5">隐私政策</a>}
+        {hasPP && <a href={withBasePath('/privacy-policy')} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-0.5">隐私政策</a>}
       </span>
     </label>
   );

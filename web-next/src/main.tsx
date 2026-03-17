@@ -4,12 +4,15 @@ import { BrowserRouter } from 'react-router-dom'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from 'react-hot-toast'
 import { StatusProvider } from '@/contexts/StatusContext'
+import { appBasePath } from '@/lib/routes'
 import './index.css'
 import App from './App.tsx'
 
+const routerBasename = appBasePath === '/' ? undefined : appBasePath
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <StatusProvider>
         <TooltipProvider>
           <App />

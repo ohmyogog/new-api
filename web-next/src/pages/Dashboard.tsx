@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { API } from '@/api/client';
 import { useStatus } from '@/contexts/StatusContext';
+import { withBasePath } from '@/lib/routes';
 import toast from 'react-hot-toast';
 
 // ── Warm color palette (matches reference peach/coral design) ──
@@ -416,7 +417,7 @@ export default function Dashboard() {
             <div className="flex justify-between items-end">
               <div>
                 <p className="text-xs text-muted-foreground mb-1">当前余额</p>
-                <p className="text-2xl font-bold mb-2">{renderQuota(user.quota)} <a href="/console/topup" className="text-xs bg-primary text-white px-2 py-0.5 rounded-full ml-2 align-middle font-normal hover:bg-primary/90 transition-colors">充值</a></p>
+                <p className="text-2xl font-bold mb-2">{renderQuota(user.quota)} <a href={withBasePath('/console/topup')} className="text-xs bg-primary text-white px-2 py-0.5 rounded-full ml-2 align-middle font-normal hover:bg-primary/90 transition-colors">充值</a></p>
                 <p className="text-xs text-muted-foreground mb-1">历史消耗</p>
                 <p className="text-xl font-bold">{renderQuota(user.used_quota)}</p>
               </div>

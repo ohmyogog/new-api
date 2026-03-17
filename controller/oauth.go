@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/i18n"
@@ -24,8 +25,16 @@ func GenerateOAuthCode(c *gin.Context) {
 	session := sessions.Default(c)
 	state := common.GetRandomString(12)
 	affCode := c.Query("aff")
+	redirectPath := c.Query("redirect_path")
 	if affCode != "" {
 		session.Set("aff", affCode)
+	}
+	if redirectPath != "" {
+		if strings.HasPrefix(redirectPath, "/") && !strings.HasPrefix(redirectPath, "//") {
+			session.Set(oauth.OAuthRedirectPathSessionKey, redirectPath)
+		}
+	} else {
+		session.Delete(oauth.OAuthRedirectPathSessionKey)
 	}
 	session.Set("oauth_state", state)
 	err := session.Save()
