@@ -129,6 +129,11 @@ const emptyForm = {
 };
 
 const PAGE_SIZE = 20;
+const panelClass = 'overflow-hidden rounded-3xl border border-primary/10 bg-white shadow-[0_10px_30px_rgba(242,107,72,0.08)]';
+const filterTabsClass = 'flex items-center gap-1.5 rounded-2xl border border-primary/10 bg-[#fff7f2] p-1.5';
+const tableHeaderRowClass = 'bg-[#fff7f2] border-b border-primary/10';
+const tableHeaderCellClass = 'px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap';
+const paginationButtonClass = 'inline-flex size-9 items-center justify-center rounded-xl border border-primary/10 bg-white text-muted-foreground transition-colors hover:border-primary/20 hover:bg-[#fff7f2] hover:text-primary disabled:opacity-40';
 
 // ── Component ──
 export default function ChannelPage() {
@@ -442,10 +447,10 @@ export default function ChannelPage() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input placeholder="搜索渠道名称..." value={search} onChange={e => setSearch(e.target.value)} className="pl-11" />
         </div>
-        <div className="flex items-center gap-1.5 bg-slate-100 rounded-2xl p-1">
+        <div className={filterTabsClass}>
           {([['all', '全部'], ['enabled', '已启用'], ['disabled', '已禁用']] as const).map(([v, l]) => (
             <button key={v} onClick={() => setStatusFilter(v)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === v ? 'bg-white text-foreground shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{l}</button>
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === v ? 'bg-white text-primary shadow-[0_8px_18px_rgba(242,107,72,0.10)]' : 'text-muted-foreground hover:text-foreground'}`}>{l}</button>
           ))}
         </div>
         <Select
@@ -464,18 +469,18 @@ export default function ChannelPage() {
 
       {/* Batch actions */}
       {selected.size > 0 && (
-        <div className="flex items-center gap-3 bg-primary/5 border border-primary/10 rounded-2xl px-5 py-3">
+        <div className="flex items-center gap-3 rounded-2xl border border-primary/10 bg-[#fff7f2] px-5 py-3 shadow-[0_8px_24px_rgba(242,107,72,0.05)]">
           <span className="text-sm font-medium text-primary">已选 {selected.size} 项</span>
           <div className="flex items-center gap-2 ml-auto">
             <Button variant="outline" size="sm" className="rounded-xl text-xs h-8" onClick={() => handleBatchToggle(true)}><Power className="size-3.5 mr-1" />批量启用</Button>
             <Button variant="outline" size="sm" className="rounded-xl text-xs h-8" onClick={() => handleBatchToggle(false)}><X className="size-3.5 mr-1" />批量禁用</Button>
             <Button variant="outline" size="sm" className="rounded-xl text-xs h-8 text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => setBatchDeleteOpen(true)}><Trash2 className="size-3.5 mr-1" />批量删除</Button>
-            <button onClick={() => setSelected(new Set())} className="size-8 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 inline-flex items-center justify-center"><X className="size-4" /></button>
+            <button onClick={() => setSelected(new Set())} className="inline-flex size-8 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-white hover:text-foreground"><X className="size-4" /></button>
           </div>
         </div>
       )}
       {/* Table */}
-      <div className="overflow-hidden bg-white border border-slate-100 rounded-3xl soft-shadow">
+      <div className={panelClass}>
         {loading && channels.length === 0 ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="size-6 animate-spin text-primary" />
@@ -489,21 +494,21 @@ export default function ChannelPage() {
         ) : (
         <div className="overflow-x-auto">
         <table className="w-full">
-          <thead><tr className="bg-slate-50/50 border-b border-slate-100">
+          <thead><tr className={tableHeaderRowClass}>
             <th className="px-4 py-4 w-10"><input type="checkbox" checked={allSelected} onChange={toggleAll} className="size-4 rounded accent-primary" /></th>
             {['ID','名称','类型','状态','已用/余额','优先级','权重','操作'].map(h => (
-              <th key={h} className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">{h}</th>
+              <th key={h} className={tableHeaderCellClass}>{h}</th>
             ))}
           </tr></thead>
-          <tbody className="divide-y divide-slate-50">
+          <tbody className="divide-y divide-primary/6">
             {channels.map(c => (
-              <tr key={c.id} className={`hover:bg-slate-50/50 transition-colors ${selected.has(c.id) ? 'bg-primary/[0.02]' : ''}`}>
+              <tr key={c.id} className={`transition-colors hover:bg-[#fffaf7] ${selected.has(c.id) ? 'bg-primary/[0.03]' : ''}`}>
                 <td className="px-4 py-4"><input type="checkbox" checked={selected.has(c.id)} onChange={() => toggleSelect(c.id)} className="size-4 rounded accent-primary" /></td>
                 <td className="px-6 py-4 text-sm text-muted-foreground">{c.id}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">{c.name}</span>
-                    {c.tag && <span className="px-2 py-0.5 rounded-lg bg-slate-100 text-[10px] font-bold text-slate-500">{c.tag}</span>}
+                    {c.tag && <span className="rounded-lg border border-primary/10 bg-[#fff7f2] px-2 py-0.5 text-[10px] font-bold text-primary/80">{c.tag}</span>}
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">{typeMap[c.type] || `Type ${c.type}`}</td>
@@ -517,15 +522,15 @@ export default function ChannelPage() {
                 <td className="px-6 py-4 text-sm font-medium">{c.weight ?? 0}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-1">
-                    <button onClick={() => handleTest(c.id)} disabled={testingId === c.id} className="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all inline-flex items-center justify-center disabled:opacity-50" title="测试">
+                    <button onClick={() => handleTest(c.id)} disabled={testingId === c.id} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-[#fff7f2] hover:text-primary disabled:opacity-50" title="测试">
                       {testingId === c.id ? <span className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <PlayCircle className="size-4" />}
                     </button>
-                    <button onClick={() => openEdit(c)} className="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all inline-flex items-center justify-center" title="编辑"><Pencil className="size-4" /></button>
-                    <button onClick={() => handleCopy(c.id)} className="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all inline-flex items-center justify-center" title="复制"><Copy className="size-4" /></button>
-                    <button onClick={() => handleToggleStatus(c)} className="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all inline-flex items-center justify-center" title={c.status === 1 ? '禁用' : '启用'}>
+                    <button onClick={() => openEdit(c)} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-[#fff7f2] hover:text-primary" title="编辑"><Pencil className="size-4" /></button>
+                    <button onClick={() => handleCopy(c.id)} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-[#fff7f2] hover:text-primary" title="复制"><Copy className="size-4" /></button>
+                    <button onClick={() => handleToggleStatus(c)} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-[#fff7f2] hover:text-primary" title={c.status === 1 ? '禁用' : '启用'}>
                       <Power className={`size-4 ${c.status === 1 ? '' : 'text-emerald-500'}`} />
                     </button>
-                    <button onClick={() => setDeleteTarget(c)} className="size-9 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all inline-flex items-center justify-center" title="删除"><Trash2 className="size-4" /></button>
+                    <button onClick={() => setDeleteTarget(c)} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-red-50 hover:text-red-500" title="删除"><Trash2 className="size-4" /></button>
                   </div>
                 </td>
               </tr>
@@ -539,9 +544,9 @@ export default function ChannelPage() {
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">共 {total} 条渠道</p>
         <div className="flex items-center gap-2">
-          <button disabled={page <= 1} onClick={() => handlePageChange(page - 1)} className="size-9 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-foreground disabled:opacity-40"><ChevronLeft className="size-4" /></button>
+          <button disabled={page <= 1} onClick={() => handlePageChange(page - 1)} className={paginationButtonClass}><ChevronLeft className="size-4" /></button>
           <span className="text-sm font-medium px-2">{page} / {totalPages}</span>
-          <button disabled={page >= totalPages} onClick={() => handlePageChange(page + 1)} className="size-9 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-foreground disabled:opacity-40"><ChevronRight className="size-4" /></button>
+          <button disabled={page >= totalPages} onClick={() => handlePageChange(page + 1)} className={paginationButtonClass}><ChevronRight className="size-4" /></button>
         </div>
       </div>
 

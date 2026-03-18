@@ -30,6 +30,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -65,7 +66,7 @@ const roleLabels: Record<number, string> = { 100: '超级管理员', 10: '管理
 const roleStyles: Record<number, string> = {
   100: 'bg-orange-50 text-orange-600 border-orange-200',
   10: 'bg-primary/10 text-primary border-primary/20',
-  1: 'bg-slate-50 text-slate-600 border-slate-200',
+  1: 'bg-[#fff7f2] text-[#8b6b60] border-primary/10',
 };
 
 const fmtTime = (ts: number) => {
@@ -73,6 +74,10 @@ const fmtTime = (ts: number) => {
   const d = new Date(ts * 1000);
   return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
 };
+const panelClass = 'overflow-hidden rounded-3xl border border-primary/10 bg-white shadow-[0_10px_30px_rgba(242,107,72,0.08)]';
+const tableHeaderRowClass = 'bg-[#fff7f2] border-b border-primary/10';
+const tableHeaderCellClass = 'px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest text-left whitespace-nowrap';
+const paginationButtonClass = 'size-8 rounded-xl border border-primary/10 bg-white text-muted-foreground hover:border-primary/20 hover:bg-[#fff7f2] hover:text-primary';
 
 // --- Component ---
 
@@ -351,7 +356,7 @@ export default function UserPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden bg-white border border-slate-100 rounded-3xl soft-shadow">
+      <div className={panelClass}>
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="size-6 animate-spin text-primary" />
@@ -366,12 +371,12 @@ export default function UserPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className={tableHeaderRowClass}>
                   {['ID', '用户名', '邮箱', '分组', '剩余额度', '已用额度', '角色', '状态', '创建时间', '操作'].map(
                     (h) => (
                       <th
                         key={h}
-                        className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-left whitespace-nowrap"
+                        className={tableHeaderCellClass}
                       >
                         {h}
                       </th>
@@ -379,19 +384,19 @@ export default function UserPage() {
                   )}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-primary/6">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={u.id} className="transition-colors hover:bg-[#fffaf7]">
                     <td className="px-6 py-4 text-sm">{u.id}</td>
                     <td className="px-6 py-4 font-medium">
                       {u.display_name || u.username}
                       {u.display_name && u.display_name !== u.username && (
-                        <span className="text-xs text-slate-400 ml-1">({u.username})</span>
+                        <span className="ml-1 text-xs text-muted-foreground">({u.username})</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500">{u.email || '-'}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{u.email || '-'}</td>
                     <td className="px-6 py-4">
-                      <Badge variant="outline">{u.group || 'default'}</Badge>
+                      <Badge className="border-primary/10 bg-[#fff7f2] text-primary/80">{u.group || 'default'}</Badge>
                     </td>
                     <td className="px-6 py-4 text-sm">{fmtQuota(u.quota)}</td>
                     <td className="px-6 py-4 text-sm">{fmtQuota(u.used_quota)}</td>
@@ -412,7 +417,7 @@ export default function UserPage() {
                         {u.status === 1 ? '正常' : '封禁'}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{fmtTime(u.created_time)}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">{fmtTime(u.created_time)}</td>
                     <td className="px-6 py-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger
@@ -422,41 +427,47 @@ export default function UserPage() {
                           <MoreHorizontal className="size-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEdit(u)}>
-                            <Pencil className="size-4 mr-2" />
-                            编辑
-                          </DropdownMenuItem>
+                          <DropdownMenuGroup>
+                            <DropdownMenuItem onClick={() => openEdit(u)}>
+                              <Pencil className="size-4 mr-2" />
+                              编辑
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
                           <DropdownMenuSeparator />
-                          {u.status === 1 ? (
-                            <DropdownMenuItem onClick={() => openConfirm(`禁用用户 ${u.username}？`, () => manageUser(u.id, 'disable'))}>
-                              <ToggleLeft className="size-4 mr-2" />
-                              禁用
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem onClick={() => manageUser(u.id, 'enable')}>
-                              <ToggleRight className="size-4 mr-2" />
-                              启用
-                            </DropdownMenuItem>
-                          )}
-                          {u.role === 1 ? (
-                            <DropdownMenuItem onClick={() => openConfirm(`提升 ${u.username} 为管理员？`, () => manageUser(u.id, 'promote'))}>
-                              <ShieldCheck className="size-4 mr-2" />
-                              提升为管理员
-                            </DropdownMenuItem>
-                          ) : u.role === 10 ? (
-                            <DropdownMenuItem onClick={() => openConfirm(`降级 ${u.username} 为普通用户？`, () => manageUser(u.id, 'demote'))}>
-                              <ShieldOff className="size-4 mr-2" />
-                              降级为普通用户
-                            </DropdownMenuItem>
-                          ) : null}
+                          <DropdownMenuGroup>
+                            {u.status === 1 ? (
+                              <DropdownMenuItem onClick={() => openConfirm(`禁用用户 ${u.username}？`, () => manageUser(u.id, 'disable'))}>
+                                <ToggleLeft className="size-4 mr-2" />
+                                禁用
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem onClick={() => manageUser(u.id, 'enable')}>
+                                <ToggleRight className="size-4 mr-2" />
+                                启用
+                              </DropdownMenuItem>
+                            )}
+                            {u.role === 1 ? (
+                              <DropdownMenuItem onClick={() => openConfirm(`提升 ${u.username} 为管理员？`, () => manageUser(u.id, 'promote'))}>
+                                <ShieldCheck className="size-4 mr-2" />
+                                提升为管理员
+                              </DropdownMenuItem>
+                            ) : u.role === 10 ? (
+                              <DropdownMenuItem onClick={() => openConfirm(`降级 ${u.username} 为普通用户？`, () => manageUser(u.id, 'demote'))}>
+                                <ShieldOff className="size-4 mr-2" />
+                                降级为普通用户
+                              </DropdownMenuItem>
+                            ) : null}
+                          </DropdownMenuGroup>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-red-600 focus:text-red-600"
-                            onClick={() => openConfirm(`确定删除用户 ${u.username}？此操作不可撤销。`, () => deleteUser(u.id))}
-                          >
-                            <Trash2 className="size-4 mr-2" />
-                            删除
-                          </DropdownMenuItem>
+                          <DropdownMenuGroup>
+                            <DropdownMenuItem
+                              className="text-red-600 focus:text-red-600"
+                              onClick={() => openConfirm(`确定删除用户 ${u.username}？此操作不可撤销。`, () => deleteUser(u.id))}
+                            >
+                              <Trash2 className="size-4 mr-2" />
+                              删除
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
@@ -478,7 +489,7 @@ export default function UserPage() {
             <Button
               variant="outline"
               size="icon"
-              className="size-8 rounded-xl"
+              className={paginationButtonClass}
               disabled={page <= 1}
               onClick={() => goPage(page - 1)}
             >
@@ -500,7 +511,7 @@ export default function UserPage() {
                   key={p}
                   variant={p === page ? 'default' : 'outline'}
                   size="icon"
-                  className={`size-8 rounded-xl text-xs ${p === page ? 'bg-primary text-white' : ''}`}
+                  className={`size-8 rounded-xl text-xs ${p === page ? 'bg-primary text-white shadow-[0_8px_18px_rgba(242,107,72,0.16)]' : 'border-primary/10 bg-white text-muted-foreground hover:border-primary/20 hover:bg-[#fff7f2] hover:text-primary'}`}
                   onClick={() => goPage(p)}
                 >
                   {p}
@@ -510,7 +521,7 @@ export default function UserPage() {
             <Button
               variant="outline"
               size="icon"
-              className="size-8 rounded-xl"
+              className={paginationButtonClass}
               disabled={page >= totalPages}
               onClick={() => goPage(page + 1)}
             >

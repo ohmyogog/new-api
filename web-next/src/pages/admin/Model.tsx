@@ -189,6 +189,10 @@ export default function ModelPage() {
   };
 
   const handleSearch = (v: string) => { setSearch(v); setPage(1); };
+  const panelClass = 'overflow-hidden rounded-3xl border border-primary/10 bg-white shadow-[0_10px_30px_rgba(242,107,72,0.08)]';
+  const tableHeaderRowClass = 'bg-[#fff7f2] border-b border-primary/10';
+  const tableHeaderCellClass = 'px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest text-left';
+  const paginationButtonClass = 'inline-flex size-9 items-center justify-center rounded-xl border border-primary/10 bg-white text-muted-foreground transition-colors hover:border-primary/20 hover:bg-[#fff7f2] hover:text-primary disabled:opacity-40';
 
   return (
     <div className="space-y-8">
@@ -215,25 +219,25 @@ export default function ModelPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden bg-white border border-slate-100 rounded-3xl soft-shadow">
+      <div className={panelClass}>
         <table className="w-full">
-          <thead><tr className="bg-slate-50/50 border-b border-slate-100">
+          <thead><tr className={tableHeaderRowClass}>
             {['ID', '模型名称', '供应商', '匹配规则', '标签', '状态', '渠道数', '创建时间', '操作'].map(h =>
-              <th key={h} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-left">{h}</th>
+              <th key={h} className={tableHeaderCellClass}>{h}</th>
             )}
           </tr></thead>
-          <tbody className="divide-y divide-slate-50">
+          <tbody className="divide-y divide-primary/6">
             {loading ? (
               <tr><td colSpan={9} className="px-6 py-12 text-center text-sm text-slate-400">加载中...</td></tr>
             ) : models.length === 0 ? (
               <tr><td colSpan={9} className="px-6 py-12 text-center text-sm text-slate-400">暂无数据</td></tr>
             ) : models.map(m => (
-              <tr key={m.id} className="hover:bg-slate-50/50 transition-colors">
+              <tr key={m.id} className="transition-colors hover:bg-[#fffaf7]">
                 <td className="px-6 py-4 text-sm text-muted-foreground">{m.id}</td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
                     <span className="font-mono text-sm font-medium">{m.model_name}</span>
-                    {m.description && <span className="text-xs text-slate-400 mt-0.5 truncate max-w-[200px]">{m.description}</span>}
+                    {m.description && <span className="mt-0.5 max-w-[200px] truncate text-xs text-muted-foreground">{m.description}</span>}
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm">{vendorMap[m.vendor_id] || (m.vendor_id ? `#${m.vendor_id}` : '-')}</td>
@@ -243,23 +247,23 @@ export default function ModelPage() {
                 </td>
                 <td className="px-6 py-4">
                   {m.tags ? m.tags.split(',').filter(Boolean).map(tag => (
-                    <span key={tag} className="inline-block px-2 py-0.5 rounded-lg bg-slate-100 text-[10px] font-bold text-slate-500 mr-1">{tag.trim()}</span>
+                    <span key={tag} className="mr-1 inline-block rounded-lg border border-primary/10 bg-[#fff7f2] px-2 py-0.5 text-[10px] font-bold text-primary/80">{tag.trim()}</span>
                   )) : '-'}
                 </td>
                 <td className="px-6 py-4">
-                  <Badge className={m.status === 1 ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200'}>
+                  <Badge className={m.status === 1 ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-[#fff7f2] text-[#8b6b60] border-primary/10'}>
                     {m.status === 1 ? '启用' : '停用'}
                   </Badge>
                 </td>
                 <td className="px-6 py-4 text-sm">{m.bound_channels?.length ?? 0}</td>
-                <td className="px-6 py-4 text-sm text-slate-500">{fmtTime(m.created_time)}</td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">{fmtTime(m.created_time)}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-1">
-                    <button onClick={() => openEdit(m)} className="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all inline-flex items-center justify-center" title="编辑"><Pencil className="size-4" /></button>
-                    <button onClick={() => handleToggleStatus(m)} className="size-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5 transition-all inline-flex items-center justify-center" title={m.status === 1 ? '停用' : '启用'}>
+                    <button onClick={() => openEdit(m)} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-[#fff7f2] hover:text-primary" title="编辑"><Pencil className="size-4" /></button>
+                    <button onClick={() => handleToggleStatus(m)} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-[#fff7f2] hover:text-primary" title={m.status === 1 ? '停用' : '启用'}>
                       <Power className={`size-4 ${m.status === 1 ? '' : 'text-emerald-500'}`} />
                     </button>
-                    <button onClick={() => confirmDelete(m)} className="size-9 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all inline-flex items-center justify-center" title="删除"><Trash2 className="size-4" /></button>
+                    <button onClick={() => confirmDelete(m)} className="inline-flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-all hover:bg-red-50 hover:text-red-500" title="删除"><Trash2 className="size-4" /></button>
                   </div>
                 </td>
               </tr>
@@ -272,9 +276,9 @@ export default function ModelPage() {
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">共 {total} 个模型</p>
         <div className="flex items-center gap-2">
-          <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="size-9 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-foreground disabled:opacity-40"><ChevronLeft className="size-4" /></button>
+          <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className={paginationButtonClass}><ChevronLeft className="size-4" /></button>
           <span className="text-sm font-medium px-2">{page} / {totalPages}</span>
-          <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="size-9 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-foreground disabled:opacity-40"><ChevronRight className="size-4" /></button>
+          <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className={paginationButtonClass}><ChevronRight className="size-4" /></button>
         </div>
       </div>
 

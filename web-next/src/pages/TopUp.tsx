@@ -53,6 +53,8 @@ interface AffInfo {
 
 const primaryActionButtonClass = 'h-12 rounded-2xl bg-primary font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90';
 const outlineActionButtonClass = 'h-12 rounded-2xl border-2 border-primary/20 bg-white font-bold text-primary hover:bg-primary/5';
+const shellCardClass = 'rounded-3xl border border-primary/10 bg-white shadow-[0_10px_30px_rgba(242,107,72,0.08)]';
+const miniStatCardClass = 'rounded-2xl border border-primary/10 bg-[#fff7f2] p-4 shadow-[0_8px_24px_rgba(242,107,72,0.04)]';
 
 export default function TopUpPage() {
   const [code, setCode] = useState('');
@@ -187,21 +189,42 @@ export default function TopUpPage() {
       </div>
 
       {/* Balance Card */}
-      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
-        <div className="relative">
-          <div className="flex items-center gap-2 mb-2"><Wallet className="size-5 opacity-80" /><span className="text-sm font-medium opacity-80">当前余额</span></div>
-          <p className="text-4xl font-bold">${balance !== null ? balance.toFixed(2) : '...'}</p>
+      <div className={`${shellCardClass} relative overflow-hidden p-8`}>
+        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-r from-[#ffe7de] via-[#fff3ec] to-white" />
+        <div className="absolute -right-8 top-2 size-28 rounded-full bg-primary/6" />
+        <div className="absolute -bottom-10 left-10 size-24 rounded-full bg-[#ffd9ca]/50" />
+        <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-[#fff6f1] px-3 py-1 text-xs font-semibold text-primary">
+              <Wallet className="size-3.5" />
+              钱包余额
+            </div>
+            <p className="mb-2 text-sm font-medium text-muted-foreground">当前可用余额</p>
+            <p className="text-4xl font-bold text-primary">${balance !== null ? balance.toFixed(2) : '...'}</p>
+            <p className="mt-2 text-sm text-muted-foreground">可通过兑换充值码或邀请奖励补充余额</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:w-[320px]">
+            <div className={miniStatCardClass}>
+              <p className="mb-1 text-xs font-medium text-muted-foreground">待划转奖励</p>
+              <p className="text-lg font-bold text-foreground">${((affInfo?.aff_quota ?? 0) / 500000).toFixed(2)}</p>
+            </div>
+            <div className={miniStatCardClass}>
+              <p className="mb-1 text-xs font-medium text-muted-foreground">累计邀请人数</p>
+              <p className="text-lg font-bold text-foreground">{affInfo?.aff_count ?? 0}</p>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Redeem Code */}
-        <div className="bg-white rounded-3xl border border-slate-100 soft-shadow p-8">
+        <div className={`${shellCardClass} p-8`}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="size-10 rounded-xl bg-amber-50 flex items-center justify-center"><Gift className="size-5 text-amber-500" /></div>
-            <h2 className="text-lg font-bold">兑换码充值</h2>
+            <div className="size-10 rounded-2xl bg-[#fff2e8] flex items-center justify-center"><Gift className="size-5 text-primary" /></div>
+            <div>
+              <h2 className="text-lg font-bold">兑换码充值</h2>
+              <p className="text-sm text-muted-foreground">输入兑换码后可立即增加钱包余额</p>
+            </div>
           </div>
           <div className="space-y-4">
             <Input value={code} onChange={e => setCode(e.target.value)} placeholder="输入兑换码" onKeyDown={e => e.key === 'Enter' && handleRedeem()} />
@@ -212,21 +235,24 @@ export default function TopUpPage() {
         </div>
 
         {/* Affiliate Card */}
-        <div className="bg-white rounded-3xl border border-slate-100 soft-shadow p-8">
+        <div className={`${shellCardClass} p-8`}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="size-10 rounded-xl bg-blue-50 flex items-center justify-center"><Users className="size-5 text-blue-500" /></div>
-            <h2 className="text-lg font-bold">邀请奖励</h2>
+            <div className="size-10 rounded-2xl bg-[#fff2e8] flex items-center justify-center"><Users className="size-5 text-primary" /></div>
+            <div>
+              <h2 className="text-lg font-bold">邀请奖励</h2>
+              <p className="text-sm text-muted-foreground">分享注册链接并将奖励额度划转到主钱包</p>
+            </div>
           </div>
           {affInfo ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-50 rounded-2xl p-4">
-                  <p className="text-xs text-slate-400 mb-1">待划转额度</p>
-                  <p className="text-lg font-bold">${((affInfo.aff_quota ?? 0) / 500000).toFixed(2)}</p>
+                <div className={miniStatCardClass}>
+                  <p className="text-xs text-muted-foreground mb-1">待划转额度</p>
+                  <p className="text-lg font-bold text-foreground">${((affInfo.aff_quota ?? 0) / 500000).toFixed(2)}</p>
                 </div>
-                <div className="bg-slate-50 rounded-2xl p-4">
-                  <p className="text-xs text-slate-400 mb-1">邀请人数</p>
-                  <p className="text-lg font-bold">{affInfo.aff_count ?? 0}</p>
+                <div className={miniStatCardClass}>
+                  <p className="text-xs text-muted-foreground mb-1">邀请人数</p>
+                  <p className="text-lg font-bold text-foreground">{affInfo.aff_count ?? 0}</p>
                 </div>
               </div>
               <div className="flex gap-3 items-stretch">
@@ -246,22 +272,24 @@ export default function TopUpPage() {
       </div>
 
       {/* History */}
-      <div className="overflow-hidden bg-white border border-slate-100 rounded-3xl soft-shadow">
-        <div className="px-8 py-5 border-b border-slate-100"><h2 className="text-lg font-bold">充值记录</h2></div>
+      <div className={`overflow-hidden ${shellCardClass}`}>
+        <div className="border-b border-primary/10 bg-[#fffaf7] px-8 py-5">
+          <h2 className="text-lg font-bold">充值记录</h2>
+        </div>
         {historyLoading ? (
           <div className="flex items-center justify-center py-16"><Loader2 className="size-5 animate-spin text-primary" /></div>
         ) : history.length === 0 ? (
           <div className="py-16 text-center text-muted-foreground text-sm">暂无充值记录</div>
         ) : (
           <table className="w-full">
-            <thead><tr className="bg-slate-50/50 border-b border-slate-100">
+            <thead><tr className="bg-[#fff7f2] border-b border-primary/10">
               {['订单号', '充值额度', '支付金额', '支付方式', '状态', '时间'].map(h => (
-                <th key={h} className="px-8 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">{h}</th>
+                <th key={h} className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">{h}</th>
               ))}
             </tr></thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-primary/6">
               {history.map(h => (
-                <tr key={h.id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={h.id} className="transition-colors hover:bg-[#fffaf7]">
                   <td className="px-8 py-5 text-sm font-mono text-muted-foreground">{h.trade_no || '-'}</td>
                   <td className="px-8 py-5 text-sm font-bold text-emerald-600">{h.amount}</td>
                   <td className="px-8 py-5 text-sm text-muted-foreground">¥{(h.money ?? 0).toFixed(2)}</td>
@@ -285,9 +313,9 @@ export default function TopUpPage() {
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">共 {historyTotal} 条</p>
           <div className="flex items-center gap-2">
-            <button disabled={historyPage <= 1} onClick={() => setHistoryPage(p => p - 1)} className="size-9 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-foreground disabled:opacity-40"><ChevronLeft className="size-4" /></button>
+            <button disabled={historyPage <= 1} onClick={() => setHistoryPage(p => p - 1)} className="inline-flex size-9 items-center justify-center rounded-xl border border-primary/10 bg-white text-muted-foreground transition-colors hover:border-primary/20 hover:bg-[#fff7f2] hover:text-primary disabled:opacity-40"><ChevronLeft className="size-4" /></button>
             <span className="text-sm font-medium px-2">{historyPage} / {totalPages}</span>
-            <button disabled={historyPage >= totalPages} onClick={() => setHistoryPage(p => p + 1)} className="size-9 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-foreground disabled:opacity-40"><ChevronRight className="size-4" /></button>
+            <button disabled={historyPage >= totalPages} onClick={() => setHistoryPage(p => p + 1)} className="inline-flex size-9 items-center justify-center rounded-xl border border-primary/10 bg-white text-muted-foreground transition-colors hover:border-primary/20 hover:bg-[#fff7f2] hover:text-primary disabled:opacity-40"><ChevronRight className="size-4" /></button>
           </div>
         </div>
       )}

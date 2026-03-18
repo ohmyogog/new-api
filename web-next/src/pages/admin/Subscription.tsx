@@ -125,6 +125,9 @@ export default function SubscriptionPage() {
   };
 
   const formatDuration = (p: SubscriptionPlan) => `${p.duration_value} ${durationLabels[p.duration_unit] || p.duration_unit}`;
+  const panelClass = 'overflow-hidden rounded-3xl border border-primary/10 bg-white shadow-[0_10px_30px_rgba(242,107,72,0.08)]';
+  const tableHeaderRowClass = 'bg-[#fff7f2] border-b border-primary/10';
+  const tableHeaderCellClass = 'px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest text-left';
 
   return (
     <div className="space-y-8">
@@ -141,26 +144,26 @@ export default function SubscriptionPage() {
         <Input placeholder="搜索计划名称..." value={search} onChange={e => setSearch(e.target.value)} className="pl-11" />
       </div>
 
-      <div className="overflow-hidden bg-white border border-slate-100 rounded-3xl soft-shadow">
+      <div className={panelClass}>
         {loading ? (
           <div className="flex items-center justify-center py-20"><Loader2 className="size-6 animate-spin text-primary" /></div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-slate-400">暂无订阅计划</div>
         ) : (
           <table className="w-full">
-            <thead><tr className="bg-slate-50/50 border-b border-slate-100">
-              {['计划名称','价格','时长','额度','状态','操作'].map(h => <th key={h} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-left">{h}</th>)}
+            <thead><tr className={tableHeaderRowClass}>
+              {['计划名称','价格','时长','额度','状态','操作'].map(h => <th key={h} className={tableHeaderCellClass}>{h}</th>)}
             </tr></thead>
             <tbody>{filtered.map(p => (
-              <tr key={p.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0">
-                <td className="px-6 py-4"><div className="font-medium">{p.title}</div>{p.subtitle && <div className="text-xs text-slate-400">{p.subtitle}</div>}</td>
+              <tr key={p.id} className="border-b border-primary/6 transition-colors last:border-0 hover:bg-[#fffaf7]">
+                <td className="px-6 py-4"><div className="font-medium">{p.title}</div>{p.subtitle && <div className="text-xs text-muted-foreground">{p.subtitle}</div>}</td>
                 <td className="px-6 py-4">${p.price_amount}</td>
                 <td className="px-6 py-4">{formatDuration(p)}</td>
                 <td className="px-6 py-4 font-mono text-sm">{p.total_amount > 0 ? p.total_amount.toLocaleString() : '无限'}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <Switch checked={p.enabled} onCheckedChange={() => toggleStatus(p)} />
-                    <Badge className={p.enabled ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200'}>{p.enabled ? '启用' : '停用'}</Badge>
+                    <Badge className={p.enabled ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-[#fff7f2] text-[#8b6b60] border-primary/10'}>{p.enabled ? '启用' : '停用'}</Badge>
                   </div>
                 </td>
                 <td className="px-6 py-4">

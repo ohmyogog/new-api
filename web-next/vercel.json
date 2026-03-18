@@ -1,0 +1,45 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "github": {
+    "silent": true
+  },
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api",
+      "destination": "https://ogog.ai/api"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "https://ogog.ai/api/$1"
+    },
+    {
+      "source": "/v1",
+      "destination": "https://ogog.ai/v1"
+    },
+    {
+      "source": "/v1/(.*)",
+      "destination": "https://ogog.ai/v1/$1"
+    },
+    {
+      "source": "/mj",
+      "destination": "https://ogog.ai/mj"
+    },
+    {
+      "source": "/mj/(.*)",
+      "destination": "https://ogog.ai/mj/$1"
+    },
+    {
+      "source": "/pg",
+      "destination": "https://ogog.ai/pg"
+    },
+    {
+      "source": "/pg/(.*)",
+      "destination": "https://ogog.ai/pg/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

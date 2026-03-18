@@ -1,6 +1,8 @@
 # web-next 待办清单
 
 > 对比 `web/`（旧前端）和 `web-next/`（新前端），整理所有需要完成的工作。
+>
+> UIKIT / UI 样式对齐请查看：`TODO-UIKIT.md`
 
 ## 一、已完成（真实 API 已接入）
 

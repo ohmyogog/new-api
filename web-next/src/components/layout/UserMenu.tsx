@@ -3,6 +3,7 @@ import { ChevronsUpDown, LogOut, UserCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -48,13 +49,17 @@ export function UserMenu() {
           <ChevronsUpDown className="size-4 text-primary/75" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={() => navigate('/console/personal')}>
-            <UserCircle className="mr-2 size-4" /> 个人设置
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => navigate('/console/personal')}>
+              <UserCircle className="mr-2 size-4" /> 个人设置
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>
-            <LogOut className="mr-2 size-4" /> 退出登录
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 size-4" /> 退出登录
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

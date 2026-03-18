@@ -151,15 +151,28 @@ function buildRegistrationResult(cred: PublicKeyCredential) {
 }
 
 // ── Tab component ──
-function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function TabButton({
+  active,
+  onClick,
+  children,
+  variant = 'underline',
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  variant?: 'underline' | 'segment';
+}) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        'flex items-center gap-1.5 border-b-2 pb-2 text-sm transition-colors',
-        active
-          ? 'border-primary font-medium text-primary'
-          : 'border-transparent text-muted-foreground hover:text-foreground',
+        variant === 'underline'
+          ? 'flex items-center gap-1.5 border-b-2 pb-2 text-sm transition-colors'
+          : 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition-all',
+        variant === 'underline' && active && 'border-primary font-medium text-primary',
+        variant === 'underline' && !active && 'border-transparent text-muted-foreground hover:text-foreground',
+        variant === 'segment' && active && 'border-primary/15 bg-white text-primary shadow-[0_10px_24px_rgba(242,107,72,0.10)]',
+        variant === 'segment' && !active && 'border-transparent text-muted-foreground hover:border-primary/10 hover:bg-white/70 hover:text-foreground',
       )}
     >
       {children}
@@ -167,10 +180,53 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
   );
 }
 
+function NotificationMethodOption({
+  checked,
+  value,
+  label,
+  onChange,
+}: {
+  checked: boolean;
+  value: string;
+  label: string;
+  onChange: () => void;
+}) {
+  return (
+    <label
+      className={cn(
+        'flex min-w-[148px] flex-1 cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 text-sm transition-all',
+        checked
+          ? 'border-primary/20 bg-[#fff4ee] text-foreground shadow-[0_10px_24px_rgba(242,107,72,0.08)]'
+          : 'border-primary/10 bg-white text-muted-foreground hover:border-primary/15 hover:bg-[#fffaf7] hover:text-foreground',
+      )}
+    >
+      <input
+        type="radio"
+        name="warningType"
+        value={value}
+        checked={checked}
+        onChange={onChange}
+        className="sr-only"
+      />
+      <span
+        className={cn(
+          'flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors',
+          checked ? 'border-primary bg-primary/10' : 'border-primary/20 bg-white',
+        )}
+      >
+        <span className={cn('size-2 rounded-full transition-colors', checked ? 'bg-primary' : 'bg-transparent')} />
+      </span>
+      <span className={cn('font-medium transition-colors', checked ? 'text-foreground' : 'text-muted-foreground')}>
+        {label}
+      </span>
+    </label>
+  );
+}
+
 // ── Binding item ──
 function BindingItem({ icon, name, status, actionLabel, onAction }: { icon: React.ReactNode; name: string; status: string; actionLabel?: string; onAction?: () => void }) {
   return (
-    <div className="border border-slate-100 rounded-xl p-3 flex items-center justify-between bg-white">
+    <div className="flex items-center justify-between rounded-2xl border border-primary/10 bg-[#fffaf7] p-3 shadow-[0_10px_24px_rgba(242,107,72,0.04)]">
       <div className="flex items-center gap-3">
         {icon}
         <div>
@@ -183,7 +239,7 @@ function BindingItem({ icon, name, status, actionLabel, onAction }: { icon: Reac
       ) : actionLabel === '解绑' && onAction ? (
         <button onClick={onAction} className="text-xs px-3 py-1 text-red-500 border border-red-200 rounded-full hover:bg-red-50 transition">解绑</button>
       ) : (
-        <span className="text-xs px-3 py-1 text-slate-400 bg-slate-50 rounded-full">未启用</span>
+        <span className="rounded-full border border-primary/10 bg-white px-3 py-1 text-xs text-[#aa8b7b]">未启用</span>
       )}
     </div>
   );
@@ -192,9 +248,11 @@ function BindingItem({ icon, name, status, actionLabel, onAction }: { icon: Reac
 const primaryActionButtonClass = 'h-10 rounded-lg bg-primary font-medium text-white shadow-md shadow-primary/20 hover:bg-primary/90';
 const subtleOutlineButtonClass = 'h-10 rounded-lg border border-primary/20 bg-white text-primary hover:bg-primary/5';
 const dangerOutlineButtonClass = 'h-10 rounded-lg border border-red-200 bg-white text-red-600 hover:bg-red-50';
-const rightPanelClass = 'rounded-lg border border-primary/10 bg-primary/5 p-4';
+const rightPanelClass = 'rounded-[24px] border border-primary/10 bg-white p-5 shadow-[0_10px_30px_rgba(242,107,72,0.06)]';
 const rightHintClass = 'mt-2 text-xs leading-5 text-muted-foreground';
-const rightInputClass = 'h-10 rounded-lg border border-primary/20 bg-white px-3 text-sm shadow-none';
+const rightInputClass = 'rounded-xl border-primary/12 bg-[#fffaf7] shadow-none hover:border-primary/20';
+const softOrangeTagClass = 'inline-flex items-center rounded-md border border-[#f6c8b3] bg-[#fff3ec] px-2.5 py-1 text-xs font-medium text-[#bf5b33] transition-colors hover:bg-[#ffe9dd]';
+const profileStatItemClass = 'flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-primary/10 bg-white px-3 py-2 text-[#6b635e] shadow-[0_6px_18px_rgba(242,107,72,0.05)] md:border-0 md:bg-transparent md:px-0 md:py-0 md:shadow-none';
 
 export default function PersonalSettingsPage() {
   const navigate = useNavigate();
@@ -589,21 +647,21 @@ export default function PersonalSettingsPage() {
           </div>
         </div>
         {/* Bottom Bar: Balance & Stats */}
-        <div className="p-4 md:px-6 md:py-4 flex flex-col md:flex-row justify-between items-center bg-white gap-4">
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <span className="text-3xl font-bold text-primary">{renderQuota(user?.quota ?? 0)}</span>
-            <Link to="/topup" className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-md border border-primary/20 hover:bg-primary/15 transition">充值</Link>
+        <div className="flex flex-col gap-4 border-t border-primary/10 bg-white p-4 md:flex-row md:items-center md:justify-between md:px-6 md:py-4">
+          <div className="flex w-full items-center gap-3 md:w-auto">
+            <span className="text-3xl font-bold tracking-tight text-primary">{renderQuota(user?.quota ?? 0)}</span>
+            <Link to="/topup" className={softOrangeTagClass}>充值</Link>
           </div>
-          <div className="flex items-center gap-2 md:gap-6 text-sm text-muted-foreground bg-primary/5 p-2 md:p-0 rounded-lg w-full md:w-auto justify-around md:bg-transparent">
-            <div className="flex items-center gap-1.5">
+          <div className="grid w-full grid-cols-1 gap-2 rounded-2xl border border-primary/10 bg-[#fff8f4] p-2 sm:grid-cols-3 md:w-auto md:grid-cols-none md:auto-cols-max md:grid-flow-col md:items-center md:gap-6 md:rounded-lg md:border-0 md:bg-transparent md:p-0">
+            <div className={profileStatItemClass}>
               <svg className="w-4 h-4 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
               <span>已消耗: {renderQuota(user?.used_quota ?? 0)}</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className={profileStatItemClass}>
               <svg className="w-4 h-4 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
               <span>请求次数: {user?.request_count ?? 0}</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className={profileStatItemClass}>
               <svg className="w-4 h-4 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
               <span>分组: {user?.group || 'default'}</span>
             </div>
@@ -625,7 +683,7 @@ export default function PersonalSettingsPage() {
               </div>
             </div>
             {/* Tabs */}
-            <div className="flex gap-6 border-b border-slate-100 mb-5 text-sm">
+            <div className="mb-5 flex gap-6 border-b border-primary/10 text-sm">
               <TabButton active={leftTab === 'binding'} onClick={() => setLeftTab('binding')}>
                 <Link2 className="size-4" /><span>账号绑定</span>
               </TabButton>
@@ -668,9 +726,9 @@ export default function PersonalSettingsPage() {
                 <div>
                   <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Lock className="size-4 text-primary" />修改密码</h3>
                   <div className="space-y-3">
-                    <Input type="password" value={passwords.old} onChange={e => setPasswords(p => ({ ...p, old: e.target.value }))} placeholder="当前密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
-                    <Input type="password" value={passwords.new_} onChange={e => setPasswords(p => ({ ...p, new_: e.target.value }))} placeholder="新密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
-                    <Input type="password" value={passwords.confirm} onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))} placeholder="确认新密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
+                    <Input type="password" value={passwords.old} onChange={e => setPasswords(p => ({ ...p, old: e.target.value }))} placeholder="当前密码" className={rightInputClass} />
+                    <Input type="password" value={passwords.new_} onChange={e => setPasswords(p => ({ ...p, new_: e.target.value }))} placeholder="新密码" className={rightInputClass} />
+                    <Input type="password" value={passwords.confirm} onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))} placeholder="确认新密码" className={rightInputClass} />
                     <Button onClick={changePassword} disabled={pwSaving} className={`w-full ${primaryActionButtonClass}`}>
                       {pwSaving && <Loader2 className="size-4 animate-spin mr-2" />}保存密码
                     </Button>
@@ -684,9 +742,9 @@ export default function PersonalSettingsPage() {
                   ) : setupData ? (
                     <div className="space-y-3">
                       <p className="text-xs text-muted-foreground">请使用验证器应用扫描二维码，然后输入 6 位验证码。</p>
-                      <div className="flex justify-center p-3 bg-white rounded-xl border border-slate-100"><img src={setupData.qr_code_data} alt="2FA QR" className="size-40" /></div>
-                      <Input readOnly value={setupData.secret} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono" />
-                      <Input value={twoFACode} onChange={e => setTwoFACode(e.target.value)} placeholder="000000" maxLength={6} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-center tracking-[0.5em] font-mono" />
+                      <div className="flex justify-center rounded-2xl border border-primary/10 bg-[#fffaf7] p-3 shadow-[0_10px_24px_rgba(242,107,72,0.04)]"><img src={setupData.qr_code_data} alt="2FA QR" className="size-40" /></div>
+                      <Input readOnly value={setupData.secret} className={cn(rightInputClass, 'font-mono')} />
+                      <Input value={twoFACode} onChange={e => setTwoFACode(e.target.value)} placeholder="000000" maxLength={6} className={cn(rightInputClass, 'text-center font-mono tracking-[0.5em]')} />
                       <Button onClick={enable2FA} disabled={twoFALoading || twoFACode.length < 6} className={`w-full ${primaryActionButtonClass}`}>
                         {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}确认启用
                       </Button>
@@ -724,7 +782,7 @@ export default function PersonalSettingsPage() {
                   <p className="text-xs text-muted-foreground mb-3">用于 API 调用的身份验证</p>
                   {token && (
                     <div className="flex items-center gap-2 mb-3">
-                      <Input readOnly value={token} className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono flex-1" />
+                      <Input readOnly value={token} className={cn(rightInputClass, 'flex-1 rounded-lg font-mono')} />
                       <Button variant="outline" size="icon" onClick={copyToken} className="shrink-0 size-9 rounded-lg border border-primary/20 text-primary hover:bg-primary/5">
                         {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
                       </Button>
@@ -737,7 +795,7 @@ export default function PersonalSettingsPage() {
                 </div>
 
                 {/* Delete Account & Logout */}
-                <div className="space-y-3 pt-2 border-t border-slate-100">
+                <div className="space-y-3 border-t border-primary/10 pt-2">
                   <div className="flex items-center justify-between p-3 border border-red-100 rounded-xl bg-red-50/30">
                     <div className="flex items-center gap-2">
                       <Trash2 className="size-4 text-red-500" />
@@ -750,12 +808,12 @@ export default function PersonalSettingsPage() {
                       删除
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl">
+                  <div className="flex items-center justify-between rounded-xl border border-primary/10 p-3">
                     <div className="flex items-center gap-2">
                       <LogOut className="size-4 text-muted-foreground" />
                       <div className="text-sm font-medium">退出登录</div>
                     </div>
-                    <Button variant="outline" size="sm" onClick={logout} className="rounded-lg border border-slate-200 bg-white text-xs hover:bg-slate-50">退出</Button>
+                    <Button variant="outline" size="sm" onClick={logout} className="rounded-lg border border-primary/15 bg-white text-xs hover:bg-[#fffaf7]">退出</Button>
                   </div>
                 </div>
               </div>
@@ -771,16 +829,22 @@ export default function PersonalSettingsPage() {
                 <p className="text-xs text-muted-foreground mt-0.5">界面语言和其他个人偏好</p>
               </div>
             </div>
-            <div className="border border-slate-100 rounded-xl p-4 flex items-center justify-between bg-slate-50/50">
+            <div className="flex flex-col gap-4 rounded-2xl border border-[#eee4dc] bg-[#fbf8f6] p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
-                <Languages className="size-5 text-muted-foreground mt-0.5" />
+                <div className="mt-0.5 rounded-lg bg-white p-2 text-[#c86a42] shadow-[0_8px_18px_rgba(242,107,72,0.08)]">
+                  <Languages className="size-4" />
+                </div>
                 <div>
                   <div className="text-sm font-medium">语言偏好</div>
-                  <div className="text-xs text-muted-foreground mt-1 max-w-xs">选择界面语言，设置将同步到所有设备</div>
+                  <div className="mt-1 max-w-xs text-xs text-muted-foreground">选择界面语言，设置将同步到所有设备</div>
                 </div>
               </div>
               <Select value={language} onValueChange={(value) => handleLanguageChange(String(value ?? 'zh'))}>
-                <SelectTrigger size="sm" className="w-[152px] shrink-0" aria-label="语言偏好">
+                <SelectTrigger
+                  size="sm"
+                  className="h-9 w-full shrink-0 rounded-md border-transparent bg-[#fff1e7] text-[#b85a34] shadow-none hover:border-[#f1c9b5] focus-visible:border-[#f1c9b5] focus-visible:ring-0 data-popup-open:border-[#f1c9b5] data-popup-open:ring-0 sm:w-[152px]"
+                  aria-label="语言偏好"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -795,7 +859,7 @@ export default function PersonalSettingsPage() {
         {/* ── Right Column ── */}
         <div className="lg:col-span-7">
           <section className={`${cardStyle} h-full flex flex-col overflow-hidden`}>
-            <div className="border-b border-slate-100 px-6 pb-5 pt-6">
+            <div className="border-b border-primary/10 px-6 pb-5 pt-6">
               <div className="flex items-start gap-3">
                 <div className="rounded-xl bg-primary/10 p-2.5 text-primary shadow-[0_6px_18px_rgba(242,107,72,0.10)]"><Bell className="size-5" /></div>
                 <div>
@@ -806,17 +870,17 @@ export default function PersonalSettingsPage() {
             </div>
             <div className="px-6 pb-6 pt-5">
               {/* Tabs */}
-              <div className="mb-6 flex flex-wrap gap-x-6 gap-y-2 border-b border-primary/10 text-sm">
-                <TabButton active={rightTab === 'notification'} onClick={() => setRightTab('notification')}>
+              <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl border border-primary/10 bg-[#fff7f2] p-2 md:flex md:flex-wrap">
+                <TabButton active={rightTab === 'notification'} onClick={() => setRightTab('notification')} variant="segment">
                   <Bell className="size-4" /><span>通知配置</span>
                 </TabButton>
-                <TabButton active={rightTab === 'pricing'} onClick={() => setRightTab('pricing')}>
+                <TabButton active={rightTab === 'pricing'} onClick={() => setRightTab('pricing')} variant="segment">
                   <DollarSign className="size-4" /><span>价格设置</span>
                 </TabButton>
-                <TabButton active={rightTab === 'privacy'} onClick={() => setRightTab('privacy')}>
+                <TabButton active={rightTab === 'privacy'} onClick={() => setRightTab('privacy')} variant="segment">
                   <Shield className="size-4" /><span>隐私设置</span>
                 </TabButton>
-                <TabButton active={rightTab === 'sidebar'} onClick={() => setRightTab('sidebar')}>
+                <TabButton active={rightTab === 'sidebar'} onClick={() => setRightTab('sidebar')} variant="segment">
                   <Settings className="size-4" /><span>边栏设置</span>
                 </TabButton>
               </div>
@@ -826,21 +890,22 @@ export default function PersonalSettingsPage() {
                   <div className="space-y-4">
                     {/* 通知方式 */}
                     <div className={rightPanelClass}>
-                      <label className="mb-3 block text-sm font-medium">通知方式 <span className="text-red-500">*</span></label>
-                      <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+                      <label className="mb-4 block text-sm font-semibold text-foreground">通知方式 <span className="text-red-500">*</span></label>
+                      <div className="flex flex-wrap gap-3">
                         {([['email', '邮件通知'], ['webhook', 'Webhook通知'], ['bark', 'Bark通知'], ['gotify', 'Gotify通知']] as const).map(([val, label]) => (
-                          <label key={val} className="flex cursor-pointer items-center gap-2">
-                            <input type="radio" name="warningType" value={val} checked={notifySettings.warningType === val}
-                              onChange={() => setNotifySettings(p => ({ ...p, warningType: val }))}
-                              className="text-primary focus:ring-primary" />
-                            <span>{label}</span>
-                          </label>
+                          <NotificationMethodOption
+                            key={val}
+                            value={val}
+                            label={label}
+                            checked={notifySettings.warningType === val}
+                            onChange={() => setNotifySettings(p => ({ ...p, warningType: val }))}
+                          />
                         ))}
-                    </div>
+                      </div>
                     </div>
                     {/* 额度预警阈值 */}
                     <div className={rightPanelClass}>
-                      <label className="mb-2 block text-sm font-medium">
+                      <label className="mb-2 block text-sm font-semibold text-foreground">
                         额度预警阈值 等价金额：{renderQuota(notifySettings.warningThreshold)} <span className="text-red-500">*</span>
                       </label>
                       <Input type="number" value={String(notifySettings.warningThreshold)}
@@ -851,7 +916,7 @@ export default function PersonalSettingsPage() {
                     {/* Conditional fields */}
                     {notifySettings.warningType === 'email' && (
                       <div className={rightPanelClass}>
-                        <label className="mb-2 block text-sm font-medium">通知邮箱</label>
+                        <label className="mb-2 block text-sm font-semibold text-foreground">通知邮箱</label>
                         <Input value={notifySettings.notificationEmail}
                           onChange={e => setNotifySettings(p => ({ ...p, notificationEmail: e.target.value }))}
                           placeholder="留空则使用账号绑定的邮箱"
@@ -862,7 +927,7 @@ export default function PersonalSettingsPage() {
                     {notifySettings.warningType === 'webhook' && (
                       <>
                         <div className={rightPanelClass}>
-                          <label className="mb-2 block text-sm font-medium">Webhook地址</label>
+                          <label className="mb-2 block text-sm font-semibold text-foreground">Webhook地址</label>
                           <Input value={notifySettings.webhookUrl}
                             onChange={e => setNotifySettings(p => ({ ...p, webhookUrl: e.target.value }))}
                             placeholder="https://example.com/webhook"
@@ -870,7 +935,7 @@ export default function PersonalSettingsPage() {
                           <p className={rightHintClass}>只支持HTTPS，系统将以POST方式发送通知</p>
                         </div>
                         <div className={rightPanelClass}>
-                          <label className="mb-2 block text-sm font-medium">接口凭证</label>
+                          <label className="mb-2 block text-sm font-semibold text-foreground">接口凭证</label>
                           <Input value={notifySettings.webhookSecret}
                             onChange={e => setNotifySettings(p => ({ ...p, webhookSecret: e.target.value }))}
                             placeholder="请输入密钥"
@@ -881,7 +946,7 @@ export default function PersonalSettingsPage() {
                     )}
                     {notifySettings.warningType === 'bark' && (
                       <div className={rightPanelClass}>
-                        <label className="mb-2 block text-sm font-medium">Bark推送URL</label>
+                        <label className="mb-2 block text-sm font-semibold text-foreground">Bark推送URL</label>
                         <Input value={notifySettings.barkUrl}
                           onChange={e => setNotifySettings(p => ({ ...p, barkUrl: e.target.value }))}
                           placeholder="https://api.day.app/yourkey/{{title}}/{{content}}"
@@ -892,21 +957,21 @@ export default function PersonalSettingsPage() {
                     {notifySettings.warningType === 'gotify' && (
                       <>
                         <div className={rightPanelClass}>
-                          <label className="mb-2 block text-sm font-medium">Gotify服务器地址</label>
+                          <label className="mb-2 block text-sm font-semibold text-foreground">Gotify服务器地址</label>
                           <Input value={notifySettings.gotifyUrl}
                             onChange={e => setNotifySettings(p => ({ ...p, gotifyUrl: e.target.value }))}
                             placeholder="https://gotify.example.com"
                             className={rightInputClass} />
                         </div>
                         <div className={rightPanelClass}>
-                          <label className="mb-2 block text-sm font-medium">Gotify应用令牌</label>
+                          <label className="mb-2 block text-sm font-semibold text-foreground">Gotify应用令牌</label>
                           <Input value={notifySettings.gotifyToken}
                             onChange={e => setNotifySettings(p => ({ ...p, gotifyToken: e.target.value }))}
                             placeholder="请输入Gotify应用令牌"
                             className={rightInputClass} />
                         </div>
                         <div className={rightPanelClass}>
-                          <label className="mb-2 block text-sm font-medium">消息优先级</label>
+                          <label className="mb-2 block text-sm font-semibold text-foreground">消息优先级</label>
                           <Select
                             value={String(notifySettings.gotifyPriority)}
                             onValueChange={(value) => setNotifySettings(p => ({ ...p, gotifyPriority: Number(value ?? 5) }))}
@@ -929,7 +994,7 @@ export default function PersonalSettingsPage() {
                     {(user?.role ?? 0) >= 10 && (
                       <div className={`${rightPanelClass} flex items-center justify-between gap-4`}>
                         <div>
-                          <div className="text-sm font-medium">接收上游模型更新通知</div>
+                          <div className="text-sm font-semibold text-foreground">接收上游模型更新通知</div>
                           <div className="mt-0.5 text-xs text-muted-foreground">仅管理员可用。开启后，当系统检测到上游模型变更时发送通知</div>
                         </div>
                         <Switch
@@ -946,7 +1011,7 @@ export default function PersonalSettingsPage() {
                   <div className="space-y-4">
                     <div className={`${rightPanelClass} flex items-center justify-between gap-4`}>
                       <div>
-                        <div className="text-sm font-medium">接受未设置价格模型</div>
+                        <div className="text-sm font-semibold text-foreground">接受未设置价格模型</div>
                         <div className="mt-0.5 text-xs text-muted-foreground">当模型没有设置价格时仍接受调用，仅当您信任该网站时使用</div>
                       </div>
                       <Switch
@@ -962,7 +1027,7 @@ export default function PersonalSettingsPage() {
                   <div className="space-y-4">
                     <div className={`${rightPanelClass} flex items-center justify-between gap-4`}>
                       <div>
-                        <div className="text-sm font-medium">记录请求与错误日志IP</div>
+                        <div className="text-sm font-semibold text-foreground">记录请求与错误日志IP</div>
                         <div className="mt-0.5 text-xs text-muted-foreground">开启后，仅"消费"和"错误"日志将记录您的客户端IP地址</div>
                       </div>
                       <Switch
@@ -976,15 +1041,15 @@ export default function PersonalSettingsPage() {
 
                 {rightTab === 'sidebar' && (
                   <div className="space-y-6">
-                    <p className="rounded-lg border border-primary/10 bg-primary/5 px-4 py-3 text-xs leading-5 text-muted-foreground">您可以个性化设置侧边栏要显示的功能模块</p>
+                    <p className="rounded-2xl border border-primary/10 bg-[#fff7f2] px-4 py-3 text-xs leading-5 text-muted-foreground">您可以个性化设置侧边栏要显示的功能模块</p>
                     {SIDEBAR_SECTIONS
                       .filter(s => !s.adminOnly || (user?.role ?? 0) >= 10)
                       .map(section => (
                       <div key={section.key}>
                         {/* Section header with toggle */}
-                        <div className="mb-3 flex items-center justify-between rounded-lg border border-primary/10 bg-primary/5 p-4">
+                        <div className="mb-3 flex items-center justify-between rounded-2xl border border-primary/10 bg-white p-4 shadow-[0_10px_24px_rgba(242,107,72,0.06)]">
                           <div>
-                            <div className="text-sm font-medium">{section.title}</div>
+                            <div className="text-sm font-semibold text-foreground">{section.title}</div>
                             <div className="text-xs text-muted-foreground">{section.desc}</div>
                           </div>
                           <Switch
@@ -1000,7 +1065,7 @@ export default function PersonalSettingsPage() {
                             const modEnabled = sidebarModules[section.key]?.[mod.key] !== false;
                             return (
                               <div key={mod.key} className={cn(
-                                'flex items-center justify-between rounded-lg border border-slate-100 bg-white p-3 transition-opacity',
+                                'flex items-center justify-between rounded-2xl border border-primary/10 bg-[#fffaf7] p-3 shadow-[0_10px_24px_rgba(242,107,72,0.04)] transition-opacity',
                                 !sectionEnabled && 'opacity-40',
                               )}>
                                 <div className="min-w-0 flex-1">
@@ -1058,7 +1123,7 @@ export default function PersonalSettingsPage() {
             <DialogTitle>禁用两步验证</DialogTitle>
             <DialogDescription>请输入验证器应用中的验证码或备用码以禁用两步验证。</DialogDescription>
           </DialogHeader>
-          <Input value={disableCode} onChange={e => setDisableCode(e.target.value)} placeholder="验证码" maxLength={20} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-center tracking-[0.3em] font-mono" />
+          <Input value={disableCode} onChange={e => setDisableCode(e.target.value)} placeholder="验证码" maxLength={20} className={cn(rightInputClass, 'text-center font-mono tracking-[0.3em]')} />
           <DialogFooter className="gap-2">
             <DialogClose render={<Button variant="outline" className="rounded-xl" />}>取消</DialogClose>
             <Button onClick={disable2FA} disabled={twoFALoading || disableCode.length < 6} className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium">
@@ -1075,7 +1140,7 @@ export default function PersonalSettingsPage() {
             <DialogTitle className="text-red-600">删除账户</DialogTitle>
             <DialogDescription>此操作不可逆。请输入你的用户名 <strong>{user?.username}</strong> 以确认删除。</DialogDescription>
           </DialogHeader>
-          <Input value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} placeholder={`输入 ${user?.username} 确认`} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
+          <Input value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} placeholder={`输入 ${user?.username} 确认`} className={rightInputClass} />
           <DialogFooter className="gap-2">
             <DialogClose render={<Button variant="outline" className="rounded-xl" />}>取消</DialogClose>
             <Button onClick={deleteAccount} disabled={deleting || deleteConfirm !== user?.username} className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium">
@@ -1094,12 +1159,12 @@ export default function PersonalSettingsPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex gap-2">
-              <Input value={bindEmailAddr} onChange={e => setBindEmailAddr(e.target.value)} placeholder="输入邮箱地址" type="email" className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+              <Input value={bindEmailAddr} onChange={e => setBindEmailAddr(e.target.value)} placeholder="输入邮箱地址" type="email" className={cn(rightInputClass, 'flex-1 rounded-lg')} />
               <Button onClick={sendEmailCode} disabled={emailSending || emailCountdown > 0} className="bg-primary hover:bg-primary/90 text-white rounded-lg text-xs px-4 shrink-0">
                 {emailCountdown > 0 ? `重新发送 (${emailCountdown})` : '获取验证码'}
               </Button>
             </div>
-            <Input value={emailCode} onChange={e => setEmailCode(e.target.value)} placeholder="输入验证码" className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
+            <Input value={emailCode} onChange={e => setEmailCode(e.target.value)} placeholder="输入验证码" className={cn(rightInputClass, 'rounded-lg')} />
           </div>
           <DialogFooter className="gap-2">
             <DialogClose><Button variant="outline" className="rounded-lg">取消</Button></DialogClose>

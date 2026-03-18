@@ -76,16 +76,16 @@ export function Sidebar() {
   const isAdmin = user && typeof user.role === 'number' && user.role >= 10;
 
   return (
-    <aside className="w-72 border-r border-border flex flex-col fixed h-full bg-sidebar backdrop-blur-xl z-20 overflow-hidden">
-      <div className="p-8 flex items-center gap-3 flex-shrink-0">
-        <div className="size-9 bg-primary rounded-xl flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
+    <aside className="fixed z-20 flex h-full w-72 flex-col overflow-hidden border-r border-primary/10 bg-[#fff8f5]">
+      <div className="flex shrink-0 items-center gap-3.5 px-6 py-7">
+        <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_10px_24px_rgba(242,107,72,0.18)]">
           <Zap className="size-5" />
         </div>
-        <h1 className="text-xl font-bold tracking-tight text-foreground">Ogog AI</h1>
+        <h1 className="text-[1.05rem] font-semibold tracking-tight text-foreground">Ogog AI</h1>
       </div>
 
-      <ScrollArea className="flex-1 min-h-0 px-5 py-2">
-        <nav className="space-y-6">
+      <ScrollArea className="min-h-0 flex-1 px-4 py-2">
+        <nav className="space-y-7">
           {navGroups.map((group) => {
             const visibleItems = group.items.filter(
               (item) => !item.adminOnly || isAdmin
@@ -94,11 +94,11 @@ export function Sidebar() {
 
             return (
               <div key={group.title}>
-                {group.separator && <Separator className="mb-6" />}
-                <p className="px-3 mb-4 text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                {group.separator && <Separator className="mb-6 bg-primary/8" />}
+                <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground/80">
                   {group.title}
                 </p>
-                <ul className="space-y-1">
+                <ul className="space-y-1.5">
                   {visibleItems.map((item) => (
                     <li key={item.to}>
                       <NavLink
@@ -106,13 +106,26 @@ export function Sidebar() {
                         end={item.to === '/console'}
                         className={({ isActive }) =>
                           cn(
-                            'flex items-center gap-3 px-4 py-2.5 rounded-xl text-muted-foreground hover:bg-muted transition-all group',
-                            isActive && 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold'
+                            'group/link flex items-center gap-3 rounded-xl px-4 py-2.5 font-medium transition-all',
+                            isActive
+                              ? 'bg-primary text-white shadow-[0_10px_22px_rgba(242,107,72,0.18)]'
+                              : 'text-muted-foreground hover:bg-[#fff1e9] hover:text-foreground'
                           )
                         }
                       >
-                        <item.icon className="size-[22px] group-hover:text-primary transition-colors" />
-                        {item.label}
+                        {({ isActive }) => (
+                          <>
+                            <item.icon
+                              className={cn(
+                                'size-5 shrink-0 transition-colors',
+                                isActive ? 'text-white' : 'text-muted-foreground group-hover/link:text-primary',
+                              )}
+                            />
+                            <span className={cn('truncate', isActive ? 'text-white' : 'text-foreground/90')}>
+                              {item.label}
+                            </span>
+                          </>
+                        )}
                       </NavLink>
                     </li>
                   ))}
@@ -124,7 +137,7 @@ export function Sidebar() {
       </ScrollArea>
 
       <div className="flex-shrink-0">
-        <Separator />
+        <Separator className="bg-primary/8" />
         <UserMenu />
       </div>
     </aside>
