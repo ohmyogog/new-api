@@ -7,7 +7,8 @@ This is an AI API gateway/proxy built with Go. It aggregates 40+ upstream AI pro
 ## Tech Stack
 
 - **Backend**: Go 1.22+, Gin web framework, GORM v2 ORM
-- **Frontend**: React 18, Vite, Semi Design UI (@douyinfe/semi-ui)
+- **Frontend (`web/`)**: React 18, Semi Design UI (@douyinfe/semi-ui)
+- **Frontend (`web-next/`)**: React + Vite + Tailwind + shadcn/base-ui style component stack
 - **Databases**: SQLite, MySQL, PostgreSQL (all three must be supported)
 - **Cache**: Redis (go-redis) + in-memory cache
 - **Auth**: JWT, WebAuthn/Passkeys, OAuth (GitHub, Discord, OIDC, etc.)
@@ -35,7 +36,25 @@ oauth/         — OAuth provider implementations
 pkg/           — Internal packages (cachex, ionet)
 web/           — React frontend
   web/src/i18n/  — Frontend internationalization (i18next, zh/en/fr/ru/ja/vi)
+web-next/      — New React + Vite frontend forked from `web/`, focused on UI restyling
+web/ref/       — UI reference assets, including UIKIT / UIKIT Extension and component/page reference HTML
 ```
+
+## Frontend Relationship
+
+- `web-next/` is a forked frontend track derived from `web/`.
+- Its purpose is to provide a new UI style while keeping the same product capabilities, API usage, and overall page/layout structure as close as possible to `web/`.
+- When working in `web-next/`, default to **UI/style-only** changes unless the task explicitly requires functional changes.
+- Do not casually change page content semantics, route meaning, API contracts, or feature behavior just to match a new visual style.
+- Prefer to preserve existing layout structure and information hierarchy; restyle components, spacing, states, and visual language instead of redesigning workflows.
+- `web-next/` should continue calling the same backend APIs unless the task explicitly requires otherwise.
+- Primary UI references for `web-next/` live under:
+  - `web/ref/UIKIT/`
+  - `web/ref/UIKIT-Extension/`
+  - `web/ref/dashboard.html`
+  - `web/ref/personal.html`
+  - `web/ref/dropdown.html`
+  - other component/page reference files under `web/ref/`
 
 ## Internationalization (i18n)
 
@@ -93,11 +112,21 @@ All database code MUST be fully compatible with all three databases simultaneous
 
 ### Rule 3: Frontend — Prefer Bun
 
-Use `bun` as the preferred package manager and script runner for the frontend (`web/` directory):
+Use `bun` as the preferred package manager and script runner for frontend work (`web/` and `web-next/`):
 - `bun install` for dependency installation
 - `bun run dev` for development server
 - `bun run build` for production build
 - `bun run i18n:*` for i18n tooling
+
+### Rule 3.1: `web-next` Must Preserve Functional Parity With `web`
+
+When editing `web-next/`:
+
+- Treat `web/` as the functional baseline.
+- Treat `web-next/` as a UI refresh / restyling fork, not a product rewrite.
+- Keep API calls, page purpose, route intent, and major layout structure aligned with `web/` unless the user explicitly requests a behavioral change.
+- Prefer changing shared components, visual states, styling tokens, spacing, and shells over rewriting page logic.
+- When a UI decision is ambiguous, check `web/ref/` first before inventing a new pattern.
 
 ### Rule 4: New Channel StreamOptions Support
 
