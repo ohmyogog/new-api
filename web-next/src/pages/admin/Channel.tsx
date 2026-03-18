@@ -1,11 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Radio, Plus, Search, Pencil, Trash2, Copy, Power, PlayCircle,
-  ChevronLeft, ChevronRight, X, ChevronDown, Loader2,
+  ChevronLeft, ChevronRight, X, Loader2,
   RefreshCw,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose,
 } from '@/components/ui/dialog';
@@ -441,14 +448,18 @@ export default function ChannelPage() {
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === v ? 'bg-white text-foreground shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>{l}</button>
           ))}
         </div>
-        <div className="relative">
-          <select value={typeFilter} onChange={e => setTypeFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-            className="appearance-none bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 pr-9 text-xs font-bold text-slate-600 focus:ring-4 focus:ring-primary/5 focus:border-primary cursor-pointer">
-            <option value="all">所有类型</option>
-            {CHANNEL_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-slate-400 pointer-events-none" />
-        </div>
+        <Select
+          value={String(typeFilter)}
+          onValueChange={(value) => setTypeFilter(value === 'all' ? 'all' : Number(value))}
+        >
+          <SelectTrigger size="xs" className="w-[188px]" aria-label="渠道类型筛选">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">所有类型</SelectItem>
+            {CHANNEL_TYPES.map(t => <SelectItem key={t.value} value={String(t.value)}>{t.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Batch actions */}
@@ -544,13 +555,14 @@ export default function ChannelPage() {
             {/* Type */}
             <div>
               <label className="text-sm font-medium mb-1.5 block">渠道类型</label>
-              <div className="relative">
-                <select value={form.type} onChange={e => setForm(f => ({ ...f, type: Number(e.target.value) }))}
-                  className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary">
-                  {CHANNEL_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 pointer-events-none" />
-              </div>
+              <Select value={String(form.type)} onValueChange={(value) => setForm(f => ({ ...f, type: Number(value ?? f.type) }))}>
+                <SelectTrigger size="default" className="w-full" aria-label="渠道类型">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CHANNEL_TYPES.map(t => <SelectItem key={t.value} value={String(t.value)}>{t.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             {/* Name */}
             <div>

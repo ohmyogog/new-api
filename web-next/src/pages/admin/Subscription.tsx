@@ -4,6 +4,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { API } from '@/api/client';
 import toast from 'react-hot-toast';
@@ -175,9 +182,17 @@ export default function SubscriptionPage() {
               <div><label className="text-sm font-medium mb-1 block">时长</label>
                 <div className="flex gap-2">
                   <Input type="number" className="w-20" value={form.duration_value ?? 1} onChange={e => setForm({ ...form, duration_value: +e.target.value })} />
-                  <select value={form.duration_unit || 'month'} onChange={e => setForm({ ...form, duration_unit: e.target.value })} className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-sm">
-                    {Object.entries(durationLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-                  </select>
+                  <Select
+                    value={form.duration_unit || 'month'}
+                    onValueChange={(value) => setForm({ ...form, duration_unit: String(value ?? 'month') })}
+                  >
+                    <SelectTrigger size="sm" className="min-w-[92px] flex-1" aria-label="时长单位">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(durationLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>

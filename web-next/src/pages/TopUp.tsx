@@ -51,6 +51,9 @@ interface AffInfo {
   aff_history_quota: number;
 }
 
+const primaryActionButtonClass = 'h-12 rounded-2xl bg-primary font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90';
+const outlineActionButtonClass = 'h-12 rounded-2xl border-2 border-primary/20 bg-white font-bold text-primary hover:bg-primary/5';
+
 export default function TopUpPage() {
   const [code, setCode] = useState('');
   const [redeeming, setRedeeming] = useState(false);
@@ -202,7 +205,7 @@ export default function TopUpPage() {
           </div>
           <div className="space-y-4">
             <Input value={code} onChange={e => setCode(e.target.value)} placeholder="输入兑换码" onKeyDown={e => e.key === 'Enter' && handleRedeem()} />
-            <Button onClick={handleRedeem} disabled={!code.trim() || redeeming} className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20 h-12">
+            <Button onClick={handleRedeem} disabled={!code.trim() || redeeming} className={`w-full ${primaryActionButtonClass}`}>
               {redeeming ? <><Loader2 className="size-4 mr-1.5 animate-spin" />兑换中...</> : '兑换'}
             </Button>
           </div>
@@ -226,11 +229,11 @@ export default function TopUpPage() {
                   <p className="text-lg font-bold">{affInfo.aff_count ?? 0}</p>
                 </div>
               </div>
-              <div className="flex gap-3">
-                <Button onClick={copyAffLink} variant="outline" className="flex-1 border-2 border-primary/20 text-primary hover:bg-primary/5 rounded-2xl font-bold">
+              <div className="flex gap-3 items-stretch">
+                <Button onClick={copyAffLink} variant="outline" className={`flex-1 ${outlineActionButtonClass}`}>
                   <Copy className="size-4 mr-1.5" />复制邀请链接
                 </Button>
-                <Button onClick={handleTransferAff} disabled={transferring || (affInfo.aff_quota ?? 0) <= 0} className="flex-1 bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20">
+                <Button onClick={handleTransferAff} disabled={transferring || (affInfo.aff_quota ?? 0) <= 0} className={`flex-1 ${primaryActionButtonClass}`}>
                   {transferring ? <Loader2 className="size-4 mr-1.5 animate-spin" /> : <ArrowRightLeft className="size-4 mr-1.5" />}
                   划转余额
                 </Button>

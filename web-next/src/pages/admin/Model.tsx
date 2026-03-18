@@ -1,9 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Box, Plus, Search, Pencil, Trash2, RefreshCw, ChevronLeft, ChevronRight, Power, ChevronDown } from 'lucide-react';
+import { Box, Plus, Search, Pencil, Trash2, RefreshCw, ChevronLeft, ChevronRight, Power } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { API } from '@/api/client';
 import toast from 'react-hot-toast';
 
@@ -287,27 +294,29 @@ export default function ModelPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">供应商</label>
-                <div className="relative">
-                  <select value={form.vendor_id} onChange={e => setForm(f => ({ ...f, vendor_id: Number(e.target.value) }))}
-                    className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary">
-                    <option value={0}>无</option>
-                    {vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 pointer-events-none" />
-                </div>
+                <Select value={String(form.vendor_id)} onValueChange={(value) => setForm(f => ({ ...f, vendor_id: Number(value ?? 0) }))}>
+                  <SelectTrigger size="default" className="w-full" aria-label="供应商">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">无</SelectItem>
+                    {vendors.map(v => <SelectItem key={v.id} value={String(v.id)}>{v.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">匹配规则</label>
-                <div className="relative">
-                  <select value={form.name_rule} onChange={e => setForm(f => ({ ...f, name_rule: Number(e.target.value) }))}
-                    className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary">
-                    <option value={0}>精确匹配</option>
-                    <option value={1}>前缀匹配</option>
-                    <option value={2}>包含匹配</option>
-                    <option value={3}>后缀匹配</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 pointer-events-none" />
-                </div>
+                <Select value={String(form.name_rule)} onValueChange={(value) => setForm(f => ({ ...f, name_rule: Number(value ?? 0) }))}>
+                  <SelectTrigger size="default" className="w-full" aria-label="匹配规则">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">精确匹配</SelectItem>
+                    <SelectItem value="1">前缀匹配</SelectItem>
+                    <SelectItem value="2">包含匹配</SelectItem>
+                    <SelectItem value="3">后缀匹配</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div>

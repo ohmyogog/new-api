@@ -8,9 +8,18 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose,
 } from '@/components/ui/dialog';
 import { API } from '@/api/client';
+import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 // ── helpers ──
@@ -146,7 +155,12 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
   return (
     <button
       onClick={onClick}
-      className={`pb-2 flex items-center gap-1.5 text-sm cursor-pointer transition-colors ${active ? 'text-primary border-b-2 border-primary font-medium' : 'text-muted-foreground border-b-2 border-transparent hover:text-foreground'}`}
+      className={cn(
+        'flex items-center gap-1.5 border-b-2 pb-2 text-sm transition-colors',
+        active
+          ? 'border-primary font-medium text-primary'
+          : 'border-transparent text-muted-foreground hover:text-foreground',
+      )}
     >
       {children}
     </button>
@@ -174,6 +188,13 @@ function BindingItem({ icon, name, status, actionLabel, onAction }: { icon: Reac
     </div>
   );
 }
+
+const primaryActionButtonClass = 'h-10 rounded-lg bg-primary font-medium text-white shadow-md shadow-primary/20 hover:bg-primary/90';
+const subtleOutlineButtonClass = 'h-10 rounded-lg border border-primary/20 bg-white text-primary hover:bg-primary/5';
+const dangerOutlineButtonClass = 'h-10 rounded-lg border border-red-200 bg-white text-red-600 hover:bg-red-50';
+const rightPanelClass = 'rounded-lg border border-primary/10 bg-primary/5 p-4';
+const rightHintClass = 'mt-2 text-xs leading-5 text-muted-foreground';
+const rightInputClass = 'h-10 rounded-lg border border-primary/20 bg-white px-3 text-sm shadow-none';
 
 export default function PersonalSettingsPage() {
   const navigate = useNavigate();
@@ -650,7 +671,7 @@ export default function PersonalSettingsPage() {
                     <Input type="password" value={passwords.old} onChange={e => setPasswords(p => ({ ...p, old: e.target.value }))} placeholder="当前密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
                     <Input type="password" value={passwords.new_} onChange={e => setPasswords(p => ({ ...p, new_: e.target.value }))} placeholder="新密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
                     <Input type="password" value={passwords.confirm} onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))} placeholder="确认新密码" className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
-                    <Button onClick={changePassword} disabled={pwSaving} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 h-10">
+                    <Button onClick={changePassword} disabled={pwSaving} className={`w-full ${primaryActionButtonClass}`}>
                       {pwSaving && <Loader2 className="size-4 animate-spin mr-2" />}保存密码
                     </Button>
                   </div>
@@ -659,14 +680,14 @@ export default function PersonalSettingsPage() {
                 <div>
                   <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Shield className="size-4 text-primary" />两步验证 {twoFAEnabled && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">已启用</span>}</h3>
                   {twoFAEnabled ? (
-                    <Button variant="outline" onClick={() => { setShowDisable2FA(true); setDisableCode(''); }} className="w-full border border-red-200 text-red-600 hover:bg-red-50 rounded-lg h-10">禁用两步验证</Button>
+                    <Button variant="outline" onClick={() => { setShowDisable2FA(true); setDisableCode(''); }} className={`w-full ${dangerOutlineButtonClass}`}>禁用两步验证</Button>
                   ) : setupData ? (
                     <div className="space-y-3">
                       <p className="text-xs text-muted-foreground">请使用验证器应用扫描二维码，然后输入 6 位验证码。</p>
                       <div className="flex justify-center p-3 bg-white rounded-xl border border-slate-100"><img src={setupData.qr_code_data} alt="2FA QR" className="size-40" /></div>
                       <Input readOnly value={setupData.secret} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono" />
                       <Input value={twoFACode} onChange={e => setTwoFACode(e.target.value)} placeholder="000000" maxLength={6} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-center tracking-[0.5em] font-mono" />
-                      <Button onClick={enable2FA} disabled={twoFALoading || twoFACode.length < 6} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-10">
+                      <Button onClick={enable2FA} disabled={twoFALoading || twoFACode.length < 6} className={`w-full ${primaryActionButtonClass}`}>
                         {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}确认启用
                       </Button>
                       {setupData.backup_codes?.length > 0 && (
@@ -677,7 +698,7 @@ export default function PersonalSettingsPage() {
                       )}
                     </div>
                   ) : (
-                    <Button onClick={start2FASetup} disabled={twoFALoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-10">
+                    <Button onClick={start2FASetup} disabled={twoFALoading} className={`w-full ${primaryActionButtonClass}`}>
                       {twoFALoading && <Loader2 className="size-4 animate-spin mr-2" />}设置两步验证
                     </Button>
                   )}
@@ -687,11 +708,11 @@ export default function PersonalSettingsPage() {
                   <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Fingerprint className="size-4 text-primary" />Passkey 登录 {passkeyEnabled && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">已注册</span>}</h3>
                   {!passkeySupported && !passkeyEnabled && <p className="text-xs text-amber-600 mb-2">当前设备不支持 Passkey</p>}
                   {passkeyEnabled ? (
-                    <Button variant="outline" onClick={deletePasskey} disabled={passkeyLoading} className="w-full border border-red-200 text-red-600 hover:bg-red-50 rounded-lg h-10">
+                    <Button variant="outline" onClick={deletePasskey} disabled={passkeyLoading} className={`w-full ${dangerOutlineButtonClass}`}>
                       {passkeyLoading && <Loader2 className="size-4 animate-spin mr-2" />}解绑 Passkey
                     </Button>
                   ) : (
-                    <Button onClick={registerPasskey} disabled={passkeyLoading || !passkeySupported} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-10">
+                    <Button onClick={registerPasskey} disabled={passkeyLoading || !passkeySupported} className={`w-full ${primaryActionButtonClass}`}>
                       {passkeyLoading && <Loader2 className="size-4 animate-spin mr-2" />}注册 Passkey
                     </Button>
                   )}
@@ -709,7 +730,7 @@ export default function PersonalSettingsPage() {
                       </Button>
                     </div>
                   )}
-                  <Button onClick={generateToken} disabled={tokenLoading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-medium h-9 text-sm">
+                  <Button onClick={generateToken} disabled={tokenLoading} className={`w-full ${primaryActionButtonClass}`}>
                     {tokenLoading && <Loader2 className="size-4 animate-spin mr-2" />}
                     {token ? '重新生成令牌' : '生成令牌'}
                   </Button>
@@ -725,7 +746,7 @@ export default function PersonalSettingsPage() {
                         <div className="text-xs text-muted-foreground">不可逆操作</div>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => { setShowDeleteDialog(true); setDeleteConfirm(''); }} className="border border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs">
+                    <Button variant="outline" size="sm" onClick={() => { setShowDeleteDialog(true); setDeleteConfirm(''); }} className="rounded-lg border border-red-200 bg-white text-xs text-red-600 hover:bg-red-50">
                       删除
                     </Button>
                   </div>
@@ -734,7 +755,7 @@ export default function PersonalSettingsPage() {
                       <LogOut className="size-4 text-muted-foreground" />
                       <div className="text-sm font-medium">退出登录</div>
                     </div>
-                    <Button variant="outline" size="sm" onClick={logout} className="border border-slate-200 rounded-lg text-xs">退出</Button>
+                    <Button variant="outline" size="sm" onClick={logout} className="rounded-lg border border-slate-200 bg-white text-xs hover:bg-slate-50">退出</Button>
                   </div>
                 </div>
               </div>
@@ -758,256 +779,273 @@ export default function PersonalSettingsPage() {
                   <div className="text-xs text-muted-foreground mt-1 max-w-xs">选择界面语言，设置将同步到所有设备</div>
                 </div>
               </div>
-              <select
-                value={language}
-                onChange={e => handleLanguageChange(e.target.value)}
-                className="text-sm bg-primary/5 border-none text-primary rounded-md py-1.5 pl-3 pr-8 focus:ring-0 cursor-pointer"
-              >
-                <option value="zh">简体中文</option>
-                <option value="en">English</option>
-              </select>
+              <Select value={language} onValueChange={(value) => handleLanguageChange(String(value ?? 'zh'))}>
+                <SelectTrigger size="sm" className="w-[152px] shrink-0" aria-label="语言偏好">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="zh">简体中文</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </section>
         </div>
 
         {/* ── Right Column ── */}
         <div className="lg:col-span-7">
-          <section className={`${cardStyle} p-6 h-full flex flex-col`}>
-            <div className="flex items-start gap-3 mb-6">
-              <div className="p-2 bg-primary/10 rounded-lg text-primary"><Bell className="size-5" /></div>
-              <div>
-                <h2 className="font-bold">通知与高级设置</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">通知、令牌和账户安全相关设置</p>
+          <section className={`${cardStyle} h-full flex flex-col overflow-hidden`}>
+            <div className="border-b border-slate-100 px-6 pb-5 pt-6">
+              <div className="flex items-start gap-3">
+                <div className="rounded-xl bg-primary/10 p-2.5 text-primary shadow-[0_6px_18px_rgba(242,107,72,0.10)]"><Bell className="size-5" /></div>
+                <div>
+                  <h2 className="font-bold">通知与高级设置</h2>
+                  <p className="mt-0.5 text-xs text-muted-foreground">通知、令牌和账户安全相关设置</p>
+                </div>
               </div>
             </div>
-            {/* Tabs */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-slate-100 mb-6 text-sm">
-              <TabButton active={rightTab === 'notification'} onClick={() => setRightTab('notification')}>
-                <Bell className="size-4" /><span>通知配置</span>
-              </TabButton>
-              <TabButton active={rightTab === 'pricing'} onClick={() => setRightTab('pricing')}>
-                <DollarSign className="size-4" /><span>价格设置</span>
-              </TabButton>
-              <TabButton active={rightTab === 'privacy'} onClick={() => setRightTab('privacy')}>
-                <Shield className="size-4" /><span>隐私设置</span>
-              </TabButton>
-              <TabButton active={rightTab === 'sidebar'} onClick={() => setRightTab('sidebar')}>
-                <Settings className="size-4" /><span>边栏设置</span>
-              </TabButton>
-            </div>
+            <div className="px-6 pb-6 pt-5">
+              {/* Tabs */}
+              <div className="mb-6 flex flex-wrap gap-x-6 gap-y-2 border-b border-primary/10 text-sm">
+                <TabButton active={rightTab === 'notification'} onClick={() => setRightTab('notification')}>
+                  <Bell className="size-4" /><span>通知配置</span>
+                </TabButton>
+                <TabButton active={rightTab === 'pricing'} onClick={() => setRightTab('pricing')}>
+                  <DollarSign className="size-4" /><span>价格设置</span>
+                </TabButton>
+                <TabButton active={rightTab === 'privacy'} onClick={() => setRightTab('privacy')}>
+                  <Shield className="size-4" /><span>隐私设置</span>
+                </TabButton>
+                <TabButton active={rightTab === 'sidebar'} onClick={() => setRightTab('sidebar')}>
+                  <Settings className="size-4" /><span>边栏设置</span>
+                </TabButton>
+              </div>
 
-            <div className="flex-grow">
-              {rightTab === 'notification' && (
-                <div className="space-y-6">
-                  {/* 通知方式 */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">通知方式 <span className="text-red-500">*</span></label>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      {([['email', '邮件通知'], ['webhook', 'Webhook通知'], ['bark', 'Bark通知'], ['gotify', 'Gotify通知']] as const).map(([val, label]) => (
-                        <label key={val} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" name="warningType" value={val} checked={notifySettings.warningType === val}
-                            onChange={() => setNotifySettings(p => ({ ...p, warningType: val }))}
-                            className="text-primary focus:ring-primary" />
-                          <span>{label}</span>
-                        </label>
-                      ))}
+              <div className="flex-grow">
+                {rightTab === 'notification' && (
+                  <div className="space-y-4">
+                    {/* 通知方式 */}
+                    <div className={rightPanelClass}>
+                      <label className="mb-3 block text-sm font-medium">通知方式 <span className="text-red-500">*</span></label>
+                      <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+                        {([['email', '邮件通知'], ['webhook', 'Webhook通知'], ['bark', 'Bark通知'], ['gotify', 'Gotify通知']] as const).map(([val, label]) => (
+                          <label key={val} className="flex cursor-pointer items-center gap-2">
+                            <input type="radio" name="warningType" value={val} checked={notifySettings.warningType === val}
+                              onChange={() => setNotifySettings(p => ({ ...p, warningType: val }))}
+                              className="text-primary focus:ring-primary" />
+                            <span>{label}</span>
+                          </label>
+                        ))}
                     </div>
+                    </div>
+                    {/* 额度预警阈值 */}
+                    <div className={rightPanelClass}>
+                      <label className="mb-2 block text-sm font-medium">
+                        额度预警阈值 等价金额：{renderQuota(notifySettings.warningThreshold)} <span className="text-red-500">*</span>
+                      </label>
+                      <Input type="number" value={String(notifySettings.warningThreshold)}
+                        onChange={e => setNotifySettings(p => ({ ...p, warningThreshold: Number(e.target.value) || 0 }))}
+                        className={`${rightInputClass} max-w-xs`} />
+                      <p className={rightHintClass}>当钱包或订阅剩余额度低于此数值时，系统将通过选择的方式发送通知</p>
+                    </div>
+                    {/* Conditional fields */}
+                    {notifySettings.warningType === 'email' && (
+                      <div className={rightPanelClass}>
+                        <label className="mb-2 block text-sm font-medium">通知邮箱</label>
+                        <Input value={notifySettings.notificationEmail}
+                          onChange={e => setNotifySettings(p => ({ ...p, notificationEmail: e.target.value }))}
+                          placeholder="留空则使用账号绑定的邮箱"
+                          className={rightInputClass} />
+                        <p className={rightHintClass}>设置用于接收额度预警的邮箱地址，不填则使用账号绑定的邮箱</p>
+                      </div>
+                    )}
+                    {notifySettings.warningType === 'webhook' && (
+                      <>
+                        <div className={rightPanelClass}>
+                          <label className="mb-2 block text-sm font-medium">Webhook地址</label>
+                          <Input value={notifySettings.webhookUrl}
+                            onChange={e => setNotifySettings(p => ({ ...p, webhookUrl: e.target.value }))}
+                            placeholder="https://example.com/webhook"
+                            className={rightInputClass} />
+                          <p className={rightHintClass}>只支持HTTPS，系统将以POST方式发送通知</p>
+                        </div>
+                        <div className={rightPanelClass}>
+                          <label className="mb-2 block text-sm font-medium">接口凭证</label>
+                          <Input value={notifySettings.webhookSecret}
+                            onChange={e => setNotifySettings(p => ({ ...p, webhookSecret: e.target.value }))}
+                            placeholder="请输入密钥"
+                            className={rightInputClass} />
+                          <p className={rightHintClass}>密钥将以Bearer方式添加到请求头中</p>
+                        </div>
+                      </>
+                    )}
+                    {notifySettings.warningType === 'bark' && (
+                      <div className={rightPanelClass}>
+                        <label className="mb-2 block text-sm font-medium">Bark推送URL</label>
+                        <Input value={notifySettings.barkUrl}
+                          onChange={e => setNotifySettings(p => ({ ...p, barkUrl: e.target.value }))}
+                          placeholder="https://api.day.app/yourkey/{{title}}/{{content}}"
+                          className={rightInputClass} />
+                        <p className={rightHintClass}>支持HTTP和HTTPS，模板变量: {'{{title}}'} (通知标题), {'{{content}}'} (通知内容)</p>
+                      </div>
+                    )}
+                    {notifySettings.warningType === 'gotify' && (
+                      <>
+                        <div className={rightPanelClass}>
+                          <label className="mb-2 block text-sm font-medium">Gotify服务器地址</label>
+                          <Input value={notifySettings.gotifyUrl}
+                            onChange={e => setNotifySettings(p => ({ ...p, gotifyUrl: e.target.value }))}
+                            placeholder="https://gotify.example.com"
+                            className={rightInputClass} />
+                        </div>
+                        <div className={rightPanelClass}>
+                          <label className="mb-2 block text-sm font-medium">Gotify应用令牌</label>
+                          <Input value={notifySettings.gotifyToken}
+                            onChange={e => setNotifySettings(p => ({ ...p, gotifyToken: e.target.value }))}
+                            placeholder="请输入Gotify应用令牌"
+                            className={rightInputClass} />
+                        </div>
+                        <div className={rightPanelClass}>
+                          <label className="mb-2 block text-sm font-medium">消息优先级</label>
+                          <Select
+                            value={String(notifySettings.gotifyPriority)}
+                            onValueChange={(value) => setNotifySettings(p => ({ ...p, gotifyPriority: Number(value ?? 5) }))}
+                          >
+                            <SelectTrigger size="sm" className="w-full max-w-xs" aria-label="消息优先级">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="0">0 - 最低</SelectItem>
+                              <SelectItem value="2">2 - 低</SelectItem>
+                              <SelectItem value="5">5 - 正常（默认）</SelectItem>
+                              <SelectItem value="8">8 - 高</SelectItem>
+                              <SelectItem value="10">10 - 最高</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </>
+                    )}
+                    {/* Admin-only: upstream model update notify */}
+                    {(user?.role ?? 0) >= 10 && (
+                      <div className={`${rightPanelClass} flex items-center justify-between gap-4`}>
+                        <div>
+                          <div className="text-sm font-medium">接收上游模型更新通知</div>
+                          <div className="mt-0.5 text-xs text-muted-foreground">仅管理员可用。开启后，当系统检测到上游模型变更时发送通知</div>
+                        </div>
+                        <Switch
+                          aria-label="接收上游模型更新通知"
+                          checked={notifySettings.upstreamModelUpdateNotifyEnabled}
+                          onCheckedChange={(checked) => setNotifySettings(p => ({ ...p, upstreamModelUpdateNotifyEnabled: checked }))}
+                        />
+                      </div>
+                    )}
                   </div>
-                  {/* 额度预警阈值 */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      额度预警阈值 等价金额：{renderQuota(notifySettings.warningThreshold)} <span className="text-red-500">*</span>
-                    </label>
-                    <Input type="number" value={String(notifySettings.warningThreshold)}
-                      onChange={e => setNotifySettings(p => ({ ...p, warningThreshold: Number(e.target.value) || 0 }))}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm max-w-xs" />
-                    <p className="text-xs text-muted-foreground mt-2">当钱包或订阅剩余额度低于此数值时，系统将通过选择的方式发送通知</p>
-                  </div>
-                  {/* Conditional fields */}
-                  {notifySettings.warningType === 'email' && (
-                    <div>
-                      <label className="block text-sm font-medium mb-2">通知邮箱</label>
-                      <Input value={notifySettings.notificationEmail}
-                        onChange={e => setNotifySettings(p => ({ ...p, notificationEmail: e.target.value }))}
-                        placeholder="留空则使用账号绑定的邮箱"
-                        className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                      <p className="text-xs text-muted-foreground mt-2">设置用于接收额度预警的邮箱地址，不填则使用账号绑定的邮箱</p>
-                    </div>
-                  )}
-                  {notifySettings.warningType === 'webhook' && (
-                    <>
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Webhook地址</label>
-                        <Input value={notifySettings.webhookUrl}
-                          onChange={e => setNotifySettings(p => ({ ...p, webhookUrl: e.target.value }))}
-                          placeholder="https://example.com/webhook"
-                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                        <p className="text-xs text-muted-foreground mt-2">只支持HTTPS，系统将以POST方式发送通知</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2">接口凭证</label>
-                        <Input value={notifySettings.webhookSecret}
-                          onChange={e => setNotifySettings(p => ({ ...p, webhookSecret: e.target.value }))}
-                          placeholder="请输入密钥"
-                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                        <p className="text-xs text-muted-foreground mt-2">密钥将以Bearer方式添加到请求头中</p>
-                      </div>
-                    </>
-                  )}
-                  {notifySettings.warningType === 'bark' && (
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Bark推送URL</label>
-                      <Input value={notifySettings.barkUrl}
-                        onChange={e => setNotifySettings(p => ({ ...p, barkUrl: e.target.value }))}
-                        placeholder="https://api.day.app/yourkey/{{title}}/{{content}}"
-                        className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                      <p className="text-xs text-muted-foreground mt-2">支持HTTP和HTTPS，模板变量: {'{{title}}'} (通知标题), {'{{content}}'} (通知内容)</p>
-                    </div>
-                  )}
-                  {notifySettings.warningType === 'gotify' && (
-                    <>
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Gotify服务器地址</label>
-                        <Input value={notifySettings.gotifyUrl}
-                          onChange={e => setNotifySettings(p => ({ ...p, gotifyUrl: e.target.value }))}
-                          placeholder="https://gotify.example.com"
-                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Gotify应用令牌</label>
-                        <Input value={notifySettings.gotifyToken}
-                          onChange={e => setNotifySettings(p => ({ ...p, gotifyToken: e.target.value }))}
-                          placeholder="请输入Gotify应用令牌"
-                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2">消息优先级</label>
-                        <select value={notifySettings.gotifyPriority}
-                          onChange={e => setNotifySettings(p => ({ ...p, gotifyPriority: Number(e.target.value) }))}
-                          className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
-                          <option value={0}>0 - 最低</option>
-                          <option value={2}>2 - 低</option>
-                          <option value={5}>5 - 正常（默认）</option>
-                          <option value={8}>8 - 高</option>
-                          <option value={10}>10 - 最高</option>
-                        </select>
-                      </div>
-                    </>
-                  )}
-                  {/* Admin-only: upstream model update notify */}
-                  {(user?.role ?? 0) >= 10 && (
-                    <div className="flex items-center justify-between border border-slate-100 rounded-xl p-4">
-                      <div>
-                        <div className="text-sm font-medium">接收上游模型更新通知</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">仅管理员可用。开启后，当系统检测到上游模型变更时发送通知</div>
-                      </div>
-                      <button onClick={() => setNotifySettings(p => ({ ...p, upstreamModelUpdateNotifyEnabled: !p.upstreamModelUpdateNotifyEnabled }))}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifySettings.upstreamModelUpdateNotifyEnabled ? 'bg-primary' : 'bg-slate-200'}`}>
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notifySettings.upstreamModelUpdateNotifyEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
 
-              {rightTab === 'pricing' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between border border-slate-100 rounded-xl p-4">
-                    <div>
-                      <div className="text-sm font-medium">接受未设置价格模型</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">当模型没有设置价格时仍接受调用，仅当您信任该网站时使用</div>
+                {rightTab === 'pricing' && (
+                  <div className="space-y-4">
+                    <div className={`${rightPanelClass} flex items-center justify-between gap-4`}>
+                      <div>
+                        <div className="text-sm font-medium">接受未设置价格模型</div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">当模型没有设置价格时仍接受调用，仅当您信任该网站时使用</div>
+                      </div>
+                      <Switch
+                        aria-label="接受未设置价格模型"
+                        checked={notifySettings.acceptUnsetModelRatioModel}
+                        onCheckedChange={(checked) => setNotifySettings(p => ({ ...p, acceptUnsetModelRatioModel: checked }))}
+                      />
                     </div>
-                    <button onClick={() => setNotifySettings(p => ({ ...p, acceptUnsetModelRatioModel: !p.acceptUnsetModelRatioModel }))}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifySettings.acceptUnsetModelRatioModel ? 'bg-primary' : 'bg-slate-200'}`}>
-                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notifySettings.acceptUnsetModelRatioModel ? 'translate-x-6' : 'translate-x-1'}`} />
-                    </button>
                   </div>
-                </div>
-              )}
+                )}
 
-              {rightTab === 'privacy' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between border border-slate-100 rounded-xl p-4">
-                    <div>
-                      <div className="text-sm font-medium">记录请求与错误日志IP</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">开启后，仅"消费"和"错误"日志将记录您的客户端IP地址</div>
+                {rightTab === 'privacy' && (
+                  <div className="space-y-4">
+                    <div className={`${rightPanelClass} flex items-center justify-between gap-4`}>
+                      <div>
+                        <div className="text-sm font-medium">记录请求与错误日志IP</div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">开启后，仅"消费"和"错误"日志将记录您的客户端IP地址</div>
+                      </div>
+                      <Switch
+                        aria-label="记录请求与错误日志IP"
+                        checked={notifySettings.recordIpLog}
+                        onCheckedChange={(checked) => setNotifySettings(p => ({ ...p, recordIpLog: checked }))}
+                      />
                     </div>
-                    <button onClick={() => setNotifySettings(p => ({ ...p, recordIpLog: !p.recordIpLog }))}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifySettings.recordIpLog ? 'bg-primary' : 'bg-slate-200'}`}>
-                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notifySettings.recordIpLog ? 'translate-x-6' : 'translate-x-1'}`} />
-                    </button>
                   </div>
+                )}
+
+                {rightTab === 'sidebar' && (
+                  <div className="space-y-6">
+                    <p className="rounded-lg border border-primary/10 bg-primary/5 px-4 py-3 text-xs leading-5 text-muted-foreground">您可以个性化设置侧边栏要显示的功能模块</p>
+                    {SIDEBAR_SECTIONS
+                      .filter(s => !s.adminOnly || (user?.role ?? 0) >= 10)
+                      .map(section => (
+                      <div key={section.key}>
+                        {/* Section header with toggle */}
+                        <div className="mb-3 flex items-center justify-between rounded-lg border border-primary/10 bg-primary/5 p-4">
+                          <div>
+                            <div className="text-sm font-medium">{section.title}</div>
+                            <div className="text-xs text-muted-foreground">{section.desc}</div>
+                          </div>
+                          <Switch
+                            aria-label={`${section.title}显示开关`}
+                            checked={sidebarModules[section.key]?.enabled !== false}
+                            onCheckedChange={(checked) => setSidebarModules(prev => ({ ...prev, [section.key]: { ...prev[section.key], enabled: checked } }))}
+                          />
+                        </div>
+                        {/* Module grid */}
+                        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
+                          {section.modules.map(mod => {
+                            const sectionEnabled = sidebarModules[section.key]?.enabled !== false;
+                            const modEnabled = sidebarModules[section.key]?.[mod.key] !== false;
+                            return (
+                              <div key={mod.key} className={cn(
+                                'flex items-center justify-between rounded-lg border border-slate-100 bg-white p-3 transition-opacity',
+                                !sectionEnabled && 'opacity-40',
+                              )}>
+                                <div className="min-w-0 flex-1">
+                                  <div className="truncate text-sm font-medium">{mod.title}</div>
+                                  <div className="truncate text-xs text-muted-foreground">{mod.desc}</div>
+                                </div>
+                                <Switch
+                                  size="sm"
+                                  aria-label={`${mod.title}显示开关`}
+                                  disabled={!sectionEnabled}
+                                  checked={modEnabled && sectionEnabled}
+                                  onCheckedChange={(checked) => setSidebarModules(prev => ({ ...prev, [section.key]: { ...prev[section.key], [mod.key]: checked } }))}
+                                  className="ml-2"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {(['notification', 'pricing', 'privacy'] as const).includes(rightTab as 'notification') && (
+                <div className="mt-8 flex justify-end">
+                  <Button onClick={saveNotifySettings} disabled={notifySaving}
+                    className={`px-6 ${primaryActionButtonClass}`}>
+                    {notifySaving && <Loader2 className="mr-2 size-4 animate-spin" />}保存设置
+                  </Button>
                 </div>
               )}
 
               {rightTab === 'sidebar' && (
-                <div className="space-y-6">
-                  <p className="text-xs text-muted-foreground">您可以个性化设置侧边栏要显示的功能模块</p>
-                  {SIDEBAR_SECTIONS
-                    .filter(s => !s.adminOnly || (user?.role ?? 0) >= 10)
-                    .map(section => (
-                    <div key={section.key}>
-                      {/* Section header with toggle */}
-                      <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl mb-3">
-                        <div>
-                          <div className="text-sm font-medium">{section.title}</div>
-                          <div className="text-xs text-muted-foreground">{section.desc}</div>
-                        </div>
-                        <button
-                          onClick={() => setSidebarModules(prev => ({ ...prev, [section.key]: { ...prev[section.key], enabled: !prev[section.key]?.enabled } }))}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${sidebarModules[section.key]?.enabled !== false ? 'bg-primary' : 'bg-slate-200'}`}
-                        >
-                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${sidebarModules[section.key]?.enabled !== false ? 'translate-x-6' : 'translate-x-1'}`} />
-                        </button>
-                      </div>
-                      {/* Module grid */}
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                        {section.modules.map(mod => {
-                          const sectionEnabled = sidebarModules[section.key]?.enabled !== false;
-                          const modEnabled = sidebarModules[section.key]?.[mod.key] !== false;
-                          return (
-                            <div key={mod.key} className={`border border-slate-100 rounded-xl p-3 flex items-center justify-between ${!sectionEnabled ? 'opacity-40' : ''}`}>
-                              <div className="min-w-0 flex-1">
-                                <div className="text-sm font-medium truncate">{mod.title}</div>
-                                <div className="text-xs text-muted-foreground truncate">{mod.desc}</div>
-                              </div>
-                              <button
-                                disabled={!sectionEnabled}
-                                onClick={() => setSidebarModules(prev => ({ ...prev, [section.key]: { ...prev[section.key], [mod.key]: !modEnabled } }))}
-                                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ml-2 shrink-0 ${modEnabled && sectionEnabled ? 'bg-primary' : 'bg-slate-200'} ${!sectionEnabled ? 'cursor-not-allowed' : ''}`}
-                              >
-                                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${modEnabled && sectionEnabled ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
+                <div className="mt-8 flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setSidebarModules(structuredClone(DEFAULT_SIDEBAR))} className={`px-5 ${subtleOutlineButtonClass}`}>
+                    重置为默认
+                  </Button>
+                  <Button onClick={saveSidebarSettings} disabled={sidebarSaving}
+                    className={`px-6 ${primaryActionButtonClass}`}>
+                    {sidebarSaving && <Loader2 className="mr-2 size-4 animate-spin" />}保存设置
+                  </Button>
                 </div>
               )}
             </div>
-
-            {(['notification', 'pricing', 'privacy'] as const).includes(rightTab as 'notification') && (
-              <div className="mt-8 flex justify-end">
-                <Button onClick={saveNotifySettings} disabled={notifySaving}
-                  className="bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 px-6">
-                  {notifySaving && <Loader2 className="size-4 animate-spin mr-2" />}保存设置
-                </Button>
-              </div>
-            )}
-
-            {rightTab === 'sidebar' && (
-              <div className="mt-8 flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setSidebarModules(structuredClone(DEFAULT_SIDEBAR))} className="rounded-lg">
-                  重置为默认
-                </Button>
-                <Button onClick={saveSidebarSettings} disabled={sidebarSaving}
-                  className="bg-primary hover:bg-primary/90 text-white rounded-lg font-medium shadow-md shadow-primary/20 px-6">
-                  {sidebarSaving && <Loader2 className="size-4 animate-spin mr-2" />}保存设置
-                </Button>
-              </div>
-            )}
           </section>
         </div>
       </main>

@@ -9,6 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose,
 } from '@/components/ui/dialog';
 import { API } from '@/api/client';
@@ -593,11 +600,15 @@ function TokenFormDialog({ open, onOpenChange, editId, form, setForm, submitting
           {availableGroups.length > 0 && (
             <div>
               <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">分组</label>
-              <select value={form.group} onChange={e => setForm(f => ({ ...f, group: e.target.value }))}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none">
-                <option value="">默认</option>
-                {availableGroups.map(g => <option key={g} value={g}>{g}</option>)}
-              </select>
+              <Select value={form.group} onValueChange={(value) => setForm(f => ({ ...f, group: String(value ?? '') }))}>
+                <SelectTrigger size="default" className="w-full" aria-label="分组">
+                  <SelectValue placeholder="默认" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">默认</SelectItem>
+                  {availableGroups.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>

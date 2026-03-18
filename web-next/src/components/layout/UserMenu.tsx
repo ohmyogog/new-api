@@ -33,7 +33,7 @@ export function UserMenu() {
   return (
     <div className="p-5">
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-3 p-3 rounded-2xl bg-muted border border-border shadow-sm w-full hover:bg-accent transition-all cursor-pointer">
+        <DropdownMenuTrigger className="flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-primary/10 bg-white p-3 shadow-sm transition-all hover:border-primary/35 hover:bg-white focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/10">
           <Avatar className="size-10 rounded-xl">
             <AvatarFallback className="rounded-xl bg-primary/10 text-primary font-bold">
               {user.username?.[0]?.toUpperCase() || 'U'}
@@ -45,7 +45,7 @@ export function UserMenu() {
               {user.role >= 10 ? '管理员' : '用户'}
             </p>
           </div>
-          <ChevronsUpDown className="size-4 text-muted-foreground" />
+          <ChevronsUpDown className="size-4 text-primary/75" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem onClick={() => navigate('/console/personal')}>

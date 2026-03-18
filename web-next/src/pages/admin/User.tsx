@@ -415,10 +415,11 @@ export default function UserPage() {
                     <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{fmtTime(u.created_time)}</td>
                     <td className="px-6 py-4">
                       <DropdownMenu>
-                        <DropdownMenuTrigger>
-                          <Button variant="ghost" size="icon" className="size-8">
-                            <MoreHorizontal className="size-4" />
-                          </Button>
+                        <DropdownMenuTrigger
+                          aria-label={`打开 ${u.username} 的操作菜单`}
+                          className="flex size-9 cursor-pointer items-center justify-center rounded-xl border border-primary/15 bg-white text-primary/80 shadow-sm transition-all hover:border-primary/35 hover:bg-primary/5 hover:text-primary"
+                        >
+                          <MoreHorizontal className="size-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => openEdit(u)}>

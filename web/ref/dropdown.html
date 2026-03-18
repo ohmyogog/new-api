@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Warm Coral UI Kit Dropdown Component</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#FAF0E8',
+            coral: {
+              DEFAULT: '#E36B4D',
+              light: '#FBE8E3',
+              border: '#E36B4D',
+            },
+            text: {
+              main: '#2B2B2B',
+              muted: '#6B6B6B',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'floating': '0 10px 25px -5px rgba(227, 107, 77, 0.15), 0 8px 10px -6px rgba(227, 107, 77, 0.1)',
+          },
+          borderRadius: {
+            'xl': '12px',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-utilities">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: theme('colors.background');
+      color: theme('colors.text.main');
+    }
+
+    .annotation-line {
+      position: absolute;
+      border-top: 1px solid theme('colors.text.muted');
+      width: 20px;
+    }
+    
+    .annotation-text {
+      font-size: 0.875rem;
+      color: theme('colors.text.main');
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-12 lg:p-24 flex flex-col items-center bg-[#fbf4ee]">
+<!-- BEGIN: Header Section -->
+<header class="w-full max-w-5xl mb-16 flex items-center"><h1 class="text-4xl font-bold text-gray-800 border-l-[6px] border-[#e87a5d] pl-4">Warm Coral UI Kit Dropdown Component.</h1></header>
+<!-- END: Header Section -->
+<!-- BEGIN: Main Content Grid -->
+<main class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-x-32 gap-y-24 relative">
+<!-- BEGIN: Closed State -->
+<section class="relative">
+<h2 class="text-lg font-semibold mb-4 text-gray-800">Closed State</h2>
+<div class="relative w-80">
+<!-- Annotation: Border radius -->
+<div class="absolute -left-28 top-3 flex items-center gap-2">
+<span class="text-sm text-text-main text-gray-500 text-sm">12px</span>
+<svg class="w-6 h-6 text-text-muted opacity-50 text-[#e87a5d]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 10v4a8 8 0 008 8h4M3 10l-3 3m3-3l3 3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path></svg>
+</div>
+<div class="absolute -left-24 top-14">
+<span class="text-sm text-text-main text-gray-500 text-sm">Border radius</span>
+</div>
+<!-- Dropdown Button -->
+<button class="w-full bg-white border border-transparent rounded-xl px-4 py-3 flex items-center justify-between hover:border-coral-border transition-colors outline-none focus:ring-2 focus:ring-coral/20">
+<span class="text-[15px] text-gray-800">Select Model</span>
+<svg class="w-5 h-5 text-[#e87a5d]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+</section>
+<!-- END: Closed State -->
+<!-- BEGIN: Open State (Active) -->
+<section class="relative">
+<h2 class="text-lg font-semibold mb-4 text-gray-800">Open State (Active)</h2>
+<div class="relative w-80">
+<!-- Annotation: Hover State -->
+<div class="absolute -left-40 top-32 flex items-center gap-2">
+<div class="text-right">
+<span class="block text-sm text-text-main text-gray-500 text-sm">New API</span>
+<span class="block text-sm text-text-main text-gray-500 text-sm">Comprehensive</span>
+<span class="block text-sm text-text-main text-gray-500 text-sm">UI Kit</span>
+</div>
+</div>
+<div class="absolute -left-24 top-[140px] flex items-center gap-2">
+<span class="text-sm text-text-main text-gray-500 text-sm">Hover State →</span>
+</div>
+<!-- Dropdown Input (Active) -->
+<div class="w-full bg-white border border-[#e87a5d] shadow-sm rounded-xl px-4 py-2.5 flex items-center justify-between mb-2">
+<div class="flex items-center w-full">
+<div class="h-5 w-[1px] bg-black mr-1 animate-pulse"></div>
+<input class="w-full border-none p-0 focus:ring-0 text-[15px] placeholder-text-muted placeholder-gray-400 text-gray-400" placeholder="Select Model" type="text" value="Select Model"/>
+</div>
+<svg class="w-5 h-5 text-[#e87a5d]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<!-- Dropdown Menu -->
+<div class="w-full bg-white rounded-xl py-2 z-10 relative shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
+<!-- Annotation: Floating menu drop shadow -->
+<div class="absolute -right-36 top-1/2 -translate-y-1/2 flex items-center gap-2">
+<svg class="h-24 w-4 text-coral/30 text-[#e87a5d]" fill="none" preserveaspectratio="none" stroke="currentColor" viewbox="0 0 16 96"><path d="M15 1v94M1 48h14" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path></svg>
+<div class="flex flex-col">
+<span class="text-sm text-text-main text-gray-500 text-sm">Floating menu</span>
+<span class="text-sm text-text-main text-gray-500 text-sm">drop shadow</span>
+</div>
+</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">GPT-4o</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] bg-coral-light border-l-2 border-coral relative flex items-center bg-[#fdf1eb] border-l-[3px] border-[#e87a5d] text-gray-800">
+            Claude 3.5 Sonnet
+          </div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">Gemini 1.5 Pro</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">Llama 3</div>
+</div>
+</div>
+</section>
+<!-- END: Open State (Active) -->
+<!-- BEGIN: Selected State -->
+<section class="relative mt-12">
+<h2 class="text-lg font-semibold mb-4 text-gray-800">Selected State</h2>
+<div class="relative w-80">
+<!-- Annotation: Hover State -->
+<div class="absolute -left-24 top-[120px] flex items-center gap-2">
+<span class="text-sm text-text-main text-gray-500 text-sm">Hover State →</span>
+</div>
+<!-- Dropdown Button (Selected) -->
+<button class="w-full bg-white border border-[#e87a5d] shadow-sm rounded-xl px-4 py-2.5 flex items-center justify-between mb-2">
+<span class="text-[15px] text-gray-800">Select Model</span>
+<svg class="w-5 h-5 text-[#e87a5d]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<!-- Dropdown Menu -->
+<div class="w-full bg-white rounded-xl py-2 z-10 relative shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">GPT-4o</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] bg-coral-light border-l-2 border-coral relative flex items-center bg-[#fdf1eb] border-l-[3px] border-[#e87a5d] text-gray-800">
+            Claude 3.5 Sonnet
+          </div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light flex justify-between items-center text-gray-800">
+            Gemini 1.5 Pro
+            <svg class="w-5 h-5 text-[#e87a5d]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">Llama 3</div>
+</div>
+</div>
+</section>
+<!-- END: Selected State -->
+<!-- BEGIN: Searchable Dropdown Variant -->
+<section class="relative mt-12 md:mt-24">
+<h2 class="text-lg font-semibold mb-4 text-gray-800">Searchable Dropdown Variant</h2>
+<div class="relative w-80">
+<!-- Dropdown Menu (Searchable) -->
+<div class="w-full bg-white rounded-xl py-2 z-10 relative shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
+<!-- Annotation: High-legibility typography -->
+<div class="absolute -right-36 top-[60px] flex items-center gap-2">
+<div class="w-6 border-t border-coral/30"></div>
+<div class="flex flex-col">
+<span class="text-sm text-text-main text-gray-500 text-sm">High-legibility</span>
+<span class="text-sm text-text-main text-gray-500 text-sm">typography</span>
+</div>
+</div>
+<!-- Search Input -->
+<div class="px-4 py-2 flex items-center border-b border-gray-100 mb-1">
+<svg class="w-5 h-5 mr-2 text-[#e87a5d]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<div class="flex items-center w-full">
+<div class="h-5 w-[1px] bg-black mr-1 animate-pulse"></div>
+<input class="w-full border-none p-0 focus:ring-0 text-[15px] text-text-muted placeholder-text-muted placeholder-gray-400 text-gray-400" placeholder="Search Models..." type="text" value="Search Models..."/>
+</div>
+</div>
+<!-- Options -->
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">GPT-4o</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">Claude 3.5 Sonnet</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light flex justify-between items-center text-gray-800">
+            Gemini 1.5 Pro
+            <svg class="w-5 h-5 text-[#e87a5d]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div class="px-4 py-2.5 cursor-pointer text-[15px] hover:bg-coral-light text-gray-800">Llama 3</div>
+</div>
+</div>
+</section>
+<!-- END: Searchable Dropdown Variant -->
+</main>
+<!-- END: Main Content Grid -->
+</body></html>
