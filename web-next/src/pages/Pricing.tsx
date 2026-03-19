@@ -298,8 +298,6 @@ const surfaceCardClass =
   'rounded-[28px] border border-[#ead8cc] bg-[#fffdfb] shadow-[0_14px_32px_rgba(145,95,74,0.06)]';
 const mutedPanelClass =
   'rounded-2xl border border-[#efe0d6] bg-[#fff8f4] p-3';
-const workspaceShellClass =
-  'rounded-[30px] border border-[#eadfd5] bg-[#f7f1eb] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] sm:p-4';
 
 function toFiniteNumber(value: unknown, fallback = 0) {
   const parsed = Number(value);
@@ -388,6 +386,10 @@ function getCapabilities(model: ApiModel): CapabilityKey[] {
     .filter((capability): capability is CapabilityKey => Boolean(capability));
 
   return Array.from(new Set(endpointCapabilities));
+}
+
+function getDisplayCapabilities(model: ApiModel) {
+  return getCapabilities(model).filter((capability) => capability !== 'chat');
 }
 
 function getEndpointLabel(
@@ -884,7 +886,7 @@ function ModelCard({
   pricingContext: PricingRenderContext;
 }) {
   const vendor = getVendorName(model);
-  const capabilities = getCapabilities(model);
+  const capabilities = getDisplayCapabilities(model);
   const primaryCapability = capabilities[0];
   const PrimaryIcon = primaryCapability
     ? getCapabilityIcon(primaryCapability)
@@ -907,14 +909,10 @@ function ModelCard({
             fallbackIcon={PrimaryIcon}
           />
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <h3 className="truncate text-[15px] font-bold text-[#342d2b]">
+            <div className="flex flex-wrap items-center gap-1">
+              <h3 className="truncate text-[17px] font-extrabold tracking-tight text-[#2f2624]">
                 {model.model_name}
               </h3>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#edf9f1] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-[#1f8a57]">
-                <span className="size-1.5 rounded-full bg-[#31a46b]" />
-                Active
-              </span>
             </div>
             <div className="mt-1 flex flex-wrap gap-1">
               <VendorBadge vendor={vendor} vendorIcon={model.vendor_icon} />
@@ -1027,7 +1025,7 @@ function PricingTableView({
           {models.map((model) => {
             const vendor = getVendorName(model);
             const pricing = buildPricingData(model, pricingContext);
-            const capabilities = getCapabilities(model);
+            const capabilities = getDisplayCapabilities(model);
             const endpointLabels = getEndpointLabels(
               model,
               pricingContext.endpointLabelMap,
@@ -1147,7 +1145,7 @@ function PricingListView({
       {models.map((model) => {
         const vendor = getVendorName(model);
         const pricing = buildPricingData(model, pricingContext);
-        const capabilities = getCapabilities(model);
+        const capabilities = getDisplayCapabilities(model);
         const endpointLabels = getEndpointLabels(
           model,
           pricingContext.endpointLabelMap,
@@ -1696,12 +1694,20 @@ export default function PricingPage() {
     return `当前筛选为 ${summaryChips.join('，')}。右侧内容区会同步保留价格、倍率、分组和能力展示。`;
   }, [summaryChips]);
 
-  const currentViewLabel =
-    viewModes.find((mode) => mode.key === view)?.label ?? '卡片视图';
+  const currentViewMeta =
+    viewModes.find((mode) => mode.key === view) ?? viewModes[0];
+  const currentViewLabel = currentViewMeta.label;
+  const CurrentViewIcon = currentViewMeta.icon;
   const displayModeLabel =
     siteDisplayType === 'TOKENS'
       ? '倍率模式'
       : `${currency}${showWithRecharge ? ' · 充值价' : ''}`;
+  const pricingStatusLabel =
+    siteDisplayType === 'TOKENS'
+      ? '站点默认按倍率展示'
+      : showWithRecharge
+        ? '已启用充值价格显示'
+        : '显示标准价格';
 
   const clearFilterSelections = useCallback(() => {
     setSearch('');
@@ -2093,24 +2099,25 @@ export default function PricingPage() {
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-2 text-[13px] text-[#7d685f]">
-                <span>当前视图：{currentViewLabel}</span>
-                <span>
-                  {siteDisplayType === 'TOKENS'
-                    ? '站点默认按倍率展示'
-                    : showWithRecharge
-                      ? '已启用充值价格显示'
-                      : '显示标准价格'}
-                </span>
+              <div className="flex flex-wrap items-center gap-2 pt-2.5">
+                <div className="inline-flex min-h-8 items-center gap-2 rounded-full border border-[#ead7d0] bg-[#fff7f2] px-3 text-[12px] text-[#6f5d57]">
+                  <CurrentViewIcon className="size-3.5 text-primary" />
+                  <span className="text-[#8e776e]">当前视图</span>
+                  <span className="font-semibold text-[#3f312d]">
+                    {currentViewLabel}
+                  </span>
+                </div>
+                <div className="inline-flex min-h-8 items-center gap-2 rounded-full border border-[#ead7d0] bg-[#fff7f2] px-3 text-[12px] text-[#6f5d57]">
+                  <Sparkles className="size-3.5 text-primary" />
+                  <span className="text-[#8e776e]">价格状态</span>
+                  <span className="font-semibold text-[#3f312d]">
+                    {pricingStatusLabel}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div
-              className={cn(
-                workspaceShellClass,
-                'lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-1',
-              )}
-            >
+            <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
               {loading ? (
                 <div className="flex items-center justify-center py-28 lg:min-h-full">
                   <Loader2 className="size-7 animate-spin text-primary" />

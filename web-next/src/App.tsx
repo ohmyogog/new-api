@@ -1,57 +1,108 @@
+import { Suspense, lazy, type ReactNode } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AppLayout } from '@/components/layout/AppLayout';
 import { PrivateRoute, AdminRoute, AuthRedirect } from '@/components/guards/AuthGuards';
-import { Placeholder } from '@/pages/Placeholder';
-import Dashboard from '@/pages/Dashboard';
-import LoginPage from '@/pages/Login';
-import RegisterPage from '@/pages/Register';
-import TokenPage from '@/pages/Token';
-import LogPage from '@/pages/Log';
-import TopUpPage from '@/pages/TopUp';
-import PersonalSettingsPage from '@/pages/PersonalSettings';
-import ChannelPage from '@/pages/admin/Channel';
-import SubscriptionPage from '@/pages/admin/Subscription';
-import ModelPage from '@/pages/admin/Model';
-import DeploymentPage from '@/pages/admin/Deployment';
-import RedemptionPage from '@/pages/admin/Redemption';
-import UserPage from '@/pages/admin/User';
-import SettingsPage from '@/pages/admin/Settings';
-import MidjourneyPage from '@/pages/Midjourney';
-import TaskPage from '@/pages/Task';
-import PricingPage from '@/pages/Pricing';
-import OAuthCallback from '@/pages/OAuthCallback';
-import PasswordResetPage from '@/pages/PasswordReset';
-import PasswordResetConfirmPage from '@/pages/PasswordResetConfirm';
-import AboutPage from '@/pages/About';
-import UserAgreementPage from '@/pages/UserAgreement';
-import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
-import ForbiddenPage from '@/pages/Forbidden';
-import NotFoundPage from '@/pages/NotFound';
+
+const AppLayout = lazy(() =>
+  import('@/components/layout/AppLayout').then((module) => ({
+    default: module.AppLayout,
+  })),
+);
+const Placeholder = lazy(() =>
+  import('@/pages/Placeholder').then((module) => ({
+    default: module.Placeholder,
+  })),
+);
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const LoginPage = lazy(() => import('@/pages/Login'));
+const RegisterPage = lazy(() => import('@/pages/Register'));
+const TokenPage = lazy(() => import('@/pages/Token'));
+const LogPage = lazy(() => import('@/pages/Log'));
+const TopUpPage = lazy(() => import('@/pages/TopUp'));
+const PersonalSettingsPage = lazy(() => import('@/pages/PersonalSettings'));
+const ChannelPage = lazy(() => import('@/pages/admin/Channel'));
+const SubscriptionPage = lazy(() => import('@/pages/admin/Subscription'));
+const ModelPage = lazy(() => import('@/pages/admin/Model'));
+const DeploymentPage = lazy(() => import('@/pages/admin/Deployment'));
+const RedemptionPage = lazy(() => import('@/pages/admin/Redemption'));
+const UserPage = lazy(() => import('@/pages/admin/User'));
+const SettingsPage = lazy(() => import('@/pages/admin/Settings'));
+const MidjourneyPage = lazy(() => import('@/pages/Midjourney'));
+const TaskPage = lazy(() => import('@/pages/Task'));
+const PricingPage = lazy(() => import('@/pages/Pricing'));
+const OAuthCallback = lazy(() => import('@/pages/OAuthCallback'));
+const PasswordResetPage = lazy(() => import('@/pages/PasswordReset'));
+const PasswordResetConfirmPage = lazy(() => import('@/pages/PasswordResetConfirm'));
+const AboutPage = lazy(() => import('@/pages/About'));
+const UserAgreementPage = lazy(() => import('@/pages/UserAgreement'));
+const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicy'));
+const ForbiddenPage = lazy(() => import('@/pages/Forbidden'));
+const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 
 // DEV: 取消注释下面这行可自动注入开发用户（跳过登录）
 // if (import.meta.env.DEV && !localStorage.getItem('user')) {
 //   localStorage.setItem('user', JSON.stringify({ id: 1, username: 'Dev', role: 100 }));
 // }
 
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center px-6 py-16 text-sm text-muted-foreground">
+      正在加载页面...
+    </div>
+  );
+}
+
+function withRouteSuspense(children: ReactNode) {
+  return <Suspense fallback={<RouteFallback />}>{children}</Suspense>;
+}
+
 function App() {
   return (
     <Routes>
       {/* Public routes (no sidebar layout) */}
       <Route path="/" element={<Navigate to="/console" replace />} />
-      <Route path="/login" element={<AuthRedirect><LoginPage /></AuthRedirect>} />
-      <Route path="/register" element={<AuthRedirect><RegisterPage /></AuthRedirect>} />
-      <Route path="/reset" element={<PasswordResetPage />} />
-      <Route path="/user/reset" element={<PasswordResetConfirmPage />} />
-      <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/user-agreement" element={<UserAgreementPage />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-      <Route path="/oauth/:provider" element={<OAuthCallback />} />
-      <Route path="/setup" element={<Placeholder />} />
-      <Route path="/forbidden" element={<ForbiddenPage />} />
+      <Route
+        path="/login"
+        element={withRouteSuspense(
+          <AuthRedirect>
+            <LoginPage />
+          </AuthRedirect>,
+        )}
+      />
+      <Route
+        path="/register"
+        element={withRouteSuspense(
+          <AuthRedirect>
+            <RegisterPage />
+          </AuthRedirect>,
+        )}
+      />
+      <Route path="/reset" element={withRouteSuspense(<PasswordResetPage />)} />
+      <Route
+        path="/user/reset"
+        element={withRouteSuspense(<PasswordResetConfirmPage />)}
+      />
+      <Route path="/pricing" element={withRouteSuspense(<PricingPage />)} />
+      <Route path="/about" element={withRouteSuspense(<AboutPage />)} />
+      <Route
+        path="/user-agreement"
+        element={withRouteSuspense(<UserAgreementPage />)}
+      />
+      <Route
+        path="/privacy-policy"
+        element={withRouteSuspense(<PrivacyPolicyPage />)}
+      />
+      <Route path="/oauth/:provider" element={withRouteSuspense(<OAuthCallback />)} />
+      <Route path="/setup" element={withRouteSuspense(<Placeholder />)} />
+      <Route path="/forbidden" element={withRouteSuspense(<ForbiddenPage />)} />
 
       {/* Console routes (with sidebar layout) */}
-      <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
+      <Route
+        element={withRouteSuspense(
+          <PrivateRoute>
+            <AppLayout />
+          </PrivateRoute>,
+        )}
+      >
         <Route path="/console" element={<Dashboard />} />
         <Route path="/console/token" element={<TokenPage />} />
         <Route path="/console/log" element={<LogPage />} />
@@ -64,7 +115,13 @@ function App() {
       </Route>
 
       {/* Admin console routes */}
-      <Route element={<AdminRoute><AppLayout /></AdminRoute>}>
+      <Route
+        element={withRouteSuspense(
+          <AdminRoute>
+            <AppLayout />
+          </AdminRoute>,
+        )}
+      >
         <Route path="/console/channel" element={<ChannelPage />} />
         <Route path="/console/user" element={<UserPage />} />
         <Route path="/console/redemption" element={<RedemptionPage />} />
@@ -74,7 +131,7 @@ function App() {
         <Route path="/console/subscription" element={<SubscriptionPage />} />
       </Route>
 
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={withRouteSuspense(<NotFoundPage />)} />
     </Routes>
   );
 }

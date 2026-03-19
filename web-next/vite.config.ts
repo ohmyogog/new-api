@@ -23,6 +23,59 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) {
+              return
+            }
+
+            if (
+              id.includes('/react/') ||
+              id.includes('/react-dom/') ||
+              id.includes('/scheduler/')
+            ) {
+              return 'vendor-react'
+            }
+
+            if (id.includes('react-router')) {
+              return 'vendor-router'
+            }
+
+            if (
+              id.includes('@base-ui') ||
+              id.includes('@floating-ui')
+            ) {
+              return 'vendor-ui'
+            }
+
+            if (
+              id.includes('/recharts/') ||
+              id.includes('/victory-vendor/') ||
+              id.includes('/d3-') ||
+              id.includes('/internmap/')
+            ) {
+              return 'vendor-charts'
+            }
+
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons'
+            }
+
+            if (id.includes('axios')) {
+              return 'vendor-network'
+            }
+
+            if (id.includes('react-hot-toast')) {
+              return 'vendor-feedback'
+            }
+
+            return 'vendor'
+          },
+        },
+      },
+    },
     server: {
       host: '0.0.0.0',
       proxy: {
