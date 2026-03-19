@@ -1,16 +1,33 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import {
-  Key, Plus, Search, Copy, Check, Trash2, Eye, EyeOff,
-  ChevronLeft, ChevronRight, ChevronDown, Loader2, AlertTriangle,
-  Globe, Zap,
+  AlertTriangle,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  CreditCard,
+  Eye,
+  EyeOff,
+  Globe,
+  Key,
+  Link2,
+  Loader2,
+  Plus,
+  Search,
+  Trash2,
+  Zap,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -19,6 +36,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose,
 } from '@/components/ui/dialog';
 import { API } from '@/api/client';
+import { useStatus } from '@/contexts/StatusContext';
 import toast from 'react-hot-toast';
 
 // ── Types ──
@@ -39,18 +57,32 @@ interface Token {
   cross_group_retry?: boolean;
 }
 
+interface GroupOption {
+  value: string;
+  label: string;
+}
+
 interface TokenForm {
   name: string;
   remain_quota: number;
   unlimited_quota: boolean;
   expired_time: number;
-  model_limits_enabled: boolean;
   model_limits: string;
   allow_ips: string;
   group: string;
+  cross_group_retry: boolean;
+  tokenCount: number;
 }
 
 // ── Helpers ──
+const DEFAULT_GROUP_VALUE = '__default__';
+const QUICK_QUOTA_OPTIONS = [
+  { label: '1$', value: 500000 },
+  { label: '10$', value: 5000000 },
+  { label: '50$', value: 25000000 },
+  { label: '100$', value: 50000000 },
+];
+
 function fmtQuota(q: number) {
   if (q === -1) return '无限';
   return `$${(q / 500000).toFixed(2)}`;
@@ -64,13 +96,97 @@ function maskKey(key: string) {
   if (key.length <= 8) return `sk-${key}`;
   return `sk-${key.slice(0, 4)}...${key.slice(-4)}`;
 }
-const emptyForm: TokenForm = {
-  name: '', remain_quota: 500000, unlimited_quota: true,
-  expired_time: -1, model_limits_enabled: false, model_limits: '',
-  allow_ips: '', group: '',
-};
+
+function splitModelLimits(modelLimits: string) {
+  return Array.from(
+    new Set(
+      modelLimits
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+function joinModelLimits(modelLimits: string[]) {
+  return splitModelLimits(modelLimits.join(',')).join(',');
+}
+
+function formatDateTimeLocal(timestamp: number) {
+  if (timestamp <= 0) return '';
+  const date = new Date(timestamp * 1000);
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function parseDateTimeLocal(value: string) {
+  const timestamp = new Date(value).getTime();
+  return Number.isNaN(timestamp) ? NaN : Math.ceil(timestamp / 1000);
+}
+
+function getRelativeExpiry(month = 0, day = 0, hour = 0, minute = 0) {
+  const seconds =
+    month * 30 * 24 * 60 * 60 +
+    day * 24 * 60 * 60 +
+    hour * 60 * 60 +
+    minute * 60;
+  return seconds === 0 ? -1 : Math.floor(Date.now() / 1000) + seconds;
+}
+
+function getInitialForm(): TokenForm {
+  return {
+    name: '',
+    remain_quota: 0,
+    unlimited_quota: true,
+    expired_time: -1,
+    model_limits: '',
+    allow_ips: '',
+    group: '',
+    cross_group_retry: false,
+    tokenCount: 1,
+  };
+}
+
+function generateRandomSuffix() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 6; i += 1) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+function normalizeGroupOptions(data: unknown, defaultUseAutoGroup: boolean): GroupOption[] {
+  let options: GroupOption[] = [];
+
+  if (Array.isArray(data)) {
+    options = data
+      .map((group) => String(group || '').trim())
+      .filter(Boolean)
+      .map((group) => ({ value: group, label: group }));
+  } else if (data && typeof data === 'object') {
+    options = Object.entries(data as Record<string, { desc?: string }>)
+      .map(([group, info]) => ({
+        value: group,
+        label: info?.desc || group,
+      }))
+      .filter((group) => group.value);
+  }
+
+  if (defaultUseAutoGroup && options.some((group) => group.value === 'auto')) {
+    options.sort((left, right) => {
+      if (left.value === 'auto') return -1;
+      if (right.value === 'auto') return 1;
+      return left.value.localeCompare(right.value, 'zh-CN');
+    });
+    return options;
+  }
+
+  return options.sort((left, right) => left.value.localeCompare(right.value, 'zh-CN'));
+}
 
 export default function TokenPage() {
+  const { status } = useStatus();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [total, setTotal] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -81,7 +197,8 @@ export default function TokenPage() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
-  const [form, setForm] = useState<TokenForm>(emptyForm);
+  const [form, setForm] = useState<TokenForm>(getInitialForm);
+  const [dialogLoading, setDialogLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'single'; id: number } | { type: 'batch' } | null>(null);
@@ -91,7 +208,7 @@ export default function TokenPage() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const [availableModels, setAvailableModels] = useState<string[]>([]);
-  const [availableGroups, setAvailableGroups] = useState<string[]>([]);
+  const [availableGroups, setAvailableGroups] = useState<GroupOption[]>([]);
 
   // Key visibility & resolved keys
   const [visibleKeys, setVisibleKeys] = useState<Record<number, boolean>>({});
@@ -112,7 +229,7 @@ export default function TokenPage() {
   const fetchTokens = useCallback(async () => {
     setLoading(true);
     try {
-      const params: Record<string, string | number> = { p: page, page_size: pageSize };
+      const params: Record<string, string | number> = { p: page, size: pageSize };
       let url = '/api/token/';
       if (searchKeyword || searchToken) {
         url = '/api/token/search';
@@ -145,7 +262,10 @@ export default function TokenPage() {
       setLoadingKeys(prev => ({ ...prev, [tokenId]: true }));
       try {
         const res = await API.post(`/api/token/${tokenId}/key`);
-        const fullKey = res.data?.data || '';
+        const fullKey = res.data?.data?.key || '';
+        if (!res.data?.success || !fullKey) {
+          throw new Error(res.data?.message || '获取密钥失败');
+        }
         setResolvedKeys(prev => ({ ...prev, [tokenId]: fullKey }));
         return fullKey;
       } finally {
@@ -180,19 +300,30 @@ export default function TokenPage() {
   };
 
   // ── Fetch models & groups for form ──
-  const fetchFormOptions = async () => {
+  const fetchFormOptions = useCallback(async () => {
     try {
       const [modelsRes, groupsRes] = await Promise.all([
         API.get('/api/user/models'),
         API.get('/api/user/self/groups'),
       ]);
-      if (modelsRes.data.success) setAvailableModels(modelsRes.data.data || []);
+      if (modelsRes.data.success) {
+        setAvailableModels(Array.isArray(modelsRes.data.data) ? modelsRes.data.data : []);
+      }
       if (groupsRes.data.success) {
-        const g = groupsRes.data.data;
-        setAvailableGroups(typeof g === 'object' && !Array.isArray(g) ? Object.keys(g) : Array.isArray(g) ? g : []);
+        setAvailableGroups(
+          normalizeGroupOptions(groupsRes.data.data, Boolean(status?.default_use_auto_group)),
+        );
       }
     } catch { /* ignore */ }
-  };
+  }, [status]);
+
+  const fetchTokenDetail = useCallback(async (tokenId: number) => {
+    const res = await API.get(`/api/token/${tokenId}`);
+    if (!res.data?.success || !res.data?.data) {
+      throw new Error(res.data?.message || '获取令牌详情失败');
+    }
+    return res.data.data as Token;
+  }, []);
 
   // ── Selection ──
   const allSelected = tokens.length > 0 && tokens.every(t => selectedIds.has(t.id));
@@ -209,33 +340,162 @@ export default function TokenPage() {
   };
 
   // ── Create / Edit ──
-  const openCreate = () => {
-    setEditId(null); setForm(emptyForm); fetchFormOptions(); setDialogOpen(true);
-  };
-  const openEdit = (t: Token) => {
-    setEditId(t.id);
-    setForm({
-      name: t.name, remain_quota: t.remain_quota, unlimited_quota: t.unlimited_quota,
-      expired_time: t.expired_time, model_limits_enabled: t.model_limits_enabled,
-      model_limits: t.model_limits || '', allow_ips: t.allow_ips || '', group: t.group || '',
-    });
-    fetchFormOptions(); setDialogOpen(true);
+  const resetDialog = useCallback(() => {
+    setEditId(null);
+    setForm(getInitialForm());
+    setDialogLoading(false);
+  }, []);
+
+  const handleDialogOpenChange = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) {
+      resetDialog();
+    }
   };
 
+  const openCreate = () => {
+    setEditId(null);
+    setForm(getInitialForm());
+    setDialogOpen(true);
+  };
+  const openEdit = (token: Token) => {
+    setEditId(token.id);
+    setForm(getInitialForm());
+    setDialogOpen(true);
+  };
+
+  useEffect(() => {
+    if (!dialogOpen) return undefined;
+
+    let cancelled = false;
+
+    const loadDialogData = async () => {
+      setDialogLoading(true);
+      try {
+        await fetchFormOptions();
+        if (cancelled) return;
+
+        if (editId === null) {
+          setForm(getInitialForm());
+          return;
+        }
+
+        const token = await fetchTokenDetail(editId);
+        if (cancelled) return;
+
+        setForm({
+          name: token.name || '',
+          remain_quota: token.remain_quota ?? 0,
+          unlimited_quota: Boolean(token.unlimited_quota),
+          expired_time: token.expired_time ?? -1,
+          model_limits: token.model_limits || '',
+          allow_ips: token.allow_ips || '',
+          group: token.group || '',
+          cross_group_retry: Boolean(token.cross_group_retry),
+          tokenCount: 1,
+        });
+      } catch (error) {
+        if (!cancelled) {
+          toast.error(error instanceof Error ? error.message : '获取令牌详情失败');
+          setDialogOpen(false);
+          resetDialog();
+        }
+      } finally {
+        if (!cancelled) {
+          setDialogLoading(false);
+        }
+      }
+    };
+
+    loadDialogData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dialogOpen, editId, fetchFormOptions, fetchTokenDetail, resetDialog]);
+
   const handleSubmit = async () => {
-    if (!form.name.trim()) { toast.error('请输入令牌名称'); return; }
+    const name = form.name.trim();
+    if (!name) {
+      toast.error('请输入名称');
+      return;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    if (form.expired_time !== -1) {
+      if (!Number.isFinite(form.expired_time)) {
+        toast.error('过期时间格式错误！');
+        return;
+      }
+      if (form.expired_time <= now) {
+        toast.error('过期时间不能早于当前时间！');
+        return;
+      }
+    }
+
+    if (!form.unlimited_quota && form.remain_quota < 0) {
+      toast.error('额度不能小于 0');
+      return;
+    }
+
     setSubmitting(true);
     try {
+      const modelLimits = joinModelLimits(splitModelLimits(form.model_limits));
+      const allowIps = form.allow_ips
+        .split('\n')
+        .map((ip) => ip.trim())
+        .filter(Boolean)
+        .join('\n');
       const payload = {
-        name: form.name, remain_quota: form.remain_quota, unlimited_quota: form.unlimited_quota,
-        expired_time: form.expired_time, model_limits_enabled: form.model_limits_enabled,
-        model_limits: form.model_limits, allow_ips: form.allow_ips, group: form.group,
+        remain_quota: Number(form.remain_quota) || 0,
+        unlimited_quota: form.unlimited_quota,
+        expired_time: form.expired_time,
+        model_limits_enabled: modelLimits.length > 0,
+        model_limits: modelLimits,
+        allow_ips: allowIps,
+        group: form.group,
+        cross_group_retry: form.group === 'auto' ? form.cross_group_retry : false,
       };
-      const res = editId
-        ? await API.put('/api/token/', { ...payload, id: editId, status: tokens.find(t => t.id === editId)?.status ?? 1 })
-        : await API.post('/api/token/', payload);
-      if (res.data.success) { toast.success(editId ? '令牌已更新' : '令牌已创建'); setDialogOpen(false); fetchTokens(); }
-      else toast.error(res.data.message || '操作失败');
+
+      if (editId !== null) {
+        const res = await API.put('/api/token/', {
+          ...payload,
+          id: editId,
+          name,
+        });
+        if (res.data.success) {
+          toast.success('令牌已更新');
+          setDialogOpen(false);
+          resetDialog();
+          fetchTokens();
+        } else {
+          toast.error(res.data.message || '操作失败');
+        }
+        return;
+      }
+
+      const count = Math.max(1, Math.trunc(Number(form.tokenCount) || 1));
+      let successCount = 0;
+
+      for (let i = 0; i < count; i += 1) {
+        const tokenName = i === 0 ? name : `${name}-${generateRandomSuffix()}`;
+        const res = await API.post('/api/token/', {
+          ...payload,
+          name: tokenName,
+        });
+        if (!res.data.success) {
+          toast.error(res.data.message || '操作失败');
+          break;
+        }
+        successCount += 1;
+      }
+
+      if (successCount > 0) {
+        toast.success('令牌创建成功，请在列表页面点击复制获取令牌！');
+        setDialogOpen(false);
+        resetDialog();
+        fetchTokens();
+      }
     } catch { toast.error('操作失败'); }
     finally { setSubmitting(false); }
   };
@@ -378,8 +638,8 @@ export default function TokenPage() {
       </div>
 
       {/* Create/Edit Dialog */}
-      <TokenFormDialog open={dialogOpen} onOpenChange={setDialogOpen} editId={editId} form={form} setForm={setForm}
-        submitting={submitting} onSubmit={handleSubmit} availableModels={availableModels} availableGroups={availableGroups} />
+      <TokenFormDialog open={dialogOpen} onOpenChange={handleDialogOpenChange} editId={editId} form={form} setForm={setForm}
+        dialogLoading={dialogLoading} submitting={submitting} onSubmit={handleSubmit} availableModels={availableModels} availableGroups={availableGroups} />
 
       {/* Delete Confirmation */}
       <Dialog open={deleteTarget !== null} onOpenChange={open => { if (!open) setDeleteTarget(null); }}>
@@ -525,98 +785,335 @@ function TokenRow({ t, selected, onSelect, visibleKeys, resolvedKeys, loadingKey
   );
 }
 
+interface TokenFormDialogProps {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  editId: number | null;
+  form: TokenForm;
+  setForm: Dispatch<SetStateAction<TokenForm>>;
+  dialogLoading: boolean;
+  submitting: boolean;
+  onSubmit: () => void;
+  availableModels: string[];
+  availableGroups: GroupOption[];
+}
+
 // ── Token Form Dialog ──
-function TokenFormDialog({ open, onOpenChange, editId, form, setForm, submitting, onSubmit, availableModels, availableGroups }: {
-  open: boolean; onOpenChange: (v: boolean) => void; editId: number | null;
-  form: TokenForm; setForm: React.Dispatch<React.SetStateAction<TokenForm>>;
-  submitting: boolean; onSubmit: () => void;
-  availableModels: string[]; availableGroups: string[];
-}) {
+function TokenFormDialog(props: TokenFormDialogProps) {
+  const {
+    open,
+    onOpenChange,
+    editId,
+    form,
+    setForm,
+    dialogLoading,
+    submitting,
+    onSubmit,
+    availableModels,
+    availableGroups,
+  } = props;
+  const selectedModels = splitModelLimits(form.model_limits);
+  const neverExpires = form.expired_time === -1;
+
+  const updateModelLimits = (models: string[]) => {
+    setForm((current) => ({ ...current, model_limits: joinModelLimits(models) }));
+  };
+
+  const toggleModelLimit = (model: string) => {
+    const currentModels = splitModelLimits(form.model_limits);
+    const nextModels = currentModels.includes(model)
+      ? currentModels.filter((item) => item !== model)
+      : [...currentModels, model];
+    updateModelLimits(nextModels);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-3xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{editId ? '编辑令牌' : '创建令牌'}</DialogTitle></DialogHeader>
-        <div className="space-y-4 py-4">
-          <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">名称</label>
-            <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="输入令牌名称" maxLength={50} />
+      <DialogContent className="sm:max-w-3xl rounded-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{editId ? '编辑令牌' : '创建新的令牌'}</DialogTitle>
+        </DialogHeader>
+        {dialogLoading ? (
+          <div className="flex items-center justify-center py-20 text-muted-foreground">
+            <Loader2 className="size-5 animate-spin text-primary" />
+            <span className="ml-2 text-sm">加载中...</span>
           </div>
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">无限额度</label>
-            <Switch checked={form.unlimited_quota} onCheckedChange={(v: boolean) => setForm(f => ({ ...f, unlimited_quota: v }))} />
-          </div>
-          {!form.unlimited_quota && (
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">额度 (1$ = 500000)</label>
-              <Input type="number" value={form.remain_quota} onChange={e => setForm(f => ({ ...f, remain_quota: Number(e.target.value) }))} />
-              <p className="text-xs text-muted-foreground mt-1">≈ ${(form.remain_quota / 500000).toFixed(2)}</p>
-            </div>
-          )}
-          <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">过期时间</label>
-            <div className="flex items-center gap-3">
-              <label className="text-xs text-muted-foreground flex items-center gap-1.5 cursor-pointer">
-                <input type="checkbox" checked={form.expired_time === -1} onChange={e => setForm(f => ({ ...f, expired_time: e.target.checked ? -1 : Math.floor(Date.now() / 1000) + 86400 * 30 }))} className="accent-primary" />
-                永不过期
-              </label>
-              {form.expired_time !== -1 && (
-                <Input type="datetime-local" className="flex-1"
-                  value={new Date(form.expired_time * 1000).toISOString().slice(0, 16)}
-                  onChange={e => setForm(f => ({ ...f, expired_time: Math.floor(new Date(e.target.value).getTime() / 1000) }))} />
-              )}
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">限制可用模型</label>
-            <Switch checked={form.model_limits_enabled} onCheckedChange={(v: boolean) => setForm(f => ({ ...f, model_limits_enabled: v }))} />
-          </div>
-          {form.model_limits_enabled && (
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">允许的模型</label>
-              <Input value={form.model_limits} onChange={e => setForm(f => ({ ...f, model_limits: e.target.value }))} placeholder="逗号分隔，如 gpt-4o, claude-3-opus" />
-              {availableModels.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2 max-h-32 overflow-y-auto">
-                  {availableModels.map(m => {
-                    const selected = form.model_limits.split(',').map(s => s.trim()).includes(m);
-                    return (
-                      <button key={m} type="button" onClick={() => {
-                        const current = form.model_limits.split(',').map(s => s.trim()).filter(Boolean);
-                        if (selected) setForm(f => ({ ...f, model_limits: current.filter(x => x !== m).join(', ') }));
-                        else setForm(f => ({ ...f, model_limits: [...current, m].join(', ') }));
-                      }} className={`px-2 py-0.5 rounded-full text-[10px] transition-colors ${selected ? 'bg-primary/15 text-primary font-bold' : 'bg-slate-50 text-slate-500 hover:bg-primary/10 hover:text-primary'}`}>
-                        {m}
-                      </button>
-                    );
-                  })}
+        ) : (
+          <div className="space-y-5 py-4">
+            <div className="rounded-[28px] border border-primary/10 bg-white p-5 shadow-sm">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <Key className="size-5" />
                 </div>
-              )}
+                <div>
+                  <h3 className="text-lg font-semibold">基本信息</h3>
+                  <p className="text-sm text-muted-foreground">设置令牌的基本信息</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">名称</label>
+                  <Input
+                    value={form.name}
+                    onChange={(e) => setForm((current) => ({ ...current, name: e.target.value }))}
+                    placeholder="请输入名称"
+                    maxLength={50}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">令牌分组</label>
+                  {availableGroups.length > 0 ? (
+                    <Select
+                      value={form.group || DEFAULT_GROUP_VALUE}
+                      onValueChange={(value) => {
+                        const nextGroup = value === DEFAULT_GROUP_VALUE ? '' : String(value ?? '');
+                        setForm((current) => ({
+                          ...current,
+                          group: nextGroup,
+                          cross_group_retry: nextGroup === 'auto' ? current.cross_group_retry : false,
+                        }));
+                      }}
+                    >
+                      <SelectTrigger size="default" className="w-full" aria-label="令牌分组">
+                        <SelectValue placeholder="令牌分组，默认为用户的分组" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value={DEFAULT_GROUP_VALUE}>令牌分组，默认为用户的分组</SelectItem>
+                          {availableGroups.map((group) => (
+                            <SelectItem key={group.value} value={group.value}>
+                              {group.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input value="管理员未设置用户可选分组" disabled />
+                  )}
+                </div>
+
+                {form.group === 'auto' && (
+                  <div className="rounded-2xl border border-primary/10 bg-primary/[0.03] p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-medium">跨分组重试</p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          开启后，当前分组渠道失败时会按顺序尝试下一个分组的渠道
+                        </p>
+                      </div>
+                      <Switch
+                        checked={form.cross_group_retry}
+                        onCheckedChange={(checked: boolean) => {
+                          setForm((current) => ({ ...current, cross_group_retry: checked }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium">过期时间</label>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                      <label className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                        <Checkbox
+                          checked={neverExpires}
+                          onCheckedChange={(checked) => {
+                            setForm((current) => ({
+                              ...current,
+                              expired_time: checked ? -1 : getRelativeExpiry(1, 0, 0, 0),
+                            }));
+                          }}
+                        />
+                        永不过期
+                      </label>
+                      {!neverExpires && (
+                        <Input
+                          type="datetime-local"
+                          className="flex-1"
+                          value={formatDateTimeLocal(form.expired_time)}
+                          onChange={(e) => {
+                            const timestamp = parseDateTimeLocal(e.target.value);
+                            setForm((current) => ({
+                              ...current,
+                              expired_time: Number.isNaN(timestamp) ? current.expired_time : timestamp,
+                            }));
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium">过期时间快捷设置</label>
+                    <div className="flex flex-wrap gap-2">
+                      <Button type="button" variant={neverExpires ? 'default' : 'outline'} size="sm" onClick={() => setForm((current) => ({ ...current, expired_time: -1 }))}>
+                        永不过期
+                      </Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setForm((current) => ({ ...current, expired_time: getRelativeExpiry(1, 0, 0, 0) }))}>
+                        一个月
+                      </Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setForm((current) => ({ ...current, expired_time: getRelativeExpiry(0, 1, 0, 0) }))}>
+                        一天
+                      </Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setForm((current) => ({ ...current, expired_time: getRelativeExpiry(0, 0, 1, 0) }))}>
+                        一小时
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {editId === null && (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium">新建数量</label>
+                    <Input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={form.tokenCount}
+                      onChange={(e) => {
+                        const nextValue = Math.max(1, Math.trunc(Number(e.target.value) || 1));
+                        setForm((current) => ({ ...current, tokenCount: nextValue }));
+                      }}
+                    />
+                    <p className="mt-1 text-xs text-muted-foreground">批量创建时会在名称后自动添加随机后缀</p>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-          <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">IP 限制</label>
-            <Input value={form.allow_ips} onChange={e => setForm(f => ({ ...f, allow_ips: e.target.value }))} placeholder="CIDR 格式，每行一个，留空不限" />
-            <p className="text-xs text-muted-foreground mt-1">支持 CIDR 格式，如 192.168.1.0/24</p>
+
+            <div className="rounded-[28px] border border-primary/10 bg-white p-5 shadow-sm">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex size-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600">
+                  <CreditCard className="size-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">额度设置</h3>
+                  <p className="text-sm text-muted-foreground">设置令牌可用额度和数量</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">额度</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    step={1}
+                    disabled={form.unlimited_quota}
+                    value={form.remain_quota}
+                    onChange={(e) => {
+                      const nextValue = Math.max(0, Math.trunc(Number(e.target.value) || 0));
+                      setForm((current) => ({ ...current, remain_quota: nextValue }));
+                    }}
+                  />
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {QUICK_QUOTA_OPTIONS.map((option) => (
+                      <Button
+                        key={option.value}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={form.unlimited_quota}
+                        onClick={() => setForm((current) => ({ ...current, remain_quota: option.value }))}
+                      >
+                        {option.label}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">等价金额：{fmtQuota(form.remain_quota)}</p>
+                </div>
+
+                <div className="rounded-2xl border border-primary/10 bg-primary/[0.03] p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-medium">无限额度</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        令牌的额度仅用于限制令牌本身的最大额度使用量，实际的使用受到账户的剩余额度限制
+                      </p>
+                    </div>
+                    <Switch
+                      checked={form.unlimited_quota}
+                      onCheckedChange={(checked: boolean) => {
+                        setForm((current) => ({ ...current, unlimited_quota: checked }));
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[28px] border border-primary/10 bg-white p-5 shadow-sm">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex size-11 items-center justify-center rounded-2xl bg-fuchsia-500/10 text-fuchsia-600">
+                  <Link2 className="size-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">访问限制</h3>
+                  <p className="text-sm text-muted-foreground">设置令牌的访问限制</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">模型限制列表</label>
+                  <Input
+                    value={form.model_limits}
+                    onChange={(e) => setForm((current) => ({ ...current, model_limits: e.target.value }))}
+                    placeholder="请选择该令牌支持的模型，留空支持所有模型"
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">非必要，不建议启用模型限制</p>
+                </div>
+
+                {availableModels.length > 0 && (
+                  <div className="max-h-44 overflow-y-auto rounded-2xl border border-slate-100 bg-slate-50/60 p-3">
+                    <div className="flex flex-wrap gap-2">
+                      {availableModels.map((model) => {
+                        const selected = selectedModels.includes(model);
+                        return (
+                          <button
+                            key={model}
+                            type="button"
+                            onClick={() => toggleModelLimit(model)}
+                            className={`rounded-full px-3 py-1 text-xs transition-colors ${
+                              selected
+                                ? 'bg-primary text-primary-foreground shadow-sm'
+                                : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:text-primary hover:ring-primary/30'
+                            }`}
+                          >
+                            {model}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">IP白名单（支持CIDR表达式）</label>
+                  <Textarea
+                    rows={3}
+                    value={form.allow_ips}
+                    onChange={(e) => setForm((current) => ({ ...current, allow_ips: e.target.value }))}
+                    placeholder="允许的IP，一行一个，不填写则不限制"
+                    className="min-h-24 rounded-xl border-primary/10 bg-white px-4 py-3 text-[15px] shadow-sm hover:border-primary/35 focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/10"
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    请勿过度信任此功能，IP可能被伪造，请配合 nginx 和 CDN 等网关使用
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-          {availableGroups.length > 0 && (
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">分组</label>
-              <Select value={form.group} onValueChange={(value) => setForm(f => ({ ...f, group: String(value ?? '') }))}>
-                <SelectTrigger size="default" className="w-full" aria-label="分组">
-                  <SelectValue placeholder="默认" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">默认</SelectItem>
-                  {availableGroups.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-        </div>
+        )}
         <DialogFooter>
           <DialogClose><Button variant="outline" className="rounded-2xl">取消</Button></DialogClose>
           <Button onClick={onSubmit} disabled={submitting} className="bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-lg shadow-primary/20">
             {submitting && <Loader2 className="size-4 mr-1.5 animate-spin" />}
-            {editId ? '保存' : '创建'}
+            提交
           </Button>
         </DialogFooter>
       </DialogContent>
