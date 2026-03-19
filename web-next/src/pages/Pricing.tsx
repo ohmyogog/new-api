@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Search, LayoutGrid, TableIcon, List, Filter, X,
-  ArrowLeft, MessageSquare, Image, Headphones, Shield, Zap,
+  MessageSquare, Image, Headphones, Shield, Zap,
   Sparkles, ChevronRight, Loader2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -12,6 +11,7 @@ import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from '@/components/ui/table';
 import { API } from '@/api/client';
+import { TopPrimaryNav } from '@/components/layout/TopPrimaryNav';
 import toast from 'react-hot-toast';
 
 // ── Types ──
@@ -280,15 +280,9 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-[#fcf9f5]">
-      <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-2 text-sm text-slate-500 hover:text-[#ee5a3e] transition-colors">
-              <ArrowLeft className="w-4 h-4" />返回
-            </Link>
-            <div className="w-px h-5 bg-slate-200" />
-            <span className="font-bold text-slate-800">模型广场</span>
-          </div>
+      <nav className="sticky top-0 z-30 border-b border-primary/8 bg-background/85 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 sm:px-8">
+          <TopPrimaryNav />
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[#ee5a3e]" />
             <span className="text-xs text-slate-400">{filtered.length} 个模型</span>
@@ -296,7 +290,7 @@ export default function PricingPage() {
         </div>
       </nav>
 
-      <div className="px-6 py-8">
+      <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-800">模型广场</h1>
           <p className="text-slate-500 mt-2">浏览所有可用模型的定价和功能信息</p>

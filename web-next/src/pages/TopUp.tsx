@@ -54,6 +54,7 @@ interface AffInfo {
 const primaryActionButtonClass = 'h-12 rounded-2xl bg-primary font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90';
 const outlineActionButtonClass = 'h-12 rounded-xl border border-primary/12 bg-[#fffaf7] font-bold text-on-surface hover:border-primary/25 hover:bg-white';
 const shellCardClass = 'rounded-[28px] border border-primary/10 bg-white shadow-[0_12px_32px_rgba(242,107,72,0.08)]';
+const balanceCardClass = 'rounded-[28px] border border-slate-100 bg-white soft-shadow';
 const miniStatCardClass = 'rounded-2xl border border-primary/10 bg-[#fffaf7] p-4 shadow-[0_8px_24px_rgba(242,107,72,0.04)]';
 const fieldLabelClass = 'text-[10px] font-bold uppercase tracking-[0.24em] text-[#9a8a80]';
 
@@ -200,9 +201,8 @@ export default function TopUpPage() {
       </div>
 
       {/* Balance Card */}
-      <div className={`${shellCardClass} relative overflow-hidden p-8 md:p-10`}>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(242,107,72,0.08),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(255,222,209,0.35),transparent_34%)]" />
-        <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+      <div className={`${balanceCardClass} p-8 md:p-10`}>
+        <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div className="space-y-3">
             <h3 className="flex items-center gap-2 text-sm font-medium text-[#756C69]">
               <Wallet className="size-4 text-primary" />
@@ -216,7 +216,7 @@ export default function TopUpPage() {
             </div>
             <p className="max-w-xl text-sm text-[#756C69]">可通过兑换充值码或邀请奖励补充余额</p>
           </div>
-          <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-[0_12px_28px_rgba(242,107,72,0.22)]">
+          <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl border border-slate-100 bg-[#fff7f2] text-primary shadow-sm">
             <CreditCard className="size-7" />
           </div>
         </div>
